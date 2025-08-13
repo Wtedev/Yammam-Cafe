@@ -118,7 +118,9 @@
                 المنتجات المطلوبة
             </h3>
             <div class="space-y-3">
-                @foreach($order->products_data as $product)
+                @php($items = isset($order->products) ? (is_array($order->products) ? $order->products : json_decode($order->products, true)) : [])
+                @php($loopItems = $items['items'] ?? $order->products_items ?? $order->products_data ?? [])
+                @foreach($loopItems as $product)
                 <div class="flex items-center justify-between p-3 bg-blue-50/50 rounded-lg border border-blue-100">
                     <div class="flex items-center gap-3">
                         <div class="w-2 h-2 bg-blue-400 rounded-full"></div>

@@ -38,6 +38,13 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function products()
+    {
+        return $this->belongsToMany(Product::class)
+            ->withPivot('quantity', 'unit_price', 'subtotal')
+            ->withTimestamps();
+    }
+
     public function firstViewedBy()
     {
         return $this->belongsTo(User::class, 'first_viewed_by');

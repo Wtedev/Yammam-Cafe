@@ -119,10 +119,10 @@
                                 <i class="fas fa-trash"></i>
                                 إفراغ السلة
                             </button>
-                            <button class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm flex items-center justify-center gap-2">
+                            <a href="{{ route('checkout.index') }}" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm flex items-center justify-center gap-2">
                                 <i class="fas fa-credit-card"></i>
                                 المتابعة للدفع
-                            </button>
+                            </a>
                             <a href="{{ route('menu.index') }}" class="w-full py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs flex items-center justify-center gap-1">
                                 <i class="fas fa-arrow-right"></i>
                                 متابعة التسوق
@@ -186,60 +186,65 @@
             }
 
             fetch(`/cart/update/${productId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({ quantity: newQuantity })
-            })
-            .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-            .then(data => {
-                if (data.success) {
-                    if (newQuantity === 0) {
-                        const li = document.getElementById(`cart-item-${productId}`);
-                        if (li) {
-                            li.style.opacity = '0';
-                            li.style.transform = 'translateX(20px)';
-                            li.style.transition = 'all 0.3s ease';
-                            setTimeout(() => {
-                                li.remove();
-                                if (data.totalQuantity === 0) showEmptyCart();
-                            }, 300);
-                        }
-                    } else {
-                        document.getElementById(`quantity-${productId}`).textContent = newQuantity;
-                        const subtotalEl = document.getElementById(`subtotal-${productId}`);
-                        subtotalEl.textContent = (data.product_price * newQuantity).toFixed(2) + ' ر.س';
-                        subtotalEl.classList.add('text-blue-600');
-                        setTimeout(()=> subtotalEl.classList.remove('text-blue-600'), 400);
+                    method: 'POST'
+                    , headers: {
+                        'Content-Type': 'application/json'
+                        , 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        , 'Accept': 'application/json'
+                        , 'X-Requested-With': 'XMLHttpRequest'
                     }
-                    document.getElementById('subtotal-amount').textContent = data.totalPrice.toFixed(2) + ' ر.س';
-                    document.getElementById('total-amount').textContent = data.totalPrice.toFixed(2) + ' ر.س';
-                    
-                    // تحديث عنوان عدد المنتجات
-                    updateProductsHeaderCount();
-                    
-                    updateHeaderCartBadge();
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('خطأ في التحديث: ' + err.message);
-            })
-            .finally(()=> {
-                if (button) {
-                    button.innerHTML = originalHTML;
-                    button.disabled = false;
-                }
-            });
+                    , body: JSON.stringify({
+                        quantity: newQuantity
+                    })
+                })
+                .then(r => {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        if (newQuantity === 0) {
+                            const li = document.getElementById(`cart-item-${productId}`);
+                            if (li) {
+                                li.style.opacity = '0';
+                                li.style.transform = 'translateX(20px)';
+                                li.style.transition = 'all 0.3s ease';
+                                setTimeout(() => {
+                                    li.remove();
+                                    if (data.totalQuantity === 0) showEmptyCart();
+                                }, 300);
+                            }
+                        } else {
+                            document.getElementById(`quantity-${productId}`).textContent = newQuantity;
+                            const subtotalEl = document.getElementById(`subtotal-${productId}`);
+                            subtotalEl.textContent = (data.product_price * newQuantity).toFixed(2) + ' ر.س';
+                            subtotalEl.classList.add('text-blue-600');
+                            setTimeout(() => subtotalEl.classList.remove('text-blue-600'), 400);
+                        }
+                        document.getElementById('subtotal-amount').textContent = data.totalPrice.toFixed(2) + ' ر.س';
+                        document.getElementById('total-amount').textContent = data.totalPrice.toFixed(2) + ' ر.س';
+
+                        // تحديث عنوان عدد المنتجات
+                        updateProductsHeaderCount();
+
+                        updateHeaderCartBadge();
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('خطأ في التحديث: ' + err.message);
+                })
+                .finally(() => {
+                    if (button) {
+                        button.innerHTML = originalHTML;
+                        button.disabled = false;
+                    }
+                });
         }
 
-        function changeQuantity(productId, delta, el){
+        function changeQuantity(productId, delta, el) {
             const qtyEl = document.getElementById(`quantity-${productId}`);
-            if(!qtyEl) return;
+            if (!qtyEl) return;
             const current = parseInt(qtyEl.textContent.trim()) || 0;
             const newQty = current + delta;
             updateQuantity(productId, newQty, el);
@@ -439,7 +444,7 @@
                 if (badge) badge.textContent = data.count;
             });
         }
-        
+
         // دالة لتحديث عدد المنتجات في العنوان
         function updateProductsHeaderCount() {
             // حساب إجمالي الكمية من جميع المنتجات الظاهرة
@@ -448,7 +453,7 @@
                 const qty = parseInt(el.textContent.trim()) || 0;
                 totalQuantity += qty;
             });
-            
+
             // تحديث النص في العنوان
             const headerElement = document.getElementById('products-header-count');
             if (headerElement) {

@@ -4,7 +4,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Middleware\EnsureCheckoutAuthenticated;
 use App\Http\Controllers\SuggestionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -37,11 +39,16 @@ Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/count', [CartController::class, 'count'])->name('count');
 });
 
+// صفحة الدفع (تتطلب تسجيل دخول)
+Route::middleware(['auth', EnsureCheckoutAuthenticated::class])->prefix('checkout')->name('checkout.')->group(function () {
+    Route::get('/', [CheckoutController::class, 'index'])->name('index');
+    Route::post('/', [CheckoutController::class, 'store'])->name('store');
+});
+
 // الطلبات (تتطلب تسجيل دخول)
 Route::middleware('auth')->prefix('orders')->name('orders.')->group(function () {
     Route::get('/', [OrderController::class, 'index'])->name('index');
     Route::get('/{order}', [OrderController::class, 'show'])->name('show');
-    Route::post('/', [OrderController::class, 'store'])->name('store');
     Route::patch('/{order}/cancel', [OrderController::class, 'cancel'])->name('cancel');
 });
 

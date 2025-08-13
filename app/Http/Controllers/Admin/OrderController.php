@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -106,17 +105,25 @@ class OrderController extends Controller
 
     public function destroy(Order $order)
     {
-        // تقليل عداد الطلبات للمنتجات إذا لم يكن الطلب ملغى مسبقاً
         if ($order->status !== 'cancelled') {
-            foreach ($order->products as $product) {
-                $product->decrement('order_count', $product->pivot->quantity);
+            $raw = $order->products;
+            if (is_string($raw)) {
+                $decoded = json_decode($raw, true) ?: [];
+            } elseif (is_array($raw)) {
+                $decoded = $raw;
+            } else {
+                $decoded = [];
+            }
+            $items = $decoded['items'] ?? $decoded; // دعم الشكل القديم
+            foreach ($items as $productData) {
+                if (isset($productData['id'])) {
+                    $product = \App\Models\Product::find($productData['id']);
+                    if ($product) $product->decrement('order_count', $productData['quantity'] ?? 0);
+                }
             }
         }
-
         $order->delete();
-
-        return redirect()->route('admin.orders.index')
-            ->with('success', 'تم حذف الطلب بنجاح');
+        return redirect()->route('admin.orders.index')->with('success', 'تم حذف الطلب بنجاح');
     }
 
     public function stats()
@@ -128,33 +135,20 @@ class OrderController extends Controller
         $stats = [
             'today' => [
                 'orders' => Order::where('created_at', '>=', $today)->count(),
-                'revenue' => Order::where('created_at', '>=', $today)
-                    ->where('status', '!=', 'cancelled')
-                    ->sum('total_amount'),
-                'completed' => Order::where('created_at', '>=', $today)
-                    ->where('status', 'completed')
-                    ->count(),
+                'revenue' => Order::where('created_at', '>=', $today)->where('status', '!=', 'cancelled')->sum('total_price'),
+                'completed' => Order::where('created_at', '>=', $today)->where('status', 'completed')->count(),
             ],
             'week' => [
                 'orders' => Order::where('created_at', '>=', $thisWeek)->count(),
-                'revenue' => Order::where('created_at', '>=', $thisWeek)
-                    ->where('status', '!=', 'cancelled')
-                    ->sum('total_amount'),
-                'completed' => Order::where('created_at', '>=', $thisWeek)
-                    ->where('status', 'completed')
-                    ->count(),
+                'revenue' => Order::where('created_at', '>=', $thisWeek)->where('status', '!=', 'cancelled')->sum('total_price'),
+                'completed' => Order::where('created_at', '>=', $thisWeek)->where('status', 'completed')->count(),
             ],
             'month' => [
                 'orders' => Order::where('created_at', '>=', $thisMonth)->count(),
-                'revenue' => Order::where('created_at', '>=', $thisMonth)
-                    ->where('status', '!=', 'cancelled')
-                    ->sum('total_amount'),
-                'completed' => Order::where('created_at', '>=', $thisMonth)
-                    ->where('status', 'completed')
-                    ->count(),
+                'revenue' => Order::where('created_at', '>=', $thisMonth)->where('status', '!=', 'cancelled')->sum('total_price'),
+                'completed' => Order::where('created_at', '>=', $thisMonth)->where('status', 'completed')->count(),
             ]
         ];
-
         return view('admin.orders.stats', compact('stats'));
     }
 }
