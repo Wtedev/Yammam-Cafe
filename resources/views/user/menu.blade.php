@@ -141,8 +141,8 @@
                     <div class="mt-auto flex items-center gap-2 pt-3 flex-shrink-0 border-t border-gray-100">
                         <div class="flex w-full gap-2 pt-2">
                             @auth
-                            <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded-xl font-bold text-xs transition shadow-sm flex items-center justify-center">
-                                <i class="fas fa-plus ml-1"></i>
+                            <button onclick="addToCart({{ $product->id }}, event)" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded-xl font-bold text-xs transition shadow-sm flex items-center justify-center">
+                                <i class="fas fa-cart-plus ml-1"></i>
                                 إضافة للسلة
                             </button>
                             @else
@@ -201,3 +201,134 @@
         @endif
     </div>
 </x-user-layout>
+
+<script>
+    function addToCart(productId, event) {
+        event.preventDefault();
+
+        // Show loading indicator on button
+        const button = event.target.closest('button');
+        if (!button) return;
+
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin ml-1"></i> جاري الإضافة...';
+        button.disabled = true;
+
+        // Get CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfToken) {
+            showMessage('خطأ في الأمان: توكن CSRF غير موجود', 'error');
+            button.innerHTML = originalText;
+            button.disabled = false;
+            return;
+        }
+
+        fetch(`/cart/add/${productId}`, {
+                method: 'POST'
+                , headers: {
+                    'Content-Type': 'application/json'
+                    , 'X-CSRF-TOKEN': csrfToken.getAttribute('content')
+                    , 'Accept': 'application/json'
+                }
+                , body: JSON.stringify({
+                    quantity: 1
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || `HTTP error! Status: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Restore button
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 500);
+
+                if (data.success) {
+                    // Show success message
+                    showMessage(`تم إضافة ${data.product_name} إلى السلة`, 'success');
+
+                    // Update cart count in header if exists
+                    updateCartCount();
+
+                    // Add animation effect to the cart icon in header
+                    animateCartIcon();
+                } else {
+                    showMessage(data.message || 'حدث خطأ أثناء إضافة المنتج', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage(error.message || 'حدث خطأ أثناء إضافة المنتج للسلة', 'error');
+
+                // Restore button
+                button.innerHTML = originalText;
+                button.disabled = false;
+            });
+    }
+
+    function updateCartCount() {
+        fetch('/cart/count')
+            .then(response => response.json())
+            .then(data => {
+                // Update cart badge in header
+                const cartBadge = document.querySelector('.cart-badge');
+                if (cartBadge) {
+                    cartBadge.textContent = data.count;
+                }
+            })
+            .catch(error => {
+                console.error('Error updating cart count:', error);
+            });
+    }
+
+    function showMessage(message, type) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `fixed top-4 left-4 right-4 ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white p-4 rounded-lg shadow-lg z-50 flex items-center justify-between`;
+
+        // Add icon based on message type
+        const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+        messageDiv.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-${icon} mr-2 text-xl"></i>
+                <span>${message}</span>
+            </div>
+            <button class="text-white hover:text-gray-200" onclick="this.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+
+        document.body.appendChild(messageDiv);
+
+        // Fade in effect
+        messageDiv.style.opacity = '0';
+        messageDiv.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => {
+            messageDiv.style.opacity = '1';
+        }, 10);
+
+        // Auto dismiss after 3 seconds
+        setTimeout(() => {
+            messageDiv.style.opacity = '0';
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 300);
+        }, 3000);
+    }
+
+    function animateCartIcon() {
+        const cartIcon = document.querySelector('.cart-icon');
+        if (cartIcon) {
+            cartIcon.classList.add('animate-bounce');
+            setTimeout(() => {
+                cartIcon.classList.remove('animate-bounce');
+            }, 1000);
+        }
+    }
+
+</script>

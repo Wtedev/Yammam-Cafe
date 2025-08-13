@@ -24,13 +24,16 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
 Route::get('/menu/{product}', [MenuController::class, 'show'])->name('menu.show');
 
+// روت مختصر للسلة
+Route::get('/cart', [CartController::class, 'index'])->name('cart');
+
 // السلة
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/add/{product}', [CartController::class, 'add'])->name('add');
-    Route::patch('/update/{product}', [CartController::class, 'update'])->name('update');
-    Route::delete('/remove/{product}', [CartController::class, 'remove'])->name('remove');
-    Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
+    Route::post('/update/{product}', [CartController::class, 'update'])->name('update');
+    Route::post('/remove/{product}', [CartController::class, 'remove'])->name('remove');
+    Route::post('/clear', [CartController::class, 'clear'])->name('clear');
     Route::get('/count', [CartController::class, 'count'])->name('count');
 });
 

@@ -11,14 +11,14 @@
 
             <!-- User Actions -->
             <div class="flex items-center space-x-4 space-x-reverse">
-                <!-- Notifications -->
-                <button class="relative p-2 text-gray-400 hover:text-gray-500 focus:outline-none">
-                    <i class="fas fa-bell text-lg"></i>
-                    <!-- Notification Badge -->
-                    <span class="absolute -top-0.5 -right-0.5 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                        3
+                <!-- Shopping Cart -->
+                <a href="/cart" class="relative p-2 text-gray-400 hover:text-gray-500 focus:outline-none">
+                    <i class="fas fa-shopping-cart text-lg"></i>
+                    <!-- Cart Badge -->
+                    <span class="cart-badge absolute -top-0.5 -right-0.5 h-4 w-4 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
+                        {{ array_sum(session('cart', [])) }}
                     </span>
-                </button>
+                </a>
 
                 <!-- User Menu -->
                 <div class="relative" x-data="{ open: false }">

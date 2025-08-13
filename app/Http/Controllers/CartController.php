@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -118,34 +119,81 @@ class CartController extends Controller
 
     public function remove(Request $request, $productId)
     {
-        $cart = Session::get('cart', []);
-        unset($cart[$productId]);
-        Session::put('cart', $cart);
-
-        // حساب ملخص السلة
-        $totalQuantity = array_sum($cart);
-        $totalPrice = $this->calculateCartTotal($cart);
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'تم حذف المنتج من السلة',
-                'totalQuantity' => $totalQuantity,
-                'totalPrice' => $totalPrice
+        try {
+            Log::info('Cart remove called', [
+                'productId' => $productId,
+                'method' => $request->method(),
+                'is_ajax' => $request->ajax(),
+                'headers' => $request->headers->all()
             ]);
+
+            $cart = Session::get('cart', []);
+            Log::info('Current cart', ['cart' => $cart]);
+
+            if (isset($cart[$productId])) {
+                unset($cart[$productId]);
+                Session::put('cart', $cart);
+
+                // حساب ملخص السلة
+                $totalQuantity = array_sum($cart);
+                $totalPrice = $this->calculateCartTotal($cart);
+
+                Log::info('Cart after removal', [
+                    'cart' => $cart,
+                    'totalQuantity' => $totalQuantity,
+                    'totalPrice' => $totalPrice
+                ]);
+
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'تم حذف المنتج من السلة',
+                        'totalQuantity' => $totalQuantity,
+                        'totalPrice' => $totalPrice
+                    ]);
+                }
+                return back()->with('success', 'تم حذف المنتج من السلة');
+            }
+
+            Log::warning('Product not found in cart', ['productId' => $productId, 'cart' => $cart]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'المنتج غير موجود في السلة'
+                ]);
+            }
+            return back()->with('error', 'المنتج غير موجود في السلة');
+        } catch (\Exception $e) {
+            Log::error('Cart remove error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'productId' => $productId
+            ]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'حدث خطأ: ' . $e->getMessage()
+                ], 500);
+            }
+            return back()->with('error', 'حدث خطأ أثناء حذف المنتج');
         }
-        return back()->with('success', 'تم حذف المنتج من السلة');
     }
 
     public function clear(Request $request)
     {
         Session::forget('cart');
+
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'تم إفراغ السلة بنجاح'
+                'message' => 'تم إفراغ السلة بنجاح',
+                'totalQuantity' => 0,
+                'totalPrice' => 0
             ]);
         }
+
         return back()->with('success', 'تم إفراغ السلة بنجاح');
     }
 
