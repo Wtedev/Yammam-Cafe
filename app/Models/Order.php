@@ -33,7 +33,6 @@ class Order extends Model
         'updated_at' => 'datetime',
     ];
 
-    // العلاقات
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -44,7 +43,6 @@ class Order extends Model
         return $this->belongsTo(User::class, 'first_viewed_by');
     }
 
-    // Scopes
     public function scopeByStatus($query, $status)
     {
         return $query->where('status', $status);
@@ -70,7 +68,6 @@ class Order extends Model
         return $query->whereNull('first_viewed_at');
     }
 
-    // Accessors
     public function getStatusTextAttribute()
     {
         $statusTexts = [

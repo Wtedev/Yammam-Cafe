@@ -1,4 +1,4 @@
-<aside class="hidden lg:flex lg:flex-col lg:fixed lg:right-0 lg:top-0 lg:h-screen lg:w-64 bg-white border-l border-gray-200 shadow-lg z-50">
+<aside class="hidden lg:flex lg:flex-col lg:fixed lg:right-0 lg:top-0 lg:h-screen lg:w-64 bg-white border-l border-gray-200 shadow-lg z-40">
     <!-- Logo/Brand -->
     <div class="p-6 border-b border-gray-200">
         <div class="flex items-center space-x-3 space-x-reverse">

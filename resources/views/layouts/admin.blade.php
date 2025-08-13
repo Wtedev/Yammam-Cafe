@@ -53,13 +53,13 @@
 
             <!-- Search Bar - لا يظهر في صفحة الملف الشخصي -->
             @if(!request()->routeIs('admin.profile'))
-            <div class="search-bar-container sticky top-0 z-50">
+            <div class="search-bar-container sticky top-0 z-30">
                 <x-admin.search-bar :page="request()->segment(2)" />
             </div>
             @endif
 
             <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6">
+            <main class="flex-1 overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6 pt-4 lg:pt-6">
                 {{ $slot }}
             </main>
         </div>
