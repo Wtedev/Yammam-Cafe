@@ -26,7 +26,7 @@ $searchConfig = [
 'action' => route('admin.orders'),
 'placeholder' => 'بحث في الطلبات...',
 'fields' => [
-['name' => 'search', 'placeholder' => 'رقم الطلب أو اسم العميل', 'type' => 'text'],
+['name' => 'search', 'placeholder' => 'رقم الطلب أو اسم العميل أو رقم المكتب', 'type' => 'text'],
 ['name' => 'status', 'placeholder' => 'حالة الطلب', 'type' => 'select', 'options' => [
 'pending' => 'في الانتظار',
 'processed' => 'قيد المعالجة',
@@ -53,7 +53,7 @@ $searchConfig = [
 'action' => route('admin.suggestions.index'),
 'placeholder' => 'بحث في الاقتراحات...',
 'fields' => [
-['name' => 'search', 'placeholder' => 'البحث في المحتوى', 'type' => 'text'],
+['name' => 'search', 'placeholder' => 'البحث في المحتوى أو اسم المستخدم', 'type' => 'text'],
 ['name' => 'type', 'placeholder' => 'النوع', 'type' => 'select', 'options' => [
 'suggestion' => 'اقتراح',
 'complaint' => 'شكوى',
@@ -61,8 +61,13 @@ $searchConfig = [
 ]],
 ['name' => 'status', 'placeholder' => 'الحالة', 'type' => 'select', 'options' => [
 'new' => 'جديد',
-'viewed' => 'تمت المشاهدة'
-]]
+'reviewing' => 'قيد المراجعة',
+'approved' => 'موافق عليه',
+'rejected' => 'مرفوض',
+'implemented' => 'تم التنفيذ'
+]],
+['name' => 'date_from', 'placeholder' => 'من تاريخ', 'type' => 'date'],
+['name' => 'date_to', 'placeholder' => 'إلى تاريخ', 'type' => 'date']
 ]
 ]
 ];
@@ -77,7 +82,7 @@ $config = $searchConfig[$page] ?? null;
             <!-- Search Form -->
             <form method="GET" action="{{ $config['action'] }}" x-data="{ showAdvanced: false }" class="space-y-4">
                 <!-- Basic Search -->
-                <div class="flex flex-col sm:flex-row gap-3">
+                <div class="flex gap-2">
                     <div class="flex-1 relative">
                         <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                             <i class="fas fa-search text-gray-400"></i>
@@ -85,27 +90,28 @@ $config = $searchConfig[$page] ?? null;
                         <input type="text" name="{{ $config['fields'][0]['name'] }}" value="{{ request($config['fields'][0]['name']) }}" placeholder="{{ $config['fields'][0]['placeholder'] }}" class="block w-full pr-10 pl-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                     </div>
 
-                    <div class="flex gap-2">
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors text-sm flex items-center">
-                            <i class="fas fa-search ml-2"></i>
-                            بحث
-                        </button>
+                    <!-- Search Button -->
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-6 py-2.5 rounded-lg font-medium transition-colors text-sm flex items-center">
+                        <i class="fas fa-search sm:ml-2"></i>
+                        <span class="hidden sm:inline">بحث</span>
+                    </button>
 
-                        @if(count($config['fields']) > 1)
-                        <button type="button" @click="showAdvanced = !showAdvanced" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-medium transition-colors text-sm flex items-center">
-                            <i class="fas fa-filter ml-2"></i>
-                            متقدم
-                            <i class="fas fa-chevron-down ml-1 transition-transform" :class="{ 'rotate-180': showAdvanced }"></i>
-                        </button>
-                        @endif
+                    <!-- Advanced Filter Button -->
+                    @if(count($config['fields']) > 1)
+                    <button type="button" @click="showAdvanced = !showAdvanced" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 sm:px-4 py-2.5 rounded-lg font-medium transition-colors text-sm flex items-center">
+                        <i class="fas fa-filter sm:ml-2"></i>
+                        <span class="hidden sm:inline">متقدم</span>
+                        <i class="fas fa-chevron-down ml-1 transition-transform hidden sm:inline" :class="{ 'rotate-180': showAdvanced }"></i>
+                    </button>
+                    @endif
 
-                        @if(request()->hasAny(array_column($config['fields'], 'name')))
-                        <a href="{{ $config['action'] }}" class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2.5 rounded-lg font-medium transition-colors text-sm flex items-center">
-                            <i class="fas fa-times ml-2"></i>
-                            مسح
-                        </a>
-                        @endif
-                    </div>
+                    <!-- Clear Button -->
+                    @if(request()->hasAny(array_column($config['fields'], 'name')))
+                    <a href="{{ $config['action'] }}" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 sm:px-4 py-2.5 rounded-lg font-medium transition-colors text-sm flex items-center">
+                        <i class="fas fa-times sm:ml-2"></i>
+                        <span class="hidden sm:inline">مسح</span>
+                    </a>
+                    @endif
                 </div>
 
                 <!-- Advanced Filters -->
@@ -157,7 +163,7 @@ $config = $searchConfig[$page] ?? null;
                         {{ $field['placeholder'] }}:
                         @if($field['type'] === 'select' && isset($field['options']) && is_array($field['options']))
                         {{ $field['options'][request($field['name'])] ?? request($field['name']) }}
-                        @elseif($field['options'] === 'categories')
+                        @elseif(isset($field['options']) && $field['options'] === 'categories')
                         @php
                         $category = \App\Models\Category::find(request($field['name']));
                         @endphp
