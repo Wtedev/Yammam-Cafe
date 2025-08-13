@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('walking_time')->nullable(); // بالدقائق
             $table->string('image')->nullable();
             $table->integer('order_count')->default(0);
+            $table->integer('stock_quantity')->default(0); // الكمية المتوفرة
             $table->boolean('is_available')->default(true);
             $table->boolean('is_featured')->default(false);
             $table->timestamps();

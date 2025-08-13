@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -125,17 +126,34 @@ class UserController extends Controller
             ->with('success', 'تم حذف المستخدم بنجاح');
     }
 
-    public function toggleRole(User $user)
+    public function toggleRole(Request $request, User $user)
     {
-        // التأكد من عدم تغيير دور آخر مدير
-        if ($user->role === 'admin' && User::where('role', 'admin')->count() <= 1) {
-            return back()->with('error', 'لا يمكن تغيير دور آخر مدير في النظام');
-        }
-
-        $newRole = $user->role === 'admin' ? 'user' : 'admin';
+        $newRole = $user->role === 'user' ? 'admin' : 'user';
         $user->update(['role' => $newRole]);
 
-        $roleText = $newRole === 'admin' ? 'مدير' : 'مستخدم';
-        return back()->with('success', "تم تغيير دور المستخدم إلى: {$roleText}");
+        return back()->with('success', 'تم تغيير دور المستخدم بنجاح');
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'first_name' => 'required|string|max:50',
+            'last_name' => 'required|string|max:50',
+            'mobile' => 'required|string|max:15|unique:users,mobile,' . $user->id,
+        ], [
+            'first_name.required' => 'الاسم الأول مطلوب',
+            'last_name.required' => 'اسم العائلة مطلوب',
+            'mobile.required' => 'رقم الجوال مطلوب',
+            'mobile.unique' => 'رقم الجوال مسجل مسبقاً',
+        ]);
+
+        $user->update([
+            'name' => $request->first_name . ' ' . $request->last_name,
+            'mobile' => $request->mobile,
+        ]);
+
+        return back()->with('success', 'تم تحديث البيانات الشخصية بنجاح');
     }
 }

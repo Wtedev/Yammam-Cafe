@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -38,21 +39,35 @@ class OrderController extends Controller
             ->groupBy('status')
             ->pluck('count', 'status');
 
-        return view('admin.orders.index', compact('orders', 'statusCounts'));
+        // إحصائيات الطلبات الجديدة
+        $newOrdersCount = Order::new()->count();
+        $newOrders = Order::new()->latest()->take(5)->get();
+
+        return view('admin.orders', compact('orders', 'statusCounts', 'newOrdersCount', 'newOrders'));
     }
 
     public function show(Order $order)
     {
-        $order->load('user', 'products');
+        // تحديث حالة أول مشاهدة للطلب
+        if (is_null($order->first_viewed_at)) {
+            $order->update([
+                'first_viewed_at' => now(),
+                'first_viewed_by' => Auth::id(),
+            ]);
+        }
+
+        $order->load('user');
         return view('admin.orders.show', compact('order'));
     }
 
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|in:pending,confirmed,preparing,ready,completed,cancelled',
+            'status' => 'required|in:pending,processed,delivered,cancelled',
             'admin_notes' => 'nullable|string|max:500'
         ]);
+
+        $oldStatus = $order->status;
 
         $order->update([
             'status' => $request->status,
@@ -61,9 +76,15 @@ class OrderController extends Controller
         ]);
 
         // إذا تم إلغاء الطلب، قلل عداد الطلبات للمنتجات
-        if ($request->status === 'cancelled' && $order->status !== 'cancelled') {
-            foreach ($order->products as $product) {
-                $product->decrement('order_count', $product->pivot->quantity);
+        if ($request->status === 'cancelled' && $oldStatus !== 'cancelled') {
+            $productsData = $order->products_data;
+            if ($productsData) {
+                foreach ($productsData as $productData) {
+                    $product = \App\Models\Product::find($productData['id']);
+                    if ($product) {
+                        $product->decrement('order_count', $productData['quantity']);
+                    }
+                }
             }
         }
 

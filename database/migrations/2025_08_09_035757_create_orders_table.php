@@ -19,6 +19,8 @@ class CreateOrdersTable extends Migration
             $table->timestamp('delivery_time')->nullable(); // وقت التوصيل إذا كان متاحًا
             $table->enum('payment_method', ['network', 'bank_transfer', 'cash']); // طريقة الدفع
             $table->string('payment_image_url')->nullable(); // صورة التحويل إذا كان الدفع عن طريق التحويل البنكي
+            $table->timestamp('first_viewed_at')->nullable(); // تاريخ أول مشاهدة للطلب من قبل الأدمن
+            $table->foreignId('first_viewed_by')->nullable()->constrained('users')->nullOnDelete(); // الأدمن الذي شاهد الطلب أولاً
             $table->timestamps(); // created_at, updated_at
         });
     }
@@ -27,5 +29,4 @@ class CreateOrdersTable extends Migration
     {
         Schema::dropIfExists('orders');
     }
-}
-;
+};

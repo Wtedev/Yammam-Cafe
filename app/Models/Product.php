@@ -24,6 +24,7 @@ class Product extends Model
         'end_date',
         'image',
         'order_count',
+        'stock_quantity',
         'is_available',
         'is_featured',
     ];
@@ -35,6 +36,7 @@ class Product extends Model
         'calories' => 'integer',
         'walking_time' => 'integer',
         'order_count' => 'integer',
+        'stock_quantity' => 'integer',
     ];
 
     /**
@@ -42,7 +44,19 @@ class Product extends Model
      */
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    /**
+     * Get the category name - custom accessor
+     */
+    public function getCategoryNameAttribute()
+    {
+        if ($this->category_id && $this->relationLoaded('category') && is_object($this->category)) {
+            return $this->category->name;
+        }
+
+        return $this->category;
     }
 
     // العلاقات
@@ -108,5 +122,55 @@ class Product extends Model
     {
         // Calculate walking time based on calories (1 calorie = 0.25 minutes)
         return $this->calories ? round($this->calories * 0.25) : 0;
+    }
+
+    /**
+     * Check if product is currently available based on stock and dates
+     */
+    public function getIsCurrentlyAvailableAttribute()
+    {
+        // Check stock quantity
+        if ($this->stock_quantity <= 0) {
+            return false;
+        }
+
+        // Check date range for weekly products
+        if ($this->type === 'weekly') {
+            $now = now();
+
+            if ($this->start_date && $now->lt($this->start_date)) {
+                return false;
+            }
+
+            if ($this->end_date && $now->gt($this->end_date)) {
+                return false;
+            }
+        }
+
+        return $this->is_available;
+    }
+
+    /**
+     * Get availability status text
+     */
+    public function getAvailabilityStatusAttribute()
+    {
+        if ($this->stock_quantity <= 0) {
+            return 'نفد المخزون';
+        }
+
+        if ($this->type === 'weekly') {
+            $now = now();
+
+            if ($this->start_date && $now->lt($this->start_date)) {
+                return 'لم يبدأ بعد';
+            }
+
+            if ($this->end_date && $now->gt($this->end_date)) {
+                return 'انتهت المدة';
+            }
+        }
+
+        return $this->is_available ? 'متوفر' : 'غير متوفر';
     }
 }

@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-layout.guest-layout>
     <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">تحقق من بريدك الإلكتروني</h2>
 
     <div class="mb-6 text-sm text-gray-600 text-center px-4 sm:px-0">
@@ -14,9 +14,9 @@
     <div class="mb-6 px-4 sm:px-0">
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
-            <button type="submit" class="w-full bg-black text-white py-4 rounded-xl font-medium hover:bg-gray-900 transition-colors duration-200 shadow-sm">
+            <x-buttons.primary type="submit" class="w-full bg-black text-white py-4 rounded-xl font-medium hover:bg-gray-900 transition-colors duration-200 shadow-sm">
                 إعادة إرسال بريد التحقق
-            </button>
+            </x-buttons.primary>
         </form>
     </div>
 
@@ -34,4 +34,4 @@
             العودة إلى الصفحة الرئيسية
         </a>
     </div>
-</x-guest-layout>
+</x-layout.guest-layout>

@@ -20,23 +20,26 @@ class ProductController extends Controller
         }
 
         if ($request->category) {
-            $query->where('category', $request->category);
+            $query->where('category_id', $request->category);
         }
 
         if ($request->type) {
             $query->where('type', $request->type);
         }
 
-        if ($request->status !== null) {
-            $query->where('is_available', $request->status);
+        if ($request->availability) {
+            $query->where('is_available', $request->availability === 'available');
         }
+
+        // تحميل علاقة التصنيف مسبقًا لتحسين الأداء وتجنب الأخطاء
+        $query->with('category');
 
         $products = $query->orderBy('created_at', 'desc')->paginate(20);
 
-        $categories = Product::distinct()->pluck('category')->filter();
-        $types = Product::distinct()->pluck('type')->filter();
+        // استرجاع التصنيفات من جدول التصنيفات
+        $categories = \App\Models\Category::all();
 
-        return view('admin.products.index', compact('products', 'categories', 'types'));
+        return view('admin.products.index', compact('products', 'categories'));
     }
 
     public function create()
@@ -56,6 +59,7 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'calories' => 'nullable|numeric|min:0',
             'preparation_time' => 'nullable|numeric|min:1',
+            'stock_quantity' => 'required|numeric|min:0',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after:start_date',
             'is_available' => 'boolean',
@@ -68,6 +72,9 @@ class ProductController extends Controller
             'category_id.exists' => 'التصنيف غير موجود',
             'type.required' => 'نوع المنتج مطلوب',
             'type.in' => 'نوع المنتج غير صحيح',
+            'stock_quantity.required' => 'الكمية المتوفرة مطلوبة',
+            'stock_quantity.numeric' => 'الكمية يجب أن تكون رقم',
+            'stock_quantity.min' => 'الكمية لا يمكن أن تكون أقل من صفر',
             'image.image' => 'الملف يجب أن يكون صورة',
             'image.max' => 'حجم الصورة كبير جداً',
             'end_date.after' => 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية'
@@ -133,11 +140,12 @@ class ProductController extends Controller
             'name' => 'required|string|max:100',
             'description' => 'nullable|string|max:500',
             'price' => 'required|numeric|min:0',
-            'category' => 'required|exists:categories,id',
-            'type' => 'nullable|in:fixed,weekly',
+            'category_id' => 'required|exists:categories,id',
+            'type' => 'required|in:fixed,weekly',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'calories' => 'nullable|numeric|min:0',
             'preparation_time' => 'nullable|numeric|min:1',
+            'stock_quantity' => 'required|numeric|min:0',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after:start_date',
             'is_available' => 'boolean',
@@ -146,9 +154,13 @@ class ProductController extends Controller
             'name.required' => 'اسم المنتج مطلوب',
             'price.required' => 'السعر مطلوب',
             'price.numeric' => 'السعر يجب أن يكون رقم',
-            'category.required' => 'التصنيف مطلوب',
-            'category.exists' => 'التصنيف غير موجود',
+            'category_id.required' => 'التصنيف مطلوب',
+            'category_id.exists' => 'التصنيف غير موجود',
+            'type.required' => 'نوع المنتج مطلوب',
             'type.in' => 'نوع المنتج غير صحيح',
+            'stock_quantity.required' => 'الكمية المتوفرة مطلوبة',
+            'stock_quantity.numeric' => 'الكمية يجب أن تكون رقم',
+            'stock_quantity.min' => 'الكمية لا يمكن أن تكون أقل من صفر',
             'image.image' => 'الملف يجب أن يكون صورة',
             'image.max' => 'حجم الصورة كبير جداً',
             'end_date.after' => 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية'
@@ -188,13 +200,28 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             // حذف الصورة القديمة
             if ($product->image) {
-                Storage::delete('public/products/' . $product->image);
+                $oldImagePath = storage_path('app/public/products/' . $product->image);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
             }
 
             $image = $request->file('image');
             $imageName = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/products', $imageName);
-            $data['image'] = $imageName;
+            $destinationPath = storage_path('app/public/products/');
+
+            // تأكد من وجود المجلد
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+
+            // نقل الملف يدوياً
+            $moved = $image->move($destinationPath, $imageName);
+            $fullPath = $destinationPath . $imageName;
+
+            if ($moved && file_exists($fullPath)) {
+                $data['image'] = $imageName;
+            }
         }
 
         $product->update($data);

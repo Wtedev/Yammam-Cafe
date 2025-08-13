@@ -1,6 +1,6 @@
-<x-guest-layout>
+<x-layout.guest-layout>
     <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <x-layout.session-status class="mb-4" :status="session('status')" />
 
     <!-- رسائل الخطأ العامة -->
     @if ($errors->any())
@@ -21,20 +21,20 @@
 
         <!-- Mobile Number -->
         <div class="mb-4">
-            <label for="mobile" class="block text-sm font-medium text-gray-700 mb-2">رقم الجوال</label>
+            <x-forms.label for="mobile" class="block text-sm font-medium text-gray-700 mb-2">رقم الجوال</x-forms.label>
             <div>
-                <input id="mobile" type="tel" name="mobile" value="{{ old('mobile') }}" required autofocus placeholder="أدخل رقم الجوال" class="w-full border @error('mobile') border-red-500 @else border-gray-300 @enderror rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" dir="ltr" />
+                <x-forms.input id="mobile" type="tel" name="mobile" value="{{ old('mobile') }}" required autofocus placeholder="أدخل رقم الجوال" class="w-full border @error('mobile') border-red-500 @else border-gray-300 @enderror rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" dir="ltr" />
             </div>
-            <x-input-error :messages="$errors->get('mobile')" class="mt-2" />
+            <x-forms.error :messages="$errors->get('mobile')" class="mt-2" />
         </div>
 
         <!-- Password -->
         <div class="mb-4">
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">كلمة المرور</label>
+            <x-forms.label for="password" class="block text-sm font-medium text-gray-700 mb-2">كلمة المرور</x-forms.label>
             <div>
-                <input id="password" type="password" name="password" required autocomplete="current-password" placeholder="أدخل كلمة المرور" class="w-full border @error('password') border-red-500 @else border-gray-300 @enderror rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" />
+                <x-forms.input id="password" type="password" name="password" required autocomplete="current-password" placeholder="أدخل كلمة المرور" class="w-full border @error('password') border-red-500 @else border-gray-300 @enderror rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" />
             </div>
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <x-forms.error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <!-- Remember Me -->
@@ -52,9 +52,9 @@
         </div>
 
         <div class="mb-6">
-            <button type="submit" class="w-full bg-gradient-to-r from-gray-900 to-black text-white py-4 rounded-xl font-medium hover:from-black hover:to-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+            <x-buttons.primary type="submit" class="w-full bg-gradient-to-r from-gray-900 to-black text-white py-4 rounded-xl font-medium hover:from-black hover:to-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                 تسجيل الدخول
-            </button>
+            </x-buttons.primary>
         </div>
 
         <div class="text-center mb-6">
@@ -73,4 +73,4 @@
         </div>
     </form>
 
-</x-guest-layout>
+</x-layout.guest-layout>

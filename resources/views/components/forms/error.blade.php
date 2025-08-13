@@ -1,0 +1,1 @@
+<x-input-error {{ $attributes }} />

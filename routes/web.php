@@ -66,10 +66,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     //     return view('admin.products');
     // })->name('products');
 
-    // إدارة الطلبات (لايوت فقط)
-    Route::get('/orders', function () {
-        return view('admin.orders');
-    })->name('orders');
+    // إدارة الطلبات
+    Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders');
+    Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
 
     // إدارة المنتجات (نظام CRUD كامل)
     Route::resource('products', AdminProductController::class);
@@ -86,6 +86,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/profile', function () {
         return view('admin.profile');
     })->name('profile');
+    Route::patch('/profile/update', [AdminUserController::class, 'updateProfile'])->name('profile.update');
 
     // إدارة الاقتراحات
     Route::prefix('suggestions')->name('suggestions.')->group(function () {

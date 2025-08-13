@@ -18,6 +18,8 @@ class CreateSuggestionsTable extends Migration
             $table->boolean('anonymous')->default(false); // خيار "لا ترسل اسمي" (يكون `true` إذا اختار المستخدم عدم إرسال اسمه)
             $table->text('admin_response')->nullable(); // رد المدير على الاقتراح
             $table->timestamp('responded_at')->nullable(); // وقت الرد على الاقتراح
+            $table->timestamp('first_viewed_at')->nullable(); // تاريخ أول مشاهدة للاقتراح من قبل الأدمن
+            $table->foreignId('first_viewed_by')->nullable()->constrained('users')->nullOnDelete(); // الأدمن الذي شاهد الاقتراح أولاً
             $table->timestamps(); // created_at, updated_at
         });
     }

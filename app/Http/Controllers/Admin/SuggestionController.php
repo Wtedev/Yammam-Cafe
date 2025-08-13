@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Suggestion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SuggestionController extends Controller
 {
@@ -46,25 +47,34 @@ class SuggestionController extends Controller
             ->groupBy('status')
             ->pluck('count', 'status');
 
-        return view('admin.suggestions.index', compact('suggestions', 'typeCounts', 'statusCounts'));
+        // إحصائيات الاقتراحات الجديدة (غير المفتوحة)
+        $newSuggestionsCount = Suggestion::unviewed()->count();
+        $newSuggestions = Suggestion::unviewed()->latest()->take(5)->get();
+
+        return view('admin.suggestions.index', compact('suggestions', 'typeCounts', 'statusCounts', 'newSuggestionsCount', 'newSuggestions'));
     }
 
     public function show(Suggestion $suggestion)
     {
+        // تحديث حالة أول مشاهدة للاقتراح
+        if (is_null($suggestion->first_viewed_at)) {
+            $suggestion->update([
+                'first_viewed_at' => now(),
+                'first_viewed_by' => Auth::id(),
+            ]);
+        }
+
         return view('admin.suggestions.show', compact('suggestion'));
     }
 
     public function updateStatus(Request $request, Suggestion $suggestion)
     {
         $request->validate([
-            'status' => 'required|in:new,reviewed,responded,closed',
-            'admin_response' => 'nullable|string|max:1000'
+            'status' => 'required|in:new,reviewing,approved,rejected,implemented',
         ]);
 
         $suggestion->update([
             'status' => $request->status,
-            'admin_response' => $request->admin_response,
-            'responded_at' => $request->status === 'responded' ? now() : $suggestion->responded_at,
         ]);
 
         return back()->with('success', 'تم تحديث حالة الاقتراح بنجاح');

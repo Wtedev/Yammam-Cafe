@@ -1,213 +1,148 @@
-<x-admin-layout title="تعديل المنتج">
-    <div class="container mx-auto px-4 py-6">
+<x-layout.admin-layout title="تعديل المنتج">
+    <div class="max-w-4xl mx-auto py-8 px-2 md:px-6 font-[Cairo,Tajawal,Segoe UI,Arial,sans-serif]">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold text-gray-900">تعديل المنتج: {{ $product->name }}</h1>
-            <div class="flex space-x-2 space-x-reverse">
-                <a href="{{ route('admin.products.show', $product) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200">
-                    <i class="fas fa-eye ml-2"></i>
-                    عرض
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+            <h1 class="text-2xl md:text-3xl font-extrabold text-blue-900 flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-blue-400"></span>
+                تعديل المنتج: {{ $product->name }}
+            </h1>
+            <div class="flex flex-row gap-2">
+                <a href="{{ route('admin.products.show', $product) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 shadow-sm flex items-center gap-1">
+                    <i class="fas fa-eye"></i> عرض
                 </a>
-                <a href="{{ route('admin.products.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200">
-                    <i class="fas fa-arrow-right ml-2"></i>
-                    العودة للقائمة
+                <button type="submit" form="editProductForm" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 shadow-sm flex items-center gap-1">
+                    <i class="fas fa-save"></i> حفظ التغييرات
+                </button>
+                <a href="{{ route('admin.products.index') }}" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 shadow-sm flex items-center gap-1">
+                    <i class="fas fa-arrow-right"></i> العودة للقائمة
                 </a>
             </div>
         </div>
 
-        <!-- Form -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data" class="p-6">
-                @csrf
-                @method('PUT')
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Left Column -->
-                    <div class="space-y-6">
-                        <!-- Name -->
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                                اسم المنتج <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="name" name="name" value="{{ old('name', $product->name) }}" required class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('name') border-red-500 @enderror" placeholder="أدخل اسم المنتج">
-                            @error('name')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Description -->
-                        <div>
-                            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-                                الوصف <span class="text-red-500">*</span>
-                            </label>
-                            <textarea id="description" name="description" rows="4" required class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('description') border-red-500 @enderror" placeholder="أدخل وصف المنتج">{{ old('description', $product->description) }}</textarea>
-                            @error('description')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Category -->
-                        <div>
-                            <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
-                                الفئة <span class="text-red-500">*</span>
-                            </label>
-                            <select id="category" name="category" required class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('category') border-red-500 @enderror">
-                                <option value="">اختر الفئة</option>
-                                @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category', $product->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('category')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Price -->
-                        <div>
-                            <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
-                                السعر (ريال) <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" id="price" name="price" value="{{ old('price', $product->price) }}" step="0.01" min="0" required class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('price') border-red-500 @enderror" placeholder="0.00">
-                            @error('price')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Product Type -->
-                        <div>
-                            <label for="type" class="block text-sm font-medium text-gray-700 mb-2">
-                                نوع المنتج
-                            </label>
-                            <select id="type" name="type" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('type') border-red-500 @enderror">
-                                <option value="fixed" {{ old('type', $product->type) == 'fixed' ? 'selected' : '' }}>ثابت</option>
-                                <option value="weekly" {{ old('type', $product->type) == 'weekly' ? 'selected' : '' }}>أسبوعي</option>
-                            </select>
-                            @error('type')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Calories -->
-                        <div>
-                            <label for="calories" class="block text-sm font-medium text-gray-700 mb-2">
-                                السعرات الحرارية
-                            </label>
-                            <input type="number" id="calories" name="calories" value="{{ old('calories', $product->calories) }}" min="0" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('calories') border-red-500 @enderror" placeholder="0">
-                            @error('calories')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Right Column -->
-                    <div class="space-y-6">
-                        <!-- Current Image -->
-                        @if($product->image)
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                الصورة الحالية
-                            </label>
-                            <div class="mb-4">
-                                <img src="{{ asset('storage/products/' . $product->image) }}" alt="{{ $product->name }}" class="h-32 w-32 object-cover rounded-lg shadow-sm">
+        <form id="editProductForm" action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+            @csrf
+            @method('PUT')
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Product Image -->
+                <div class="md:col-span-1">
+                    <div class="bg-white/90 rounded-2xl shadow-sm border border-blue-50 p-4 flex flex-col items-center">
+                        <h3 class="text-base font-bold text-blue-900 mb-3">صورة المنتج</h3>
+                        <div id="imagePreviewContainer">
+                            @if($product->image)
+                            <img id="imagePreview" src="{{ Storage::url('products/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-56 object-cover rounded-xl shadow-sm border border-blue-50 mb-2">
+                            @else
+                            <div id="noImagePlaceholder" class="w-full h-56 bg-gray-100 rounded-xl flex items-center justify-center mb-2">
+                                <i class="fas fa-image text-4xl text-gray-400"></i>
                             </div>
+                            @endif
                         </div>
-                        @endif
-
-                        <!-- Image Upload -->
-                        <div>
-                            <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
-                                {{ $product->image ? 'تغيير الصورة' : 'صورة المنتج' }}
-                            </label>
-                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors duration-200">
-                                <div class="space-y-1 text-center">
-                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <div class="w-full">
+                            <label for="image" class="block">
+                                <div class="flex flex-col items-center justify-center border-2 border-dashed border-blue-200 rounded-xl bg-blue-50 hover:border-blue-400 transition-colors duration-200 cursor-pointer py-6 px-3">
+                                    <svg class="mx-auto h-10 w-10 text-blue-300 mb-2" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                         <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
-                                    <div class="flex text-sm text-gray-600">
-                                        <label for="image" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                            <span>ارفع صورة</span>
-                                            <input id="image" name="image" type="file" class="sr-only" accept="image/*">
-                                        </label>
-                                        <p class="pr-1">أو اسحب وأفلت</p>
-                                    </div>
-                                    <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                    <span class="text-blue-700 font-medium text-sm">اسحب الصورة هنا أو اضغط للرفع</span>
+                                    <span class="text-xs text-blue-400 mt-1">PNG, JPG, GIF حتى 10MB</span>
+                                    <input id="image" name="image" type="file" accept="image/*" class="sr-only" />
                                 </div>
-                            </div>
-                            @error('image')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Status Options -->
-                        <div class="space-y-4">
-                            <h3 class="text-lg font-medium text-gray-900">خيارات المنتج</h3>
-
-                            <!-- Available -->
-                            <div class="flex items-center">
-                                <input id="is_available" name="is_available" type="checkbox" value="1" {{ old('is_available', $product->is_available) ? 'checked' : '' }} class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                <label for="is_available" class="mr-2 block text-sm text-gray-900">
-                                    متوفر للطلب
-                                </label>
-                            </div>
-
-                            <!-- Featured -->
-                            <div class="flex items-center">
-                                <input id="is_featured" name="is_featured" type="checkbox" value="1" {{ old('is_featured', $product->is_featured) ? 'checked' : '' }} class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                <label for="is_featured" class="mr-2 block text-sm text-gray-900">
-                                    منتج مميز
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Preparation Time -->
-                        <div>
-                            <label for="preparation_time" class="block text-sm font-medium text-gray-700 mb-2">
-                                وقت التحضير (دقيقة)
                             </label>
-                            <input type="number" id="preparation_time" name="preparation_time" value="{{ old('preparation_time', $product->preparation_time ?? 15) }}" min="1" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('preparation_time') border-red-500 @enderror" placeholder="15">
-                            @error('preparation_time')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                        </div>
+                        @error('image')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Product Details -->
+                <div class="md:col-span-2">
+                    <div class="bg-white/90 rounded-2xl shadow-sm border border-blue-50 p-6 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-blue-50 rounded-xl p-4 flex flex-col gap-2">
+                                <label for="name" class="text-xs text-blue-700 font-bold mb-1">اسم المنتج <span class="text-red-500">*</span></label>
+                                <input type="text" id="name" name="name" value="{{ old('name', $product->name) }}" required class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('name') border-red-500 @enderror" placeholder="أدخل اسم المنتج">
+                                @error('name')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 flex flex-col gap-2">
+                                <label for="category" class="text-xs text-blue-700 font-bold mb-1">الفئة <span class="text-red-500">*</span></label>
+                                <select id="category" name="category" required class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('category') border-red-500 @enderror">
+                                    <option value="">اختر الفئة</option>
+                                    @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" {{ old('category', $product->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('category')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 flex flex-col gap-2 md:col-span-2">
+                                <label for="description" class="text-xs text-blue-700 font-bold mb-1">الوصف <span class="text-red-500">*</span></label>
+                                <textarea id="description" name="description" rows="3" required class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('description') border-red-500 @enderror" placeholder="أدخل وصف المنتج">{{ old('description', $product->description) }}</textarea>
+                                @error('description')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 flex flex-col gap-2">
+                                <label for="price" class="text-xs text-blue-700 font-bold mb-1">السعر (ريال) <span class="text-red-500">*</span></label>
+                                <input type="number" id="price" name="price" value="{{ old('price', $product->price) }}" step="0.01" min="0" required class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('price') border-red-500 @enderror" placeholder="0.00">
+                                @error('price')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 flex flex-col gap-2">
+                                <label for="stock_quantity" class="text-xs text-blue-700 font-bold mb-1">الكمية المتوفرة <span class="text-red-500">*</span></label>
+                                <input type="number" id="stock_quantity" name="stock_quantity" value="{{ old('stock_quantity', $product->stock_quantity ?? 0) }}" min="0" required class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('stock_quantity') border-red-500 @enderror" placeholder="0">
+                                @error('stock_quantity')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 flex flex-col gap-2">
+                                <label for="type" class="text-xs text-blue-700 font-bold mb-1">نوع المنتج</label>
+                                <select id="type" name="type" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('type') border-red-500 @enderror">
+                                    <option value="fixed" {{ old('type', $product->type) == 'fixed' ? 'selected' : '' }}>ثابت</option>
+                                    <option value="weekly" {{ old('type', $product->type) == 'weekly' ? 'selected' : '' }}>أسبوعي</option>
+                                </select>
+                                @error('type')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 flex flex-col gap-2">
+                                <label for="calories" class="text-xs text-blue-700 font-bold mb-1">السعرات الحرارية</label>
+                                <input type="number" id="calories" name="calories" value="{{ old('calories', $product->calories) }}" min="0" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('calories') border-red-500 @enderror" placeholder="0">
+                                @error('calories')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 flex flex-col gap-2">
+                                <label for="preparation_time" class="text-xs text-blue-700 font-bold mb-1">وقت التحضير (دقيقة)</label>
+                                <input type="number" id="preparation_time" name="preparation_time" value="{{ old('preparation_time', $product->preparation_time ?? 15) }}" min="1" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('preparation_time') border-red-500 @enderror" placeholder="15">
+                                @error('preparation_time')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                        </div>
+                        <div class="flex flex-row flex-wrap gap-4 mt-4">
+                            <div class="flex items-center gap-2">
+                                <input id="is_available" name="is_available" type="checkbox" value="1" {{ old('is_available', $product->is_available) ? 'checked' : '' }} class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="is_available" class="text-xs text-blue-700 font-bold">متوفر للطلب</label>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input id="is_featured" name="is_featured" type="checkbox" value="1" {{ old('is_featured', $product->is_featured) ? 'checked' : '' }} class="h-4 w-4 text-yellow-500 focus:ring-yellow-500 border-gray-300 rounded">
+                                <label for="is_featured" class="text-xs text-yellow-700 font-bold">منتج مميز</label>
+                            </div>
+                        </div>
+                        <!-- Date Fields for Weekly Products -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4" id="dateFields" style="display: {{ old('type', $product->type) == 'weekly' ? 'grid' : 'none' }}">
+                            <div class="bg-blue-50 rounded-xl p-4 flex flex-col gap-2">
+                                <label for="start_date" class="text-xs text-blue-700 font-bold mb-1">تاريخ البداية</label>
+                                <input type="date" id="start_date" name="start_date" value="{{ old('start_date', $product->start_date) }}" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('start_date') border-red-500 @enderror">
+                                @error('start_date')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 flex flex-col gap-2">
+                                <label for="end_date" class="text-xs text-blue-700 font-bold mb-1">تاريخ النهاية</label>
+                                <input type="date" id="end_date" name="end_date" value="{{ old('end_date', $product->end_date) }}" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('end_date') border-red-500 @enderror">
+                                @error('end_date')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Date Fields for Weekly Products -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6" id="dateFields" style="display: {{ old('type', $product->type) == 'weekly' ? 'grid' : 'none' }}">
-                    <div>
-                        <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
-                            تاريخ البداية
-                        </label>
-                        <input type="date" id="start_date" name="start_date" value="{{ old('start_date', $product->start_date) }}" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('start_date') border-red-500 @enderror">
-                        @error('start_date')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
-                        <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">
-                            تاريخ النهاية
-                        </label>
-                        <input type="date" id="end_date" name="end_date" value="{{ old('end_date', $product->end_date) }}" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('end_date') border-red-500 @enderror">
-                        @error('end_date')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Submit Buttons -->
-                <div class="flex items-center justify-end space-x-4 space-x-reverse pt-6 border-t border-gray-200 mt-8">
-                    <a href="{{ route('admin.products.show', $product) }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors duration-200">
-                        إلغاء
-                    </a>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-200">
-                        <i class="fas fa-save ml-2"></i>
-                        حفظ التغييرات
-                    </button>
-                </div>
-            </form>
-        </div>
+            </div>
+            <div class="flex items-center justify-end gap-4 pt-6 border-t border-blue-50 mt-8">
+                <a href="{{ route('admin.products.show', $product) }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors duration-200">
+                    إلغاء
+                </a>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-200 flex items-center gap-1">
+                    <i class="fas fa-save"></i> حفظ التغييرات
+                </button>
+            </div>
+        </form>
     </div>
-
     <script>
         // Show/hide date fields based on product type
         document.getElementById('type').addEventListener('change', function() {
@@ -219,5 +154,52 @@
             }
         });
 
+        // Image preview functionality
+        document.getElementById('image').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const imagePreview = document.getElementById('imagePreview');
+            const noImagePlaceholder = document.getElementById('noImagePlaceholder');
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // إنشاء أو تحديث عنصر الصورة
+                    if (imagePreview) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    } else {
+                        // إنشاء عنصر صورة جديد إذا لم يكن موجود
+                        const newImagePreview = document.createElement('img');
+                        newImagePreview.id = 'imagePreview';
+                        newImagePreview.src = e.target.result;
+                        newImagePreview.alt = 'معاينة الصورة';
+                        newImagePreview.className = 'w-full h-56 object-cover rounded-xl shadow-sm border border-blue-50 mb-2';
+                        imagePreviewContainer.innerHTML = '';
+                        imagePreviewContainer.appendChild(newImagePreview);
+                    }
+
+                    // إخفاء placeholder إذا كان موجود
+                    if (noImagePlaceholder) {
+                        noImagePlaceholder.style.display = 'none';
+                    }
+
+                    // إضافة نص توضيحي
+                    const statusText = document.createElement('div');
+                    statusText.className = 'text-xs text-green-600 mt-1 font-semibold';
+                    statusText.innerHTML = '<i class="fas fa-check-circle mr-1"></i>تم اختيار صورة جديدة - سيتم حفظها عند الضغط على "حفظ التغييرات"';
+
+                    // إزالة أي نص توضيحي سابق
+                    const existingStatus = imagePreviewContainer.querySelector('.text-green-600');
+                    if (existingStatus) {
+                        existingStatus.remove();
+                    }
+
+                    imagePreviewContainer.appendChild(statusText);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
     </script>
-</x-admin-layout>
+</x-layout.admin-layout>

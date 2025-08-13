@@ -1,185 +1,351 @@
-<x-admin-layout title="لوحة الإدارة">
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-        <!-- Total Orders -->
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">إجمالي الطلبات</p>
-                    <p class="text-3xl font-bold text-gray-900">1,234</p>
-                    <p class="text-sm text-green-600 mt-1">
-                        <i class="fas fa-arrow-up"></i>
-                        +12% من الشهر الماضي
-                    </p>
-                </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-shopping-bag text-blue-600 text-xl"></i>
-                </div>
-            </div>
+<x-layout.admin-layout title="لوحة الإدارة">
+    <!-- Weekly Stats (Soft, Modern, Responsive) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-6 font-[Cairo,Tajawal,Segoe UI,Arial,sans-serif]">
+        <div class="rounded-2xl bg-white shadow-sm border border-orange-50 flex flex-col items-start p-4 min-h-[110px]">
+            <span class="text-xs text-orange-700 font-bold mb-1">طلبات جديدة</span>
+            <span class="text-2xl md:text-3xl font-extrabold text-orange-600">{{ number_format($weeklyStats['new_orders']) }}</span>
         </div>
-
-        <!-- Total Revenue -->
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">إجمالي المبيعات</p>
-                    <p class="text-3xl font-bold text-gray-900">45,678 ريال</p>
-                    <p class="text-sm text-green-600 mt-1">
-                        <i class="fas fa-arrow-up"></i>
-                        +8% من الشهر الماضي
-                    </p>
-                </div>
-                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
-                </div>
-            </div>
+        <div class="rounded-2xl bg-white shadow-sm border border-purple-50 flex flex-col items-start p-4 min-h-[110px]">
+            <span class="text-xs text-purple-700 font-bold mb-1">اقتراحات جديدة</span>
+            <span class="text-2xl md:text-3xl font-extrabold text-purple-600">{{ number_format($weeklyStats['new_suggestions']) }}</span>
         </div>
-
-        <!-- Pending Orders -->
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">الطلبات المعلقة</p>
-                    <p class="text-3xl font-bold text-gray-900">12</p>
-                    <p class="text-sm text-red-600 mt-1">
-                        <i class="fas fa-clock"></i>
-                        تحتاج لمراجعة
-                    </p>
-                </div>
-                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-hourglass-half text-red-600 text-xl"></i>
-                </div>
-            </div>
+        <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
+            <span class="text-xs text-blue-700 font-bold mb-1">طلبات هذا الأسبوع</span>
+            <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ number_format($weeklyStats['orders']) }}</span>
         </div>
-
-        <!-- New Suggestions -->
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">اقتراحات جديدة</p>
-                    <p class="text-3xl font-bold text-gray-900">3</p>
-                    <p class="text-sm text-amber-600 mt-1">
-                        <i class="fas fa-lightbulb"></i>
-                        غير مقروءة
-                    </p>
-                </div>
-                <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-lightbulb text-amber-600 text-xl"></i>
-                </div>
-            </div>
+        <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
+            <span class="text-xs text-blue-700 font-bold mb-1">مبيعات هذا الأسبوع</span>
+            <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ number_format($weeklyStats['revenue'], 2) }} <span class="text-base text-blue-400 font-normal">ر.س</span></span>
+        </div>
+        <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
+            <span class="text-xs text-blue-700 font-bold mb-1">عدد منتجاتي</span>
+            <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ number_format($weeklyStats['products']) }}</span>
+        </div>
+        <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
+            <span class="text-xs text-blue-700 font-bold mb-1">اقتراحات هذا الأسبوع</span>
+            <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ number_format($weeklyStats['suggestions']) }}</span>
         </div>
     </div>
 
-    <!-- Recent Orders -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
-        <div class="p-6 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-gray-900">أحدث الطلبات</h3>
-                <a href="/admin/orders" class="text-amber-600 hover:text-amber-700 font-medium text-sm">
-                    عرض الكل
-                </a>
-            </div>
+    <!-- Recent Orders List (Mobile-first, List Row, Soft) -->
+    <div class="rounded-2xl bg-white/90 shadow-sm border border-blue-50 mb-6">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-blue-50">
+            <h3 class="text-lg md:text-xl font-bold text-blue-900 flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-blue-400"></span>
+                أحدث الطلبات
+            </h3>
+            <a href="{{ route('admin.orders') }}" class="border border-blue-200 text-blue-700 hover:bg-blue-50 hover:text-blue-900 px-3 py-1.5 rounded-lg font-medium text-xs md:text-sm transition-colors duration-200">عرض كل الطلبات</a>
         </div>
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">رقم الطلب</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">العميل</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المبلغ</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">التاريخ</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#1234</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">أحمد محمد</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">45 ريال</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                قيد التحضير
+        @if($recentOrders->count() > 0)
+        <ul class="divide-y divide-blue-50">
+            @foreach($recentOrders as $order)
+            <li onclick="window.location='{{ route('admin.orders') }}/{{ $order->id }}'" class="group cursor-pointer transition-colors px-2 md:px-4 py-3 hover:bg-blue-50/60">
+                <div class="flex flex-col md:flex-row md:items-center md:gap-2">
+                    <!-- موبايل: كارد تفاعلي -->
+                    <div class="flex md:hidden flex-col gap-2 bg-white rounded-xl shadow-sm border border-blue-50 p-3 mb-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-blue-600 font-bold text-lg">#{{ $order->id }}</span>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{
+                                match($order->status) {
+                                    'pending' => 'bg-yellow-100 text-yellow-800',
+                                    'processed' => 'bg-blue-100 text-blue-800',
+                                    'delivered' => 'bg-green-100 text-green-800',
+                                    'cancelled' => 'bg-red-100 text-red-800',
+                                    default => 'bg-gray-200 text-gray-700',
+                                }
+                            }}">{{
+                                match($order->status) {
+                                    'pending' => 'في الانتظار',
+                                    'processed' => 'قيد المعالجة',
+                                    'delivered' => 'تم التسليم',
+                                    'cancelled' => 'ملغي',
+                                    default => $order->status,
+                                }
+                            }}</span>
+                            <span class="text-green-600 font-bold text-sm ml-auto">{{ number_format($order->total_price, 2) }} ر.س</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-building"></i>
+                            <span>{{ isset($order->office_number) ? 'مكتب ' . $order->office_number : 'مكتب غير معروف' }}</span>
+                            <span class="mx-1">|</span>
+                            <i class="fas fa-user"></i>
+                            <span class="truncate">{{ $order->user->name ?? 'بدون اسم' }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-400 mt-1">
+                            <i class="fas fa-clock"></i>
+                            <span>{{ $order->created_at->diffForHumans() }}</span>
+                        </div>
+                    </div>
+                    <!-- لابتوب: نفس الشكل القديم -->
+                    <div class="hidden md:flex flex-1 flex-row items-center gap-3 min-w-0">
+                        <span class="text-blue-600 font-bold text-base md:text-lg shrink-0">#{{ $order->id }}</span>
+                        <span class="hidden md:inline-block text-gray-400">|</span>
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-sm font-semibold text-gray-900 truncate">
+                                {{ isset($order->office_number) ? 'مكتب ' . $order->office_number : 'مكتب غير معروف' }}
                             </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">منذ 5 دقائق</td>
-                    </tr>
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#1233</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">فاطمة علي</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">32 ريال</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                مكتمل
+                            <span class="text-xs text-gray-400 truncate md:block hidden">
+                                {{ isset($order->user->email) ? $order->user->email : $order->created_at->diffForHumans() }}
                             </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">منذ 10 دقائق</td>
-                    </tr>
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#1232</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">محمد سالم</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">28 ريال</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                ملغي
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">منذ 15 دقيقة</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex flex-row items-center gap-2 md:gap-4 ml-auto">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{
+                            match($order->status) {
+                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                'processed' => 'bg-blue-100 text-blue-800',
+                                'delivered' => 'bg-green-100 text-green-800',
+                                'cancelled' => 'bg-red-100 text-red-800',
+                                default => 'bg-gray-200 text-gray-700',
+                            }
+                        }}" style="min-width: 64px; text-align:center;">{{
+                            match($order->status) {
+                                'pending' => 'في الانتظار',
+                                'processed' => 'قيد المعالجة',
+                                'delivered' => 'تم التسليم',
+                                'cancelled' => 'ملغي',
+                                default => $order->status,
+                            }
+                        }}</span>
+                        <span class="text-green-600 font-bold text-sm md:text-base">{{ number_format($order->total_price, 2) }} ر.س</span>
+                    </div>
+                </div>
+            </li>
+            @endforeach
+        </ul>
+        @else
+        <div class="p-8 text-center text-gray-400">لا توجد طلبات حتى الآن</div>
+        @endif
     </div>
 
-    <!-- Quick Actions -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h4 class="text-lg font-semibold text-gray-900 mb-4">إجراءات سريعة</h4>
-            <div class="space-y-3">
-                <a href="{{ route('admin.products.create') }}" class="block w-full bg-amber-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-amber-600 transition-colors duration-200 text-center">
-                    إضافة منتج جديد
-                </a>
-                <button class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200">
-                    عرض التقارير
-                </button>
-                <button class="w-full bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition-colors duration-200">
-                    إدارة المخزون
-                </button>
-            </div>
+    <!-- New Orders List (Special Alert Style) -->
+    @if($newOrders->count() > 0)
+    <div class="rounded-2xl bg-orange-50/90 shadow-sm border border-orange-100 mb-6">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-orange-100">
+            <h3 class="text-lg md:text-xl font-bold text-orange-900 flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span>
+                طلبات جديدة تحتاج مراجعة
+            </h3>
+            <a href="{{ route('admin.orders') }}" class="border border-orange-200 text-orange-700 hover:bg-orange-100 hover:text-orange-900 px-3 py-1.5 rounded-lg font-medium text-xs md:text-sm transition-colors duration-200">عرض كل الطلبات</a>
         </div>
-
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h4 class="text-lg font-semibold text-gray-900 mb-4">إحصائيات اليوم</h4>
-            <div class="space-y-4">
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-600">الطلبات المكتملة</span>
-                    <span class="font-semibold text-green-600">45</span>
+        <ul class="divide-y divide-orange-100">
+            @foreach($newOrders as $order)
+            <li onclick="window.location='{{ route('admin.orders') }}/{{ $order->id }}'" class="group cursor-pointer transition-colors px-2 md:px-4 py-3 hover:bg-orange-100/60">
+                <div class="flex flex-col md:flex-row md:items-center md:gap-2">
+                    <!-- موبايل: كارد تفاعلي -->
+                    <div class="flex md:hidden flex-col gap-2 bg-white rounded-xl shadow-sm border border-orange-100 p-3 mb-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-orange-600 font-bold text-lg">#{{ $order->id }}</span>
+                            <span class="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
+                                جديد
+                            </span>
+                            <span class="text-green-600 font-bold text-sm ml-auto">{{ number_format($order->total_price, 2) }} ر.س</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-building"></i>
+                            <span>{{ isset($order->office_number) ? 'مكتب ' . $order->office_number : 'مكتب غير معروف' }}</span>
+                            <span class="mx-1">|</span>
+                            <i class="fas fa-user"></i>
+                            <span class="truncate">{{ $order->user->name ?? 'بدون اسم' }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-400 mt-1">
+                            <i class="fas fa-clock"></i>
+                            <span>{{ $order->created_at->diffForHumans() }}</span>
+                        </div>
+                    </div>
+                    <!-- لابتوب -->
+                    <div class="hidden md:flex flex-1 flex-row items-center gap-3 min-w-0">
+                        <span class="text-orange-600 font-bold text-base md:text-lg shrink-0">#{{ $order->id }}</span>
+                        <span class="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
+                            جديد
+                        </span>
+                        <span class="hidden md:inline-block text-gray-400">|</span>
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-sm font-semibold text-gray-900 truncate">
+                                {{ isset($order->office_number) ? 'مكتب ' . $order->office_number : 'مكتب غير معروف' }}
+                            </span>
+                            <span class="text-xs text-gray-400 truncate md:block hidden">
+                                {{ isset($order->user->email) ? $order->user->email : $order->created_at->diffForHumans() }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex flex-row items-center gap-2 md:gap-4 ml-auto">
+                        <span class="text-green-600 font-bold text-sm md:text-base">{{ number_format($order->total_price, 2) }} ر.س</span>
+                    </div>
                 </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-600">الطلبات الجارية</span>
-                    <span class="font-semibold text-yellow-600">12</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-600">إجمالي المبيعات</span>
-                    <span class="font-semibold text-blue-600">1,450 ريال</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h4 class="text-lg font-semibold text-gray-900 mb-4">الاقتراحات الجديدة</h4>
-            <div class="space-y-3">
-                <div class="p-3 bg-amber-50 rounded-lg border border-amber-200">
-                    <p class="text-sm text-gray-800 font-medium">إضافة مشروب جديد</p>
-                    <p class="text-xs text-gray-600 mt-1">من: محمد أحمد</p>
-                </div>
-                <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <p class="text-sm text-gray-800 font-medium">تحسين الخدمة</p>
-                    <p class="text-xs text-gray-600 mt-1">من: سارة علي</p>
-                </div>
-                <a href="/admin/suggestions" class="block text-center text-amber-600 hover:text-amber-700 text-sm font-medium">
-                    عرض جميع الاقتراحات
-                </a>
-            </div>
-        </div>
+            </li>
+            @endforeach
+        </ul>
     </div>
-</x-admin-layout>
+    @endif
+
+    <!-- New Suggestions List (Special Alert Style) -->
+    @if($newSuggestions->count() > 0)
+    <div class="rounded-2xl bg-purple-50/90 shadow-sm border border-purple-100 mb-6">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-purple-100">
+            <h3 class="text-lg md:text-xl font-bold text-purple-900 flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                اقتراحات جديدة تحتاج مراجعة
+            </h3>
+            <a href="{{ route('admin.suggestions.index') }}" class="border border-purple-200 text-purple-700 hover:bg-purple-100 hover:text-purple-900 px-3 py-1.5 rounded-lg font-medium text-xs md:text-sm transition-colors duration-200">عرض كل الاقتراحات</a>
+        </div>
+        <ul class="divide-y divide-purple-100">
+            @foreach($newSuggestions as $suggestion)
+            <li onclick="window.location='{{ route('admin.suggestions.show', $suggestion) }}'" class="group cursor-pointer transition-colors px-2 md:px-4 py-3 hover:bg-purple-100/60">
+                <div class="flex flex-col md:flex-row md:items-center md:gap-2">
+                    <!-- موبايل: كارد تفاعلي -->
+                    <div class="flex md:hidden flex-col gap-2 bg-white rounded-xl shadow-sm border border-purple-100 p-3 mb-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-purple-600 font-bold text-lg">#{{ $suggestion->id }}</span>
+                            <span class="inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
+                                جديد
+                            </span>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{
+                                match($suggestion->type) {
+                                    'suggestion' => 'bg-blue-100 text-blue-800',
+                                    'complaint' => 'bg-red-100 text-red-800',
+                                    'compliment' => 'bg-green-100 text-green-800',
+                                    default => 'bg-gray-200 text-gray-700',
+                                }
+                            }} ml-auto">{{
+                                match($suggestion->type) {
+                                    'suggestion' => 'اقتراح',
+                                    'complaint' => 'شكوى',
+                                    'compliment' => 'إعجاب',
+                                    default => $suggestion->type,
+                                }
+                            }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-comment-dots"></i>
+                            <span class="truncate">{{ Str::limit($suggestion->suggestion, 40) }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-400 mt-1">
+                            <i class="fas fa-clock"></i>
+                            <span>{{ $suggestion->created_at->diffForHumans() }}</span>
+                        </div>
+                    </div>
+                    <!-- لابتوب -->
+                    <div class="hidden md:flex flex-1 flex-row items-center gap-3 min-w-0">
+                        <span class="text-purple-600 font-bold text-base md:text-lg shrink-0">#{{ $suggestion->id }}</span>
+                        <span class="inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
+                            جديد
+                        </span>
+                        <span class="hidden md:inline-block text-gray-400">|</span>
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-sm font-semibold text-gray-900 truncate">{{ Str::limit($suggestion->suggestion, 40) }}</span>
+                            <span class="text-xs text-gray-400 truncate md:block hidden">{{ $suggestion->name ?? 'مجهول' }}</span>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex flex-row items-center gap-2 md:gap-4 ml-auto">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{
+                            match($suggestion->type) {
+                                'suggestion' => 'bg-blue-100 text-blue-800',
+                                'complaint' => 'bg-red-100 text-red-800',
+                                'compliment' => 'bg-green-100 text-green-800',
+                                default => 'bg-gray-200 text-gray-700',
+                            }
+                        }}" style="min-width: 56px; text-align:center;">{{
+                            match($suggestion->type) {
+                                'suggestion' => 'اقتراح',
+                                'complaint' => 'شكوى',
+                                'compliment' => 'إعجاب',
+                                default => $suggestion->type,
+                            }
+                        }}</span>
+                    </div>
+                </div>
+            </li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
+    <!-- Recent Suggestions List (Mobile-first, List Row, Soft) -->
+    <div class="rounded-2xl bg-white/90 shadow-sm border border-blue-50">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-blue-50">
+            <h3 class="text-lg md:text-xl font-bold text-purple-900 flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-purple-400"></span>
+                أحدث الاقتراحات
+            </h3>
+            <a href="{{ route('admin.suggestions.index') }}" class="border border-purple-200 text-purple-700 hover:bg-purple-50 hover:text-purple-900 px-3 py-1.5 rounded-lg font-medium text-xs md:text-sm transition-colors duration-200">عرض كل الاقتراحات</a>
+        </div>
+        @if($recentSuggestions->count() > 0)
+        <ul class="divide-y divide-blue-50">
+            @foreach($recentSuggestions as $suggestion)
+            <li onclick="window.location='{{ route('admin.suggestions.show', $suggestion) }}'" class="group cursor-pointer transition-colors px-2 md:px-4 py-3 hover:bg-purple-50/60">
+                <div class="flex flex-col md:flex-row md:items-center md:gap-2">
+                    <!-- موبايل: كارد تفاعلي -->
+                    <div class="flex md:hidden flex-col gap-2 bg-white rounded-xl shadow-sm border border-purple-50 p-3 mb-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-purple-600 font-bold text-lg">#{{ $suggestion->id }}</span>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{
+                                match($suggestion->type) {
+                                    'product' => 'bg-blue-100 text-blue-800',
+                                    'service' => 'bg-green-100 text-green-800',
+                                    'improvement' => 'bg-amber-100 text-amber-800',
+                                    'complaint' => 'bg-red-100 text-red-800',
+                                    default => 'bg-gray-200 text-gray-700',
+                                }
+                            }}">{{
+                                match($suggestion->type) {
+                                    'product' => 'منتج',
+                                    'service' => 'خدمة',
+                                    'improvement' => 'تحسين',
+                                    'complaint' => 'شكوى',
+                                    default => $suggestion->type,
+                                }
+                            }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-comment-dots"></i>
+                            <span class="truncate">{{ Str::limit($suggestion->title, 40) }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-400 mt-1">
+                            <i class="fas fa-align-left"></i>
+                            <span class="truncate">{{ Str::limit($suggestion->description, 60) }}</span>
+                        </div>
+                    </div>
+                    <!-- لابتوب: نفس الشكل القديم -->
+                    <div class="hidden md:flex flex-1 flex-row items-center gap-3 min-w-0">
+                        <span class="text-purple-600 font-bold text-base md:text-lg shrink-0">#{{ $suggestion->id }}</span>
+                        <span class="hidden md:inline-block text-gray-300">|</span>
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-sm font-semibold text-gray-900 truncate">{{ Str::limit($suggestion->title, 40) }}</span>
+                            <span class="text-xs text-gray-400 truncate">{{ Str::limit($suggestion->description, 60) }}</span>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex flex-col md:flex-row md:items-center gap-1 md:gap-4 min-w-0">
+                        <span class="text-sm font-medium text-gray-900 truncate">{{ Str::limit($suggestion->title, 40) }}</span>
+                        <span class="hidden md:inline-block text-xs text-gray-400 truncate">{{ Str::limit($suggestion->description, 60) }}</span>
+                    </div>
+                    <div class="hidden md:flex flex-row items-center gap-2 md:gap-4">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{
+                            match($suggestion->type) {
+                                'product' => 'bg-blue-100 text-blue-800',
+                                'service' => 'bg-green-100 text-green-800',
+                                'improvement' => 'bg-amber-100 text-amber-800',
+                                'complaint' => 'bg-red-100 text-red-800',
+                                default => 'bg-gray-200 text-gray-700',
+                            }
+                        }}" style="min-width: 56px; text-align:center;">{{
+                            match($suggestion->type) {
+                                'product' => 'منتج',
+                                'service' => 'خدمة',
+                                'improvement' => 'تحسين',
+                                'complaint' => 'شكوى',
+                                default => $suggestion->type,
+                            }
+                        }}</span>
+                    </div>
+                    <div class="hidden md:flex flex-row items-center gap-2 md:gap-4 text-xs text-gray-400 md:text-sm">
+                    </div>
+                </div>
+            </li>
+            @endforeach
+        </ul>
+        @else
+        <div class="p-8 text-center text-gray-400">لا توجد اقتراحات حتى الآن</div>
+        @endif
+    </div>
+</x-layout.admin-layout>

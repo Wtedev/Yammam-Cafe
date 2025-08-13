@@ -14,68 +14,53 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // إحصائيات اليوم
-        $todayStats = [
-            'orders' => Order::whereDate('created_at', today())->count(),
-            'revenue' => Order::whereDate('created_at', today())
+        // إحصائيات هذا الأسبوع
+        $weekStart = now()->startOfWeek();
+        $weekEnd = now()->endOfWeek();
+
+        $weeklyStats = [
+            'orders' => Order::whereBetween('created_at', [$weekStart, $weekEnd])->count(),
+            'revenue' => Order::whereBetween('created_at', [$weekStart, $weekEnd])
                 ->where('status', '!=', 'cancelled')
                 ->sum('total_price'),
-            'new_users' => User::whereDate('created_at', today())->count(),
-            'suggestions' => Suggestion::whereDate('created_at', today())->count(),
+            'products' => Product::count(),
+            'suggestions' => Suggestion::whereBetween('created_at', [$weekStart, $weekEnd])->count(),
+            'new_orders' => Order::new()->count(),
+            'new_suggestions' => Suggestion::unviewed()->count(),
         ];
 
-        // إحصائيات الشهر
-        $monthStats = [
-            'orders' => Order::whereMonth('created_at', now()->month)->count(),
-            'revenue' => Order::whereMonth('created_at', now()->month)
-                ->where('status', '!=', 'cancelled')
-                ->sum('total_price'),
-            'new_users' => User::whereMonth('created_at', now()->month)->count(),
-            'suggestions' => Suggestion::whereMonth('created_at', now()->month)->count(),
-        ];
-
-        // الطلبات الحديثة
+        // أحدث 5 طلبات
         $recentOrders = Order::with('user')
             ->orderBy('created_at', 'desc')
-            ->take(10)
-            ->get();
-
-        // المنتجات الأكثر طلباً
-        $topProducts = Product::orderBy('order_count', 'desc')
             ->take(5)
             ->get();
 
-        // الاقتراحات الجديدة
-        $newSuggestions = Suggestion::where('status', 'new')
+        // أحدث 3 طلبات جديدة
+        $newOrders = Order::new()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
+
+        // أحدث 5 اقتراحات
+        $recentSuggestions = Suggestion::with('user')
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
 
-        // إحصائيات الطلبات حسب الحالة
-        $ordersByStatus = Order::select('status', DB::raw('count(*) as count'))
-            ->groupBy('status')
-            ->get()
-            ->pluck('count', 'status');
-
-        // المبيعات اليومية لآخر 7 أيام
-        $dailySales = Order::select(
-            DB::raw('DATE(created_at) as date'),
-            DB::raw('SUM(total_price) as total')
-        )
-            ->where('created_at', '>=', now()->subDays(7))
-            ->where('status', '!=', 'cancelled')
-            ->groupBy('date')
-            ->orderBy('date')
+        // أحدث 3 اقتراحات جديدة
+        $newSuggestions = Suggestion::unviewed()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->take(3)
             ->get();
 
         return view('admin.dashboard', compact(
-            'todayStats',
-            'monthStats',
+            'weeklyStats',
             'recentOrders',
-            'topProducts',
-            'newSuggestions',
-            'ordersByStatus',
-            'dailySales'
+            'recentSuggestions',
+            'newOrders',
+            'newSuggestions'
         ));
     }
 }

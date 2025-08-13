@@ -15,21 +15,28 @@ class Suggestion extends Model
         'suggestion',
         'type',
         'status',
+        'anonymous',
         'admin_response',
         'responded_at',
-        'anonymous',
+        'first_viewed_at',
+        'first_viewed_by',
     ];
 
     protected $casts = [
+        'first_viewed_at' => 'datetime',
         'responded_at' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'anonymous' => 'boolean',
     ];
 
     // العلاقات
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function firstViewedBy()
+    {
+        return $this->belongsTo(User::class, 'first_viewed_by');
     }
 
     // Scopes
@@ -46,6 +53,11 @@ class Suggestion extends Model
     public function scopeNew($query)
     {
         return $query->where('status', 'new');
+    }
+
+    public function scopeUnviewed($query)
+    {
+        return $query->whereNull('first_viewed_at');
     }
 
     // Accessors
@@ -70,5 +82,10 @@ class Suggestion extends Model
         ];
 
         return $statusTexts[$this->status] ?? 'غير معروف';
+    }
+
+    public function getIsNewViewAttribute()
+    {
+        return is_null($this->first_viewed_at);
     }
 }

@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
-use App\Models\Product;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
+use App\Models\Product;
 
 class ProductSeeder extends Seeder
 {
@@ -15,254 +13,150 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        // الحصول على الأقسام
-        $categories = Category::all();
-
-        if ($categories->isEmpty()) {
-            $this->command->error('يجب إنشاء الأقسام أولاً! قم بتشغيل php artisan db:seed --class=CategorySeeder');
-            return;
-        }
-
-        // تخزين الأقسام في مصفوفة للوصول السريع
-        $categoriesMap = [];
-        foreach ($categories as $category) {
-            $categoriesMap[$category->name] = $category->id;
-        }
-
-        // تنظيف المنتجات الموجودة (بدلاً من truncate)
-        // لا نستطيع استخدام truncate بسبب وجود علاقات خارجية
-        // سنقوم بحذف المنتجات واحدة تلو الأخرى للحفاظ على سلامة البيانات
-
-        // يمكن تعطيل فحص العلاقات الخارجية مؤقتاً
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        Product::query()->delete();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
-        // مصفوفة المنتجات حسب القسم
         $products = [
             // مشروبات ساخنة
-            'مشروبات ساخنة' => [
-                [
-                    'name' => 'إسبريسو',
-                    'description' => 'قهوة إسبريسو قوية ومركزة بنكهة غنية',
-                    'price' => 12.00,
-                    'type' => 'عادي',
-                    'calories' => 5,
-                    'walking_time' => 3,
-                    'is_featured' => true,
-                ],
-                [
-                    'name' => 'أمريكانو',
-                    'description' => 'إسبريسو ممزوج بالماء الساخن',
-                    'price' => 15.00,
-                    'type' => 'عادي',
-                    'calories' => 10,
-                    'walking_time' => 5,
-                ],
-                [
-                    'name' => 'كابتشينو',
-                    'description' => 'إسبريسو مع الحليب المبخر والرغوة',
-                    'price' => 18.00,
-                    'type' => 'مميز',
-                    'calories' => 120,
-                    'walking_time' => 18,
-                    'is_featured' => true,
-                ],
-                [
-                    'name' => 'لاتيه',
-                    'description' => 'إسبريسو مع الحليب الساخن والقليل من رغوة الحليب',
-                    'price' => 18.00,
-                    'type' => 'عادي',
-                    'calories' => 150,
-                    'walking_time' => 22,
-                ],
+            [
+                'name' => 'قهوة عربية',
+                'slug' => 'arabic-coffee',
+                'description' => 'قهوة عربية أصيلة بطعم مميز',
+                'price' => 15.00,
+                'category' => 'مشروبات ساخنة',
+                'type' => 'fixed',
+                'calories' => 50,
+                'walking_time' => 5,
+                'stock_quantity' => 100,
+                'is_available' => true,
+                'is_featured' => true,
+            ],
+            [
+                'name' => 'شاي أحمر',
+                'slug' => 'red-tea',
+                'description' => 'شاي أحمر طازج ومنعش',
+                'price' => 8.00,
+                'category' => 'مشروبات ساخنة',
+                'type' => 'fixed',
+                'calories' => 30,
+                'walking_time' => 3,
+                'stock_quantity' => 150,
+                'is_available' => true,
+                'is_featured' => false,
+            ],
+            [
+                'name' => 'كابتشينو',
+                'slug' => 'cappuccino',
+                'description' => 'كابتشينو إيطالي كلاسيكي',
+                'price' => 18.00,
+                'category' => 'مشروبات ساخنة',
+                'type' => 'fixed',
+                'calories' => 120,
+                'walking_time' => 8,
+                'stock_quantity' => 80,
+                'is_available' => true,
+                'is_featured' => true,
             ],
 
             // مشروبات باردة
-            'مشروبات باردة' => [
-                [
-                    'name' => 'أيس كوفي',
-                    'description' => 'قهوة باردة منعشة مع مكعبات الثلج',
-                    'price' => 18.00,
-                    'type' => 'صيفي',
-                    'calories' => 90,
-                    'walking_time' => 15,
-                    'is_featured' => true,
-                ],
-                [
-                    'name' => 'فرابتشينو',
-                    'description' => 'مشروب قهوة مخلوط بالثلج والكريمة',
-                    'price' => 22.00,
-                    'type' => 'أسبوعي',
-                    'calories' => 230,
-                    'walking_time' => 35,
-                ],
-                [
-                    'name' => 'عصير برتقال طازج',
-                    'description' => 'عصير برتقال طازج 100%',
-                    'price' => 16.00,
-                    'type' => 'صحي',
-                    'calories' => 120,
-                    'walking_time' => 18,
-                ],
-                [
-                    'name' => 'موكا فرابيه',
-                    'description' => 'مزيج غني من القهوة والشوكولاتة والحليب المثلج',
-                    'price' => 24.00,
-                    'type' => 'أسبوعي',
-                    'calories' => 320,
-                    'walking_time' => 45,
-                    'is_featured' => true,
-                ],
+            [
+                'name' => 'عصير برتقال طبيعي',
+                'slug' => 'natural-orange-juice',
+                'description' => 'عصير برتقال طازج 100%',
+                'price' => 12.00,
+                'category' => 'مشروبات باردة',
+                'type' => 'fixed',
+                'calories' => 80,
+                'walking_time' => 5,
+                'stock_quantity' => 50,
+                'is_available' => true,
+                'is_featured' => false,
+            ],
+            [
+                'name' => 'آيس كوفي',
+                'slug' => 'iced-coffee',
+                'description' => 'قهوة مثلجة منعشة',
+                'price' => 20.00,
+                'category' => 'مشروبات باردة',
+                'type' => 'fixed',
+                'calories' => 100,
+                'walking_time' => 10,
+                'stock_quantity' => 60,
+                'is_available' => true,
+                'is_featured' => true,
             ],
 
-            // قهوة مختصة
-            'قهوة مختصة' => [
-                [
-                    'name' => 'فلتر V60',
-                    'description' => 'قهوة مفلترة بطريقة V60 لمذاق نقي وصافي',
-                    'price' => 20.00,
-                    'type' => 'مختص',
-                    'calories' => 5,
-                    'walking_time' => 3,
-                ],
-                [
-                    'name' => 'قهوة كولد برو',
-                    'description' => 'قهوة مخمرة على البارد لمدة 24 ساعة',
-                    'price' => 25.00,
-                    'type' => 'مختص',
-                    'calories' => 15,
-                    'walking_time' => 8,
-                    'is_featured' => true,
-                ],
-                [
-                    'name' => 'قهوة كمكس',
-                    'description' => 'قهوة محضرة بطريقة كمكس للحصول على نكهة متوازنة',
-                    'price' => 22.00,
-                    'type' => 'مختص',
-                    'calories' => 10,
-                    'walking_time' => 5,
-                ],
+            // وجبات خفيفة
+            [
+                'name' => 'ساندويش جبن',
+                'slug' => 'cheese-sandwich',
+                'description' => 'ساندويش جبن مشوي لذيذ',
+                'price' => 25.00,
+                'category' => 'وجبات خفيفة',
+                'type' => 'fixed',
+                'calories' => 300,
+                'walking_time' => 15,
+                'stock_quantity' => 30,
+                'is_available' => true,
+                'is_featured' => false,
             ],
-
-            // مأكولات خفيفة
-            'مأكولات خفيفة' => [
-                [
-                    'name' => 'كرواسون بالجبنة',
-                    'description' => 'كرواسون طازج محشو بالجبنة',
-                    'price' => 15.00,
-                    'type' => 'فطور',
-                    'calories' => 320,
-                    'walking_time' => 45,
-                ],
-                [
-                    'name' => 'سندويش تونة',
-                    'description' => 'سندويش تونة طازج مع الخس والخضروات',
-                    'price' => 22.00,
-                    'type' => 'غداء',
-                    'calories' => 350,
-                    'walking_time' => 50,
-                    'is_featured' => true,
-                ],
-                [
-                    'name' => 'سلطة سيزر',
-                    'description' => 'سلطة سيزر مع الدجاج المشوي وصلصة سيزر المميزة',
-                    'price' => 28.00,
-                    'type' => 'صحي',
-                    'calories' => 280,
-                    'walking_time' => 40,
-                ],
+            [
+                'name' => 'كروسان بالشوكولاتة',
+                'slug' => 'chocolate-croissant',
+                'description' => 'كروسان طازج محشو بالشوكولاتة',
+                'price' => 22.00,
+                'category' => 'وجبات خفيفة',
+                'type' => 'fixed',
+                'calories' => 250,
+                'walking_time' => 10,
+                'stock_quantity' => 40,
+                'is_available' => true,
+                'is_featured' => true,
             ],
 
             // حلويات
-            'حلويات' => [
-                [
-                    'name' => 'كوكيز شوكولاتة',
-                    'description' => 'كوكيز طازج بالشوكولاتة والمكسرات',
-                    'price' => 12.00,
-                    'type' => 'أسبوعي',
-                    'calories' => 230,
-                    'walking_time' => 35,
-                ],
-                [
-                    'name' => 'شيز كيك',
-                    'description' => 'قطعة شيز كيك كريمية مع صلصة التوت',
-                    'price' => 25.00,
-                    'type' => 'خاص',
-                    'calories' => 400,
-                    'walking_time' => 60,
-                ],
-                [
-                    'name' => 'براونيز',
-                    'description' => 'براونيز شوكولاتة مع آيس كريم الفانيليا',
-                    'price' => 22.00,
-                    'type' => 'أسبوعي',
-                    'calories' => 450,
-                    'walking_time' => 65,
-                    'is_featured' => true,
-                ],
+            [
+                'name' => 'كيك الشوكولاتة',
+                'slug' => 'chocolate-cake',
+                'description' => 'قطعة كيك شوكولاتة غنية ولذيذة',
+                'price' => 28.00,
+                'category' => 'حلويات',
+                'type' => 'fixed',
+                'calories' => 400,
+                'walking_time' => 5,
+                'stock_quantity' => 20,
+                'is_available' => true,
+                'is_featured' => true,
+            ],
+            [
+                'name' => 'تشيز كيك',
+                'slug' => 'cheesecake',
+                'description' => 'تشيز كيك كريمي بطعم الفانيليا',
+                'price' => 32.00,
+                'category' => 'حلويات',
+                'type' => 'weekly',
+                'calories' => 350,
+                'walking_time' => 5,
+                'stock_quantity' => 15,
+                'is_available' => true,
+                'is_featured' => false,
             ],
 
-            // مثلجات
-            'مثلجات' => [
-                [
-                    'name' => 'آيس كريم فانيليا',
-                    'description' => 'آيس كريم فانيليا كلاسيكي',
-                    'price' => 15.00,
-                    'type' => 'عادي',
-                    'calories' => 200,
-                    'walking_time' => 30,
-                ],
-                [
-                    'name' => 'سوربيه الليمون',
-                    'description' => 'سوربيه ليمون منعش',
-                    'price' => 16.00,
-                    'type' => 'صحي',
-                    'calories' => 120,
-                    'walking_time' => 18,
-                ],
-                [
-                    'name' => 'آيس كريم نوتيلا',
-                    'description' => 'آيس كريم غني بنكهة النوتيلا والبندق',
-                    'price' => 22.00,
-                    'type' => 'أسبوعي',
-                    'calories' => 380,
-                    'walking_time' => 55,
-                    'is_featured' => true,
-                ],
+            // منتج نفدت كميته للاختبار
+            [
+                'name' => 'قهوة مختصة',
+                'slug' => 'specialty-coffee',
+                'description' => 'قهوة مختصة من أجود أنواع البن',
+                'price' => 35.00,
+                'category' => 'مشروبات ساخنة',
+                'type' => 'fixed',
+                'calories' => 60,
+                'walking_time' => 12,
+                'stock_quantity' => 0, // نفدت الكمية
+                'is_available' => true,
+                'is_featured' => false,
             ],
         ];
 
-        // إنشاء المنتجات
-        foreach ($products as $categoryName => $categoryProducts) {
-            $categoryId = $categoriesMap[$categoryName] ?? null;
-
-            if (!$categoryId) {
-                $this->command->warn("لم يتم العثور على قسم: $categoryName");
-                continue;
-            }
-
-            foreach ($categoryProducts as $productData) {
-                $slug = Str::slug($productData['name'] . '-' . uniqid());
-
-                Product::create([
-                    'name' => $productData['name'],
-                    'slug' => $slug,
-                    'description' => $productData['description'],
-                    'price' => $productData['price'],
-                    'category' => $categoryName, // الحقل القديم
-                    'category_id' => $categoryId, // الحقل الجديد
-                    'type' => $productData['type'],
-                    'calories' => $productData['calories'] ?? null,
-                    'walking_time' => $productData['walking_time'] ?? null,
-                    'image' => null, // يمكن إضافة صور لاحقاً
-                    'order_count' => rand(0, 100), // عدد عشوائي للطلبات
-                    'is_available' => true,
-                    'is_featured' => $productData['is_featured'] ?? false,
-                ]);
-            }
+        foreach ($products as $product) {
+            Product::create($product);
         }
-
-        $this->command->info('تم إنشاء ' . Product::count() . ' منتج بنجاح.');
     }
 }

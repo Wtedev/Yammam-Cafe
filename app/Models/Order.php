@@ -19,12 +19,15 @@ class Order extends Model
         'delivery_time',
         'payment_method',
         'payment_image_url',
+        'first_viewed_at',
+        'first_viewed_by',
     ];
 
     protected $casts = [
         'total_price' => 'decimal:2',
         'order_time' => 'datetime',
         'delivery_time' => 'datetime',
+        'first_viewed_at' => 'datetime',
         'products' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -34,6 +37,11 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function firstViewedBy()
+    {
+        return $this->belongsTo(User::class, 'first_viewed_by');
     }
 
     // Scopes
@@ -57,6 +65,11 @@ class Order extends Model
         return $query->whereMonth('created_at', now()->month);
     }
 
+    public function scopeNew($query)
+    {
+        return $query->whereNull('first_viewed_at');
+    }
+
     // Accessors
     public function getStatusTextAttribute()
     {
@@ -73,6 +86,11 @@ class Order extends Model
     public function getFormattedTotalAttribute()
     {
         return number_format($this->total_price, 2) . ' ريال';
+    }
+
+    public function getIsNewAttribute()
+    {
+        return is_null($this->first_viewed_at);
     }
 
     public function getProductsDataAttribute()
