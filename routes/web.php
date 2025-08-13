@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\SuggestionController as AdminSuggestionController;
 use App\Http\Controllers\Api\ProductController as ApiProductController;
 use App\Http\Controllers\Api\OrderController as ApiOrderController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // الصفحة الرئيسية
@@ -69,12 +70,17 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth'])->group(function () {
     // صفحة طلباتي
     Route::get('/my-orders', function () {
-        return view('user.orders');
+        $user = Auth::user();
+        $orders = $user->orders()->orderByDesc('created_at')->paginate(10);
+        $activeCount = $user->orders()->whereIn('status', ['pending', 'confirmed', 'processed'])->count();
+        return view('user.orders', compact('orders', 'activeCount'));
     })->name('my-orders');
 
     // صفحة اقتراحاتي
     Route::get('/my-suggestions', function () {
-        return view('user.suggestions');
+        $user = Auth::user();
+        $suggestions = $user->suggestions()->orderByDesc('created_at')->paginate(10);
+        return view('user.suggestions', compact('suggestions'));
     })->name('my-suggestions');
 });
 

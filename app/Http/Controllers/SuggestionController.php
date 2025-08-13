@@ -14,7 +14,7 @@ class SuggestionController extends Controller
             ? Auth::user()->suggestions()->orderBy('created_at', 'desc')->paginate(10)
             : collect();
 
-        return view('suggestions.index', compact('suggestions'));
+        return view('user.suggestions', compact('suggestions'));
     }
 
     public function create()
