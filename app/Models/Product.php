@@ -173,4 +173,33 @@ class Product extends Model
 
         return $this->is_available ? 'متوفر' : 'غير متوفر';
     }
+
+    /**
+     * Get the appropriate icon class for the product type
+     */
+    public function getIconClass()
+    {
+        switch (strtolower($this->type)) {
+            case 'coffee':
+            case 'قهوة':
+                return 'coffee';
+            case 'tea':
+            case 'شاي':
+                return 'leaf';
+            case 'cold_drink':
+            case 'مشروب بارد':
+                return 'glass-whiskey';
+            case 'dessert':
+            case 'حلوى':
+                return 'birthday-cake';
+            case 'pastry':
+            case 'معجنات':
+                return 'bread-slice';
+            case 'ice_cream':
+            case 'آيس كريم':
+                return 'ice-cream';
+            default:
+                return 'utensils';
+        }
+    }
 }

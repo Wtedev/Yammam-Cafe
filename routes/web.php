@@ -55,6 +55,19 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
+// ==== صفحات المستخدم العادي ====
+Route::middleware(['auth'])->group(function () {
+    // صفحة طلباتي
+    Route::get('/my-orders', function () {
+        return view('user.orders');
+    })->name('my-orders');
+
+    // صفحة اقتراحاتي
+    Route::get('/my-suggestions', function () {
+        return view('user.suggestions');
+    })->name('my-suggestions');
+});
+
 // ==== لوحة الإدارة ====
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
 

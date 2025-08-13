@@ -10,7 +10,8 @@ class MenuController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::where('is_available', true);
+        $query = Product::where('is_available', true)
+            ->where('stock_quantity', '>', 0); // إخفاء المنتجات التي نفد مخزونها
 
         // البحث يأخذ الأولوية على تصفية القسم
         if ($request->has('search') && $request->search != '') {
@@ -68,7 +69,7 @@ class MenuController extends Controller
         // الحصول على الفئات المتاحة
         $categories = Category::orderBy('name')->get();
 
-        return view('menu.index', compact('products', 'categories'));
+        return view('user.menu', compact('products', 'categories'));
     }
 
     public function show(Product $product)

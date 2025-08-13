@@ -33,9 +33,9 @@ class SuggestionController extends Controller
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
                     ->orWhere('suggestion', 'like', '%' . $request->search . '%')
-                    ->orWhereHas('user', function($userQuery) use ($request) {
+                    ->orWhereHas('user', function ($userQuery) use ($request) {
                         $userQuery->where('name', 'like', '%' . $request->search . '%')
-                                  ->orWhere('mobile', 'like', '%' . $request->search . '%');
+                            ->orWhere('mobile', 'like', '%' . $request->search . '%');
                     });
             });
         }

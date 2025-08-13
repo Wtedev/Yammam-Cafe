@@ -30,10 +30,10 @@ class OrderController extends Controller
         if ($request->search) {
             $query->where(function ($q) use ($request) {
                 $q->where('id', 'like', '%' . $request->search . '%')
-                    ->orWhereHas('user', function($userQuery) use ($request) {
+                    ->orWhereHas('user', function ($userQuery) use ($request) {
                         $userQuery->where('name', 'like', '%' . $request->search . '%')
-                                  ->orWhere('office_number', 'like', '%' . $request->search . '%')
-                                  ->orWhere('mobile', 'like', '%' . $request->search . '%');
+                            ->orWhere('office_number', 'like', '%' . $request->search . '%')
+                            ->orWhere('mobile', 'like', '%' . $request->search . '%');
                     });
             });
         }

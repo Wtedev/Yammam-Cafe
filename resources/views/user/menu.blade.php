@@ -1,0 +1,203 @@
+<x-user-layout title="المنيو">
+    <div class="max-w-7xl mx-auto">
+        <!-- Page Header -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">المنيو</h1>
+                    <p class="text-gray-600 mt-1">
+                        @if(request('category'))
+                        @php
+                        $categoryName = $categories->find(request('category'))->name ?? 'الفئة المحددة';
+                        $availableCount = $products->where('stock_quantity', '>', 0)->count();
+                        @endphp
+                        منتجات فئة {{ $categoryName }} - {{ $availableCount }} منتج متاح
+                        @elseif(request('search'))
+                        @php
+                        $availableCount = $products->where('stock_quantity', '>', 0)->count();
+                        @endphp
+                        نتائج البحث عن "{{ request('search') }}" - {{ $availableCount }} منتج متاح
+                        @else
+                        @php
+                        $availableCount = $products->where('stock_quantity', '>', 0)->count();
+                        @endphp
+                        تصفح جميع المنتجات المتاحة - {{ $availableCount }} منتج متاح
+                        @endif
+                    </p>
+                </div>
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">
+                        <i class="fas fa-coffee mr-1"></i>
+                        {{ $products->count() }} متاح
+                    </span>
+                    @if(request('category') || request('search'))
+                    <a href="{{ route('menu.index') }}" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-times mr-1"></i>
+                        مسح الفلاتر
+                    </a>
+                    @endif
+                    <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                    <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-sort"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <x-user.search-bar page="menu" />
+
+        <!-- Categories Filter -->
+        <div class="bg-white rounded-lg shadow-sm mb-6">
+            <div class="p-4">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">الفئات</h3>
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('menu.index') }}" class="px-4 py-2 {{ !request('category') ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} rounded-full text-sm font-medium transition-colors">
+                        الكل
+                    </a>
+                    @forelse($categories as $category)
+                    <a href="{{ route('menu.index', ['category' => $category->id]) }}" class="px-4 py-2 {{ request('category') == $category->id ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} rounded-full text-sm font-medium transition-colors">
+                        <i class="fas fa-tag mr-1"></i>
+                        {{ $category->name }}
+                    </a>
+                    @empty
+                    <span class="text-gray-500 text-sm">لا توجد فئات متاحة</span>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">
+            @forelse($products->where('stock_quantity', '>', 0) as $product)
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden relative group transition hover:shadow-md h-[500px] max-h-[500px]">
+                <!-- Product Image -->
+                <div class="relative w-full bg-blue-50/40 aspect-square flex-shrink-0">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        @if($product->image)
+                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover object-center">
+                        @else
+                        <div class="w-full h-full flex items-center justify-center text-gray-300 bg-gradient-to-br from-blue-400 to-blue-600">
+                            <i class="fas fa-{{ $product->getIconClass() }} text-white text-6xl"></i>
+                        </div>
+                        @endif
+                    </div>
+
+                    <!-- Tags Container (Top Left) -->
+                    <div class="absolute top-3 left-3 flex flex-col gap-2 z-10">
+                        <!-- Weekly Product Badge -->
+                        @if($product->type === 'weekly')
+                        <span class="bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full border border-purple-300">
+                            <i class="fas fa-star mr-1"></i>
+                            منتج الأسبوع
+                        </span>
+                        @endif
+
+                        <!-- Low Stock Badge -->
+                        @if($product->stock_quantity <= 3 && $product->stock_quantity > 0)
+                            <span class="bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1 rounded-full border border-orange-300">
+                                <i class="fas fa-exclamation-triangle mr-1 text-orange-500"></i>
+                                قرب يخلّص
+                            </span>
+                            @endif
+                    </div>
+                </div>
+
+                <!-- Product Content -->
+                <div class="flex-1 flex flex-col p-4 gap-2 overflow-y-auto">
+                    <h3 class="text-base font-extrabold text-gray-900 mb-1">{{ $product->name }}</h3>
+
+                    @if($product->description)
+                    <p class="text-xs text-gray-500 mb-2 line-clamp-2">{{ Str::limit($product->description, 80) }}</p>
+                    @endif
+
+                    <!-- Price Info -->
+                    <div class="flex items-center flex-wrap gap-2 mb-1">
+                        <span class="text-green-700 font-bold text-lg">{{ number_format($product->price, 2) }} ر.س</span>
+                    </div>
+
+                    <!-- Calories and Walking Time -->
+                    @if($product->calories || $product->walking_time)
+                    <div class="flex items-center gap-4 mb-2">
+                        @if($product->calories)
+                        <div class="flex items-center gap-1">
+                            <i class="fas fa-fire text-orange-500 text-sm"></i>
+                            <span class="text-xs text-gray-600">{{ $product->calories }} سعرة</span>
+                        </div>
+                        @endif
+
+                        @if($product->walking_time)
+                        <div class="flex items-center gap-1">
+                            <i class="fas fa-walking text-blue-500 text-sm"></i>
+                            <span class="text-xs text-gray-600">{{ $product->walking_time }} دقيقة مشي</span>
+                        </div>
+                        @endif
+                    </div>
+                    @endif
+
+                    <!-- Action Buttons -->
+                    <div class="mt-auto flex items-center gap-2 pt-3 flex-shrink-0 border-t border-gray-100">
+                        <div class="flex w-full gap-2 pt-2">
+                            @auth
+                            <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded-xl font-bold text-xs transition shadow-sm flex items-center justify-center">
+                                <i class="fas fa-plus ml-1"></i>
+                                إضافة للسلة
+                            </button>
+                            @else
+                            <a href="{{ route('login') }}" class="flex-1 bg-gray-400 hover:bg-gray-500 text-white text-center py-2 rounded-xl font-bold text-xs transition shadow-sm flex items-center justify-center">
+                                <i class="fas fa-sign-in-alt ml-1"></i>
+                                تسجيل دخول
+                            </a>
+                            @endauth
+
+                            <a href="{{ route('menu.show', $product) }}" class="flex items-center justify-center gap-1 w-auto px-4 h-9 bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-600 rounded-xl text-xs font-bold border border-gray-200 transition focus:outline-none">
+                                <i class="fas fa-eye text-base"></i>
+                                <span class="hidden sm:inline">عرض</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @empty
+            <!-- Empty State -->
+            <div class="col-span-full">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+                    <div class="max-w-md mx-auto">
+                        <i class="fas fa-coffee text-6xl text-gray-300 mb-4"></i>
+                        <h2 class="text-xl font-semibold text-gray-700 mb-2">
+                            @if(request('category'))
+                            لا توجد منتجات متاحة في هذه الفئة
+                            @elseif(request('search'))
+                            لم يتم العثور على نتائج متاحة
+                            @else
+                            لا توجد منتجات متاحة حالياً
+                            @endif
+                        </h2>
+                        <p class="text-gray-500 mb-4">
+                            @if(request('category') || request('search'))
+                            جرب البحث في فئة أخرى أو قم بمسح الفلاتر
+                            @else
+                            جميع المنتجات نفدت أو سيتم إضافة منتجات جديدة قريباً
+                            @endif
+                        </p>
+                        @if(request('category') || request('search'))
+                        <a href="{{ route('menu.index') }}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors font-semibold">
+                            مسح الفلاتر
+                        </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endforelse
+        </div>
+
+        <!-- Pagination -->
+        @if($products->hasPages())
+        <div class="flex justify-center">
+            {{ $products->appends(request()->query())->links() }}
+        </div>
+        @endif
+    </div>
+</x-user-layout>
