@@ -98,7 +98,7 @@
                                     <div id="upload-placeholder">
                                         <i class="fas fa-cloud-upload-alt text-3xl text-blue-400 mb-2"></i>
                                         <p class="text-gray-600 text-sm">اضغط لرفع صورة المنتج</p>
-                                        <p class="text-xs text-gray-400 mt-1">PNG, JPG, GIF حتى 2MB</p>
+                                        <p class="text-xs text-gray-400 mt-1">PNG, JPG, GIF حتى 10MB</p>
                                     </div>
                                 </label>
                             </div>
@@ -212,21 +212,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-6 border-t border-gray-100">
-                        <a href="{{ route('admin.products.index') }}" class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg shadow-sm border border-gray-200 transition-colors duration-200">
-                            <i class="fas fa-times"></i>
-                            <span>إلغاء</span>
-                        </a>
-                        <button type="submit" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded-lg shadow-sm transition-colors duration-200">
-                            <i class="fas fa-save"></i>
-                            <span>إضافة المنتج</span>
-                        </button>
-                    </div>
                 </div>
                 <!-- Navigation Buttons -->
-                <div class="flex justify-between mt-8">
+                <div class="flex justify-between mt-8 items-center flex-wrap gap-3">
                     <button type="button" id="prev-btn" class="hidden bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg shadow-sm border border-gray-200 transition-colors duration-200">السابق</button>
-                    <button type="button" id="next-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded-lg shadow-sm transition-colors duration-200">التالي</button>
+                    <div class="ml-auto flex items-center gap-3" id="nav-dynamic-area">
+                        <button type="button" id="next-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded-lg shadow-sm transition-colors duration-200">التالي</button>
+                        <div id="final-actions" class="hidden items-center gap-3">
+                            <a href="{{ route('admin.products.index') }}" class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg shadow-sm border border-gray-200 transition-colors duration-200">
+                                <i class="fas fa-times"></i><span>إلغاء</span>
+                            </a>
+                            <button type="submit" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded-lg shadow-sm transition-colors duration-200">
+                                <i class="fas fa-save"></i><span>إضافة المنتج</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -238,6 +238,7 @@
             const steps = Array.from(document.querySelectorAll('.step'));
             const nextBtn = document.getElementById('next-btn');
             const prevBtn = document.getElementById('prev-btn');
+            const finalActions = document.getElementById('final-actions');
             const stepIndicators = [
                 document.getElementById('step-indicator-1')
                 , document.getElementById('step-indicator-2')
@@ -277,7 +278,14 @@
                     }
                 });
                 prevBtn.classList.toggle('hidden', idx === 0);
-                nextBtn.classList.toggle('hidden', idx === steps.length - 1);
+                const isLast = idx === steps.length - 1;
+                if(isLast){
+                    nextBtn.classList.add('hidden');
+                    finalActions.classList.remove('hidden');
+                } else {
+                    nextBtn.classList.remove('hidden');
+                    finalActions.classList.add('hidden');
+                }
             }
 
             nextBtn.addEventListener('click', function() {

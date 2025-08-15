@@ -27,16 +27,16 @@
                 <div class="md:col-span-1">
                     <div class="bg-white/90 rounded-2xl shadow-sm border border-blue-50 p-4 flex flex-col items-center">
                         <h3 class="text-base font-bold text-blue-900 mb-3">صورة المنتج</h3>
-                        <div id="imagePreviewContainer">
+                        <div id="imagePreviewContainer" class="relative w-full">
                             @if($product->image)
-                            <img id="imagePreview" src="{{ Storage::url('products/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-56 object-cover rounded-xl shadow-sm border border-blue-50 mb-2">
+                            <img id="imagePreview" data-original-src="{{ Storage::url('products/' . $product->image) }}" src="{{ Storage::url('products/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-56 object-cover rounded-xl shadow-sm border border-blue-50 mb-2 transition-opacity duration-200">
                             @else
                             <div id="noImagePlaceholder" class="w-full h-56 bg-gray-100 rounded-xl flex items-center justify-center mb-2">
                                 <i class="fas fa-image text-4xl text-gray-400"></i>
                             </div>
                             @endif
                         </div>
-                        <div class="w-full">
+                        <div class="w-full mb-2">
                             <label for="image" class="block">
                                 <div class="flex flex-col items-center justify-center border-2 border-dashed border-blue-200 rounded-xl bg-blue-50 hover:border-blue-400 transition-colors duration-200 cursor-pointer py-6 px-3">
                                     <svg class="mx-auto h-10 w-10 text-blue-300 mb-2" stroke="currentColor" fill="none" viewBox="0 0 48 48">
@@ -48,9 +48,20 @@
                                 </div>
                             </label>
                         </div>
-                        @error('image')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        @if($product->image)
+                        <input type="hidden" id="remove_image" name="remove_image" value="{{ old('remove_image') ? 1 : 0 }}">
+                        <div id="imageActionButtons" class="w-full flex flex-wrap items-center gap-2">
+                            <button type="button" id="btnDeleteImage" class="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm"><i class="fas fa-trash-alt"></i><span>حذف الصورة</span></button>
+                            <button type="button" id="btnReplaceImage" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm"><i class="fas fa-sync-alt"></i><span>استبدال</span></button>
+                        </div>
+                        <div id="imageDeletedNotice" class="hidden w-full mt-2 text-xs bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 flex items-start gap-2">
+                            <i class="fas fa-info-circle mt-0.5"></i>
+                            <span>تم تحديد حذف الصورة. لن تُحذف فعلياً إلا عند الضغط على "حفظ التغييرات". يمكنك التراجع.</span>
+                        </div>
+                        <button type="button" id="btnUndoDelete" class="hidden mt-2 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-semibold px-3 py-2 rounded-lg flex items-center justify-center gap-1"><i class="fas fa-undo"></i><span>تراجع عن الحذف</span></button>
+                        @endif
+                        @error('image')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                        @if(session('uploadError'))<p class="mt-2 text-xs text-red-600 font-semibold">❗ {{ session('uploadError') }}</p>@elseif(session('uploadWarning'))<p class="mt-2 text-xs text-amber-600 font-semibold">⚠ {{ session('uploadWarning') }}</p>@endif
                     </div>
                 </div>
 
@@ -133,14 +144,6 @@
                     </div>
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-4 pt-6 border-t border-blue-50 mt-8">
-                <a href="{{ route('admin.products.show', $product) }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors duration-200">
-                    إلغاء
-                </a>
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-200 flex items-center gap-1">
-                    <i class="fas fa-save"></i> حفظ التغييرات
-                </button>
-            </div>
         </form>
     </div>
     <script>
@@ -154,52 +157,86 @@
             }
         });
 
-        // Image preview functionality
-        document.getElementById('image').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const imagePreview = document.getElementById('imagePreview');
-            const noImagePlaceholder = document.getElementById('noImagePlaceholder');
-            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        document.addEventListener('DOMContentLoaded', function(){
+            const imageInput = document.getElementById('image');
+            const removeField = document.getElementById('remove_image');
+            const img = document.getElementById('imagePreview');
+            const btnDelete = document.getElementById('btnDeleteImage');
+            const btnReplace = document.getElementById('btnReplaceImage');
+            const btnUndo = document.getElementById('btnUndoDelete');
+            const deletedNotice = document.getElementById('imageDeletedNotice');
+            let originalSrc = img ? img.getAttribute('data-original-src') : null;
 
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    // إنشاء أو تحديث عنصر الصورة
-                    if (imagePreview) {
-                        imagePreview.src = e.target.result;
-                        imagePreview.style.display = 'block';
-                    } else {
-                        // إنشاء عنصر صورة جديد إذا لم يكن موجود
-                        const newImagePreview = document.createElement('img');
-                        newImagePreview.id = 'imagePreview';
-                        newImagePreview.src = e.target.result;
-                        newImagePreview.alt = 'معاينة الصورة';
-                        newImagePreview.className = 'w-full h-56 object-cover rounded-xl shadow-sm border border-blue-50 mb-2';
-                        imagePreviewContainer.innerHTML = '';
-                        imagePreviewContainer.appendChild(newImagePreview);
+            function markDeleted(){
+                if(removeField){ removeField.value = 1; }
+                if(img){ img.style.display = 'none'; }
+                if(btnDelete){ btnDelete.classList.add('hidden'); }
+                if(btnReplace){ btnReplace.classList.add('hidden'); }
+                if(deletedNotice){ deletedNotice.classList.remove('hidden'); }
+                if(btnUndo){ btnUndo.classList.remove('hidden'); }
+                ensurePlaceholder();
+            }
+            function undoDelete(){
+                if(removeField){ removeField.value = 0; }
+                if(img){ img.style.display = 'block'; if(originalSrc){ img.src = originalSrc; } }
+                if(btnDelete){ btnDelete.classList.remove('hidden'); }
+                if(btnReplace){ btnReplace.classList.remove('hidden'); }
+                if(deletedNotice){ deletedNotice.classList.add('hidden'); }
+                if(btnUndo){ btnUndo.classList.add('hidden'); }
+                removeTemporaryPlaceholder();
+            }
+            function ensurePlaceholder(){
+                if(!document.getElementById('noImagePlaceholder')){
+                    const cont = document.getElementById('imagePreviewContainer');
+                    const ph = document.createElement('div');
+                    ph.id = 'noImagePlaceholder';
+                    ph.className = 'w-full h-56 bg-gray-100 rounded-xl flex items-center justify-center mb-2 border border-dashed border-gray-300';
+                    ph.innerHTML = '<i class="fas fa-image text-4xl text-gray-400"></i>';
+                    cont.prepend(ph);
+                }
+            }
+            function removeTemporaryPlaceholder(){
+                const ph = document.getElementById('noImagePlaceholder');
+                if(ph && originalSrc){ ph.remove(); }
+            }
+            if(btnDelete){ btnDelete.addEventListener('click', markDeleted); }
+            if(btnUndo){ btnUndo.addEventListener('click', undoDelete); }
+            if(btnReplace){ btnReplace.addEventListener('click', () => imageInput && imageInput.click()); }
+            if(imageInput){
+                imageInput.addEventListener('change', function(){
+                    if(this.files && this.files.length){
+                        // Selecting new image cancels deletion if marked
+                        if(removeField && removeField.value === '1'){ undoDelete(); }
                     }
-
-                    // إخفاء placeholder إذا كان موجود
-                    if (noImagePlaceholder) {
-                        noImagePlaceholder.style.display = 'none';
-                    }
-
-                    // إضافة نص توضيحي
-                    const statusText = document.createElement('div');
-                    statusText.className = 'text-xs text-green-600 mt-1 font-semibold';
-                    statusText.innerHTML = '<i class="fas fa-check-circle mr-1"></i>تم اختيار صورة جديدة - سيتم حفظها عند الضغط على "حفظ التغييرات"';
-
-                    // إزالة أي نص توضيحي سابق
-                    const existingStatus = imagePreviewContainer.querySelector('.text-green-600');
-                    if (existingStatus) {
-                        existingStatus.remove();
-                    }
-
-                    imagePreviewContainer.appendChild(statusText);
-                };
-                reader.readAsDataURL(file);
+                });
             }
         });
-
+        // Preview new image selection
+        document.getElementById('image').addEventListener('change', function(e){
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev){
+                let img = document.getElementById('imagePreview');
+                const container = document.getElementById('imagePreviewContainer');
+                if(!img){
+                    img = document.createElement('img');
+                    img.id = 'imagePreview';
+                    img.className = 'w-full h-56 object-cover rounded-xl shadow-sm border border-blue-50 mb-2';
+                    container.prepend(img);
+                }
+                img.src = ev.target.result;
+                img.style.display = 'block';
+                const statusText = document.createElement('div');
+                statusText.className = 'text-xs text-green-600 mt-1 font-semibold';
+                statusText.innerHTML = '<i class="fas fa-check-circle mr-1"></i>تم استبدال الصورة - الحفظ عند الضغط على "حفظ التغييرات"';
+                const existing = container.querySelector('.text-green-600');
+                if(existing) existing.remove();
+                container.appendChild(statusText);
+                const ph = document.getElementById('noImagePlaceholder');
+                if(ph) ph.remove();
+            };
+            reader.readAsDataURL(file);
+        });
     </script>
 </x-layout.admin-layout>
