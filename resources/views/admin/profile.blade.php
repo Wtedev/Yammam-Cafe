@@ -160,28 +160,23 @@
                 <p class="text-gray-600 text-sm">معلومات إضافية حول حسابك</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="space-y-3">
                     <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">تاريخ إنشاء الحساب:</span>
+                        <span class="text-sm font-medium text-gray-600">تاريخ بدء العضوية:</span>
                         <span class="text-sm text-gray-900">{{ auth()->user()->created_at->format('Y-m-d') }}</span>
-                    </div>
-                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">آخر تحديث:</span>
-                        <span class="text-sm text-gray-900">{{ auth()->user()->updated_at->diffForHumans() }}</span>
                     </div>
                 </div>
                 <div class="space-y-3">
                     <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">ID المستخدم:</span>
-                        <span class="text-sm text-gray-900 font-mono">#{{ auth()->user()->id }}</span>
+                        <span class="text-sm font-medium text-gray-600">عدد الطلبات الكلية:</span>
+                        <span class="text-sm text-gray-900">{{ \App\Models\Order::count() }}</span>
                     </div>
+                </div>
+                <div class="space-y-3">
                     <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">حالة الحساب:</span>
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            <i class="fas fa-check-circle ml-1"></i>
-                            نشط
-                        </span>
+                        <span class="text-sm font-medium text-gray-600">المبيعات الكلية:</span>
+                        <span class="text-sm text-gray-900">{{ number_format(\App\Models\Order::whereNotIn('status', ['cancelled'])->sum('total_price'), 2) }} ر.س</span>
                     </div>
                 </div>
             </div>
