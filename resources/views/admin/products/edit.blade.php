@@ -157,7 +157,7 @@
             }
         });
 
-        document.addEventListener('DOMContentLoaded', function(){
+        document.addEventListener('DOMContentLoaded', function() {
             const imageInput = document.getElementById('image');
             const removeField = document.getElementById('remove_image');
             const img = document.getElementById('imagePreview');
@@ -167,26 +167,55 @@
             const deletedNotice = document.getElementById('imageDeletedNotice');
             let originalSrc = img ? img.getAttribute('data-original-src') : null;
 
-            function markDeleted(){
-                if(removeField){ removeField.value = 1; }
-                if(img){ img.style.display = 'none'; }
-                if(btnDelete){ btnDelete.classList.add('hidden'); }
-                if(btnReplace){ btnReplace.classList.add('hidden'); }
-                if(deletedNotice){ deletedNotice.classList.remove('hidden'); }
-                if(btnUndo){ btnUndo.classList.remove('hidden'); }
+            function markDeleted() {
+                if (removeField) {
+                    removeField.value = 1;
+                }
+                if (img) {
+                    img.style.display = 'none';
+                }
+                if (btnDelete) {
+                    btnDelete.classList.add('hidden');
+                }
+                if (btnReplace) {
+                    btnReplace.classList.add('hidden');
+                }
+                if (deletedNotice) {
+                    deletedNotice.classList.remove('hidden');
+                }
+                if (btnUndo) {
+                    btnUndo.classList.remove('hidden');
+                }
                 ensurePlaceholder();
             }
-            function undoDelete(){
-                if(removeField){ removeField.value = 0; }
-                if(img){ img.style.display = 'block'; if(originalSrc){ img.src = originalSrc; } }
-                if(btnDelete){ btnDelete.classList.remove('hidden'); }
-                if(btnReplace){ btnReplace.classList.remove('hidden'); }
-                if(deletedNotice){ deletedNotice.classList.add('hidden'); }
-                if(btnUndo){ btnUndo.classList.add('hidden'); }
+
+            function undoDelete() {
+                if (removeField) {
+                    removeField.value = 0;
+                }
+                if (img) {
+                    img.style.display = 'block';
+                    if (originalSrc) {
+                        img.src = originalSrc;
+                    }
+                }
+                if (btnDelete) {
+                    btnDelete.classList.remove('hidden');
+                }
+                if (btnReplace) {
+                    btnReplace.classList.remove('hidden');
+                }
+                if (deletedNotice) {
+                    deletedNotice.classList.add('hidden');
+                }
+                if (btnUndo) {
+                    btnUndo.classList.add('hidden');
+                }
                 removeTemporaryPlaceholder();
             }
-            function ensurePlaceholder(){
-                if(!document.getElementById('noImagePlaceholder')){
+
+            function ensurePlaceholder() {
+                if (!document.getElementById('noImagePlaceholder')) {
                     const cont = document.getElementById('imagePreviewContainer');
                     const ph = document.createElement('div');
                     ph.id = 'noImagePlaceholder';
@@ -195,31 +224,42 @@
                     cont.prepend(ph);
                 }
             }
-            function removeTemporaryPlaceholder(){
+
+            function removeTemporaryPlaceholder() {
                 const ph = document.getElementById('noImagePlaceholder');
-                if(ph && originalSrc){ ph.remove(); }
+                if (ph && originalSrc) {
+                    ph.remove();
+                }
             }
-            if(btnDelete){ btnDelete.addEventListener('click', markDeleted); }
-            if(btnUndo){ btnUndo.addEventListener('click', undoDelete); }
-            if(btnReplace){ btnReplace.addEventListener('click', () => imageInput && imageInput.click()); }
-            if(imageInput){
-                imageInput.addEventListener('change', function(){
-                    if(this.files && this.files.length){
+            if (btnDelete) {
+                btnDelete.addEventListener('click', markDeleted);
+            }
+            if (btnUndo) {
+                btnUndo.addEventListener('click', undoDelete);
+            }
+            if (btnReplace) {
+                btnReplace.addEventListener('click', () => imageInput && imageInput.click());
+            }
+            if (imageInput) {
+                imageInput.addEventListener('change', function() {
+                    if (this.files && this.files.length) {
                         // Selecting new image cancels deletion if marked
-                        if(removeField && removeField.value === '1'){ undoDelete(); }
+                        if (removeField && removeField.value === '1') {
+                            undoDelete();
+                        }
                     }
                 });
             }
         });
         // Preview new image selection
-        document.getElementById('image').addEventListener('change', function(e){
+        document.getElementById('image').addEventListener('change', function(e) {
             const file = e.target.files[0];
-            if(!file) return;
+            if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(ev){
+            reader.onload = function(ev) {
                 let img = document.getElementById('imagePreview');
                 const container = document.getElementById('imagePreviewContainer');
-                if(!img){
+                if (!img) {
                     img = document.createElement('img');
                     img.id = 'imagePreview';
                     img.className = 'w-full h-56 object-cover rounded-xl shadow-sm border border-blue-50 mb-2';
@@ -231,12 +271,13 @@
                 statusText.className = 'text-xs text-green-600 mt-1 font-semibold';
                 statusText.innerHTML = '<i class="fas fa-check-circle mr-1"></i>تم استبدال الصورة - الحفظ عند الضغط على "حفظ التغييرات"';
                 const existing = container.querySelector('.text-green-600');
-                if(existing) existing.remove();
+                if (existing) existing.remove();
                 container.appendChild(statusText);
                 const ph = document.getElementById('noImagePlaceholder');
-                if(ph) ph.remove();
+                if (ph) ph.remove();
             };
             reader.readAsDataURL(file);
         });
+
     </script>
 </x-layout.admin-layout>

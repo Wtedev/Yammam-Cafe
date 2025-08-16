@@ -81,20 +81,45 @@ class OrderController extends Controller
 
         $oldStatus = $order->status;
 
-        $order->update([
+        $data = [
             'status' => $request->status,
             'admin_notes' => $request->admin_notes,
-            'updated_at' => now()
-        ]);
+            'updated_at' => now(),
+        ];
+        // ضبط وقت التسليم عند التحويل إلى "تم التسليم" وإلغاءه خلاف ذلك
+        if ($request->status === 'delivered' && $oldStatus !== 'delivered') {
+            $data['delivery_time'] = now();
+        } elseif ($oldStatus === 'delivered' && $request->status !== 'delivered') {
+            $data['delivery_time'] = null;
+        }
 
-        // إذا تم إلغاء الطلب، قلل عداد الطلبات للمنتجات
+        $order->update($data);
+
+        // إذا تم إلغاء الطلب، قلل عداد الطلبات للمنتجات (مع دعم جميع الأشكال المحتملة للبيانات)
         if ($request->status === 'cancelled' && $oldStatus !== 'cancelled') {
-            $productsData = $order->products_data;
-            if ($productsData) {
-                foreach ($productsData as $productData) {
-                    $product = \App\Models\Product::find($productData['id']);
-                    if ($product) {
-                        $product->decrement('order_count', $productData['quantity']);
+            $raw = $order->products;
+            if (is_string($raw)) {
+                $decoded = json_decode($raw, true) ?: [];
+            } elseif (is_array($raw)) {
+                $decoded = $raw;
+            } else {
+                $decoded = [];
+            }
+            $items = $decoded['items'] ?? $decoded; // دعم الشكل { items: [...] } أو مصفوفة مباشرة
+
+            if (is_array($items)) {
+                foreach ($items as $productData) {
+                    if (!is_array($productData)) continue;
+                    $id = $productData['id'] ?? $productData['product_id'] ?? null;
+                    $qty = (int)($productData['quantity'] ?? 0);
+                    if ($id && $qty > 0) {
+                        $product = \App\Models\Product::find($id);
+                        if ($product) {
+                            $dec = min($qty, max(0, (int)$product->order_count));
+                            if ($dec > 0) {
+                                $product->decrement('order_count', $dec);
+                            }
+                        }
                     }
                 }
             }
@@ -123,32 +148,6 @@ class OrderController extends Controller
             }
         }
         $order->delete();
-        return redirect()->route('admin.orders.index')->with('success', 'تم حذف الطلب بنجاح');
-    }
-
-    public function stats()
-    {
-        $today = now()->startOfDay();
-        $thisWeek = now()->startOfWeek();
-        $thisMonth = now()->startOfMonth();
-
-        $stats = [
-            'today' => [
-                'orders' => Order::where('created_at', '>=', $today)->count(),
-                'revenue' => Order::where('created_at', '>=', $today)->where('status', '!=', 'cancelled')->sum('total_price'),
-                'completed' => Order::where('created_at', '>=', $today)->where('status', 'completed')->count(),
-            ],
-            'week' => [
-                'orders' => Order::where('created_at', '>=', $thisWeek)->count(),
-                'revenue' => Order::where('created_at', '>=', $thisWeek)->where('status', '!=', 'cancelled')->sum('total_price'),
-                'completed' => Order::where('created_at', '>=', $thisWeek)->where('status', 'completed')->count(),
-            ],
-            'month' => [
-                'orders' => Order::where('created_at', '>=', $thisMonth)->count(),
-                'revenue' => Order::where('created_at', '>=', $thisMonth)->where('status', '!=', 'cancelled')->sum('total_price'),
-                'completed' => Order::where('created_at', '>=', $thisMonth)->where('status', 'completed')->count(),
-            ]
-        ];
-        return view('admin.orders.stats', compact('stats'));
+        return redirect()->route('admin.orders')->with('success', 'تم حذف الطلب بنجاح');
     }
 }

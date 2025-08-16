@@ -279,7 +279,7 @@
                 });
                 prevBtn.classList.toggle('hidden', idx === 0);
                 const isLast = idx === steps.length - 1;
-                if(isLast){
+                if (isLast) {
                     nextBtn.classList.add('hidden');
                     finalActions.classList.remove('hidden');
                 } else {
