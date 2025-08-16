@@ -34,7 +34,7 @@
                             <div class="flex items-center gap-2 mb-1">
                                 <span class="text-blue-600 font-bold text-lg">#{{ $order->id }}</span>
                                 @if($order->is_new)
-                                <span class="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">جديد</span>
+                                <span class="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">لم تتم رؤيته</span>
                                 @endif
                                 <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{
                                             match($order->status) {
@@ -72,7 +72,7 @@
                         <div class="hidden md:flex flex-1 flex-row items-center gap-3 min-w-0">
                             <span class="text-blue-600 font-bold text-base md:text-lg shrink-0">#{{ $order->id }}</span>
                             @if($order->is_new)
-                            <span class="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">جديد</span>
+                            <span class="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">لم تتم رؤيته</span>
                             @endif
                             <span class="hidden md:inline-block text-gray-400">|</span>
                             <div class="flex flex-col min-w-0">

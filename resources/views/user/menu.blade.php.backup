@@ -62,7 +62,7 @@
         <!-- Products Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">
             @forelse($products->where('stock_quantity', '>', 0) as $product)
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden relative group transition hover:shadow-md h-auto sm:h-[500px] sm:max-h-[500px]">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden relative group transition hover:shadow-md h-[500px] max-h-[500px]">
                 <!-- Product Image -->
                 <div class="relative w-full bg-blue-50/40 aspect-square flex-shrink-0">
                     @if($product->image)
@@ -94,7 +94,7 @@
                 </div>
 
                 <!-- Product Content -->
-                <div class="flex-1 flex flex-col p-4 gap-2 overflow-visible sm:overflow-y-auto">
+                <div class="flex-1 flex flex-col p-4 gap-2 overflow-y-auto">
                     <h3 class="text-base font-extrabold text-gray-900 mb-1">{{ $product->name }}</h3>
 
                     @if($product->description)
@@ -186,13 +186,6 @@
 </x-user-layout>
 
 <script>
-    // Wait for page to load
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Menu page loaded');
-        console.log('Cart badge element:', document.querySelector('.cart-badge'));
-        console.log('CSRF token:', document.querySelector('meta[name="csrf-token"]'));
-    });
-
     function addToCart(productId, event) {
         event.preventDefault();
 
@@ -207,14 +200,11 @@
         // Get CSRF token
         const csrfToken = document.querySelector('meta[name="csrf-token"]');
         if (!csrfToken) {
-            console.error('CSRF token not found');
             showMessage('خطأ في الأمان: توكن CSRF غير موجود', 'error');
             button.innerHTML = originalText;
             button.disabled = false;
             return;
         }
-
-        console.log('Adding product to cart:', productId);
 
         fetch(`/cart/add/${productId}`, {
                 method: 'POST'
@@ -222,46 +212,47 @@
                     'Content-Type': 'application/json'
                     , 'X-CSRF-TOKEN': csrfToken.getAttribute('content')
                     , 'Accept': 'application/json'
-                    , 'X-Requested-With': 'XMLHttpRequest'
                 }
                 , body: JSON.stringify({
                     quantity: 1
                 })
             })
             .then(response => {
-                console.log('Response status:', response.status);
                 if (!response.ok) {
                     return response.json().then(data => {
-                        console.error('Server error:', data);
                         throw new Error(data.message || `HTTP error! Status: ${response.status}`);
                     });
                 }
                 return response.json();
             })
             .then(data => {
-                console.log('Cart add response:', data);
-                
+                if (data.success) {
+                    console.log('Product added successfully:', data.product_name);
+                    
+                    // Update cart count immediately (before everything else)
+                    incrementCartBadge(1);
+                    
+                    // Add animation effect to the cart icon in header
+                    animateCartIcon();
+                    
+                    // Show success message
+                    showMessage(`تم إضافة ${data.product_name} إلى السلة`, 'success');
+                    
+                    // Sync cart count with server in background
+                    updateCartCount();
+                } else {
+                    console.log('Failed to add product:', data.message);
+                    showMessage(data.message || 'حدث خطأ أثناء إضافة المنتج', 'error');
+                }
+
                 // Restore button
                 setTimeout(() => {
                     button.innerHTML = originalText;
                     button.disabled = false;
                 }, 500);
-
-                if (data.success) {
-                    // Update cart count with server response
-                    updateCartBadge(data.cart_count);
-                    
-                    // Show success message
-                    showMessage(`تم إضافة ${data.product_name} إلى السلة`, 'success');
-
-                    // Add animation effect to the cart icon in header
-                    animateCartIcon();
-                } else {
-                    showMessage(data.message || 'حدث خطأ أثناء إضافة المنتج', 'error');
-                }
             })
             .catch(error => {
-                console.error('Error adding to cart:', error);
+                console.error('Error:', error);
                 showMessage(error.message || 'حدث خطأ أثناء إضافة المنتج للسلة', 'error');
 
                 // Restore button
@@ -270,58 +261,37 @@
             });
     }
 
-    // Update cart badge with exact count
-    function updateCartBadge(count) {
-        console.log('Updating cart badge to:', count);
+    // Increment cart badge immediately without waiting for server
+    function incrementCartBadge(delta) {
+        const cartBadge = document.querySelector('.cart-badge');
+        if (!cartBadge) return;
         
-        // Try multiple selectors to find the cart badge
-        const cartBadgeSelectors = [
-            '.cart-badge',
-            '[data-cart-count]',
-            '.cart-count',
-            '#cart-count',
-            '.badge-cart',
-            '.header-cart-count'
-        ];
+        const current = parseInt(cartBadge.textContent, 10);
+        const next = (isNaN(current) ? 0 : current) + (delta || 0);
         
-        let cartBadge = null;
-        for (const selector of cartBadgeSelectors) {
-            cartBadge = document.querySelector(selector);
-            if (cartBadge) {
-                console.log('Found cart badge with selector:', selector);
-                break;
-            }
-        }
-        
-        if (!cartBadge) {
-            console.error('Cart badge element not found. Available elements:', document.querySelectorAll('[class*="cart"], [class*="badge"]'));
-            return;
-        }
-        
-        cartBadge.textContent = count;
+        // Add scale animation for more visibility
+        cartBadge.style.transform = 'scale(1.3)';
+        cartBadge.style.transition = 'all 0.3s ease';
         cartBadge.classList.add('animate-pulse');
-        setTimeout(() => cartBadge.classList.remove('animate-pulse'), 600);
+        
+        // Update the number
+        cartBadge.textContent = next;
+        
+        // Return to normal size
+        setTimeout(() => {
+            cartBadge.style.transform = 'scale(1)';
+            cartBadge.classList.remove('animate-pulse');
+        }, 300);
     }
 
     function updateCartCount() {
         fetch('/cart/count')
             .then(response => response.json())
             .then(data => {
-                // Update cart badge in header with multiple selectors
-                const cartBadgeSelectors = [
-                    '.cart-badge',
-                    '[data-cart-count]',
-                    '.cart-count',
-                    '#cart-count',
-                    '.badge-cart',
-                    '.header-cart-count'
-                ];
-                
-                for (const selector of cartBadgeSelectors) {
-                    const cartBadge = document.querySelector(selector);
-                    if (cartBadge) {
-                        cartBadge.textContent = data.count;
-                    }
+                // Update cart badge in header
+                const cartBadge = document.querySelector('.cart-badge');
+                if (cartBadge) {
+                    cartBadge.textContent = data.count;
                 }
             })
             .catch(error => {
@@ -330,63 +300,38 @@
     }
 
     function showMessage(message, type) {
-        console.log('Showing message:', message, type);
-        
-        // Remove any existing messages first
-        const existingMessages = document.querySelectorAll('.toast-message');
-        existingMessages.forEach(msg => msg.remove());
-
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `toast-message fixed top-4 left-4 right-4 ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white p-4 rounded-lg shadow-lg z-50 flex items-center justify-between mx-auto max-w-md`;
-
-        // Add icon based on message type
-        const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
-        messageDiv.innerHTML = `
-            <div class="flex items-center">
-                <i class="fas fa-${icon} mr-2 text-xl"></i>
-                <span>${message}</span>
-            </div>
-            <button class="text-white hover:text-gray-200 mr-2" onclick="this.parentElement.remove()">
-                <i class="fas fa-times"></i>
-            </button>
+        // Create a simple toast notification
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: ${type === 'success' ? '#10b981' : '#ef4444'};
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            max-width: 90vw;
+            text-align: center;
         `;
-
-        document.body.appendChild(messageDiv);
-
-        // Fade in effect
-        messageDiv.style.opacity = '0';
-        messageDiv.style.transition = 'opacity 0.3s ease';
-        messageDiv.style.transform = 'translateY(-20px)';
+        toast.textContent = message;
+        
+        document.body.appendChild(toast);
+        
+        // Auto remove after 3 seconds
         setTimeout(() => {
-            messageDiv.style.opacity = '1';
-            messageDiv.style.transform = 'translateY(0)';
-        }, 10);
-
-        // Auto dismiss after 4 seconds
-        setTimeout(() => {
-            messageDiv.style.opacity = '0';
-            messageDiv.style.transform = 'translateY(-20px)';
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 300);
-        }, 4000);
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 3000);
     }
 
     function animateCartIcon() {
-        // Find cart icon and add animation
-        const cartIconSelectors = [
-            '.cart-icon',
-            '.fa-shopping-cart',
-            '[href="/cart"]',
-            'a[href*="cart"]'
-        ];
-        
-        let cartIcon = null;
-        for (const selector of cartIconSelectors) {
-            cartIcon = document.querySelector(selector);
-            if (cartIcon) break;
-        }
-        
+        const cartIcon = document.querySelector('.cart-icon');
         if (cartIcon) {
             cartIcon.classList.add('animate-bounce');
             setTimeout(() => {

@@ -51,19 +51,8 @@
                                     جديد
                                 </span>
                                 @endif
-                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{
-                                    match($suggestion->type) {
-                                        'suggestion' => 'bg-blue-100 text-blue-800',
-                                        'complaint' => 'bg-red-100 text-red-800',
-                                        'compliment' => 'bg-green-100 text-green-800',
-                                        default => 'bg-gray-200 text-gray-700',
-                                    }
-                                }}">{{ $suggestion->type_text }}</span>
                             </div>
                             <div class="flex items-center gap-2 text-xs text-gray-500">
-                                <i class="fas fa-user"></i>
-                                <span>{{ $suggestion->name ?? ($suggestion->user->name ?? 'مجهول') }}</span>
-                                <span class="mx-1">|</span>
                                 <i class="fas fa-calendar"></i>
                                 <span>{{ $suggestion->created_at->diffForHumans() }}</span>
                             </div>
@@ -82,7 +71,7 @@
                             <span class="hidden md:inline-block text-gray-400">|</span>
                             <div class="flex flex-col min-w-0">
                                 <span class="text-sm font-semibold text-gray-900 truncate">
-                                    {{ $suggestion->name ?? ($suggestion->user->name ?? 'مجهول') }}
+                                    {{ Str::limit($suggestion->suggestion, 100) }}
                                 </span>
                                 <span class="text-xs text-gray-400 truncate">
                                     {{ $suggestion->created_at->diffForHumans() }}
