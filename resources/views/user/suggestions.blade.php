@@ -7,10 +7,18 @@
                     <h1 class="text-2xl font-bold text-gray-900">اقتراحاتي</h1>
                     <p class="text-gray-600 mt-1">شاركنا آرائك واقتراحاتك لتحسين الخدمة</p>
                 </div>
-                <a href="{{ route('suggestions.create') }}" class="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <i class="fas fa-plus"></i>
-                    <span class="hidden sm:inline ml-2">أرسل اقتراح</span>
-                </a>
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <a href="{{ route('suggestions.create') }}" class="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-plus"></i>
+                        <span class="hidden sm:inline ml-2">أرسل اقتراح</span>
+                    </a>
+                    @if(request('search') || request('type') || request('status'))
+                    <a href="{{ route('my-suggestions') }}" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-times mr-1"></i>
+                        مسح الفلاتر
+                    </a>
+                    @endif
+                </div>
             </div>
         </div>
 
@@ -112,7 +120,7 @@
                 @endforeach
             </ul>
             <div class="mt-6 flex justify-center">
-                {{ $suggestions->links() }}
+                {{ $suggestions->appends(request()->query())->links() }}
             </div>
         </div>
         @else
@@ -120,8 +128,26 @@
         <div class="bg-white rounded-lg shadow-sm p-8 text-center">
             <div class="max-w-md mx-auto">
                 <i class="fas fa-lightbulb text-6xl text-gray-300 mb-4"></i>
-                <h2 class="text-xl font-semibold text-gray-700 mb-2">لا توجد اقتراحات بعد</h2>
-                <p class="text-gray-500 mb-6">ساعدنا في تطوير خدماتنا من خلال مشاركة اقتراحاتك وآرائك</p>
+                <h2 class="text-xl font-semibold text-gray-700 mb-2">
+                    @if(request('search') || request('type') || request('status'))
+                    لا توجد اقتراحات بهذه المعايير
+                    @else
+                    لا توجد اقتراحات بعد
+                    @endif
+                </h2>
+                <p class="text-gray-500 mb-6">
+                    @if(request('search') || request('type') || request('status'))
+                    جرب تغيير معايير البحث أو قم بمسح الفلاتر
+                    @else
+                    ساعدنا في تطوير خدماتنا من خلال مشاركة اقتراحاتك وآرائك
+                    @endif
+                </p>
+                @if(request('search') || request('type') || request('status'))
+                <a href="{{ route('my-suggestions') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors mr-3">
+                    <i class="fas fa-times ml-2"></i>
+                    مسح الفلاتر
+                </a>
+                @endif
                 <a href="{{ route('suggestions.create') }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                     <i class="fas fa-comment-alt ml-2"></i>
                     أرسل اقتراح

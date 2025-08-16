@@ -27,6 +27,31 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
-        return view('home', compact('weeklyProducts', 'categories', 'popularProducts'));
+        // Selected category (for tabs) and its products
+        $selectedCategoryId = request('category');
+        $categoryProducts = collect();
+        if ($selectedCategoryId) {
+            $categoryProducts = Product::where('is_available', true)
+                ->where('stock_quantity', '>', 0)
+                ->where('category_id', $selectedCategoryId)
+                ->latest()
+                ->take(8)
+                ->get();
+        }
+
+        // All available products for the 'All' tab
+        $allProducts = Product::where('is_available', true)
+            ->where('stock_quantity', '>', 0)
+            ->latest()
+            ->get();
+
+        return view('home', compact(
+            'weeklyProducts',
+            'categories',
+            'popularProducts',
+            'selectedCategoryId',
+            'categoryProducts',
+            'allProducts'
+        ));
     }
 }

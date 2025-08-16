@@ -25,7 +25,7 @@
                         @endif
                     </p>
                 </div>
-                @if(request('category') || request('search'))
+                @if(request('category') || request('search') || request('product_type'))
                 <div class="flex items-center">
                     <a href="{{ route('menu.index') }}" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors">
                         <i class="fas fa-times mr-1"></i>
@@ -39,23 +39,33 @@
         <!-- Search Bar -->
         <x-user.search-bar page="menu" />
 
-        <!-- Categories Filter -->
-        <div class="bg-white rounded-lg shadow-sm mb-6">
-            <div class="p-4">
+        <!-- Categories Tabs Slider -->
+        <div class="bg-transparent mb-6">
+            <div class="p-4 pb-0">
                 <h3 class="text-lg font-semibold text-gray-900 mb-3">الفئات</h3>
-                <div class="flex flex-wrap gap-2">
-                    <a href="{{ route('menu.index') }}" class="px-4 py-2 {{ !request('category') ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} rounded-full text-sm font-medium transition-colors">
-                        الكل
-                    </a>
-                    @forelse($categories as $category)
-                    <a href="{{ route('menu.index', ['category' => $category->id]) }}" class="px-4 py-2 {{ request('category') == $category->id ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} rounded-full text-sm font-medium transition-colors">
-                        <i class="fas fa-tag mr-1"></i>
-                        {{ $category->name }}
-                    </a>
-                    @empty
-                    <span class="text-gray-500 text-sm">لا توجد فئات متاحة</span>
-                    @endforelse
+            </div>
+            <div class="relative">
+                <!-- Scroll Container -->
+                <div class="px-4 pb-4">
+                    <div class="category-tabs-container overflow-x-auto scrollbar-hide bg-gray-50 rounded-full">
+                        <div class="flex gap-2 px-3 py-2 min-w-max">
+                            <button onclick="switchCategory('all')" class="category-tab appearance-none flex-shrink-0 px-6 py-3 rounded-full text-sm font-medium {{ !request('category') ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700' }}" style="border-radius:9999px; line-height:1;" data-category="all">الكل</button>
+                            @forelse($categories as $category)
+                            <button onclick="switchCategory({{ $category->id }})" class="category-tab appearance-none flex-shrink-0 px-6 py-3 rounded-full text-sm font-medium {{ request('category') == $category->id ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700' }}" style="border-radius:9999px; line-height:1;" data-category="{{ $category->id }}">{{ $category->name }}</button>
+                            @empty
+                            <span class="text-gray-500 text-sm px-4">لا توجد فئات متاحة</span>
+                            @endforelse
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Navigation Arrows -->
+                <button id="scrollLeft" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white rounded-full w-10 h-10 p-0 flex items-center justify-center z-10 hidden">
+                    <i class="fas fa-chevron-left text-gray-600"></i>
+                </button>
+                <button id="scrollRight" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white rounded-full w-10 h-10 p-0 flex items-center justify-center z-10 hidden">
+                    <i class="fas fa-chevron-right text-gray-600"></i>
+                </button>
             </div>
         </div>
 
@@ -150,8 +160,8 @@
                     <div class="max-w-md mx-auto">
                         <i class="fas fa-coffee text-6xl text-gray-300 mb-4"></i>
                         <h2 class="text-xl font-semibold text-gray-700 mb-2">
-                            @if(request('category'))
-                            لا توجد منتجات متاحة في هذه الفئة
+                            @if(request('category') || request('product_type'))
+                            لا توجد منتجات متاحة بهذه المعايير
                             @elseif(request('search'))
                             لم يتم العثور على نتائج متاحة
                             @else
@@ -159,13 +169,13 @@
                             @endif
                         </h2>
                         <p class="text-gray-500 mb-4">
-                            @if(request('category') || request('search'))
+                            @if(request('category') || request('search') || request('product_type'))
                             جرب البحث في فئة أخرى أو قم بمسح الفلاتر
                             @else
                             جميع المنتجات نفدت أو سيتم إضافة منتجات جديدة قريباً
                             @endif
                         </p>
-                        @if(request('category') || request('search'))
+                        @if(request('category') || request('search') || request('product_type'))
                         <a href="{{ route('menu.index') }}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors font-semibold">
                             مسح الفلاتر
                         </a>
@@ -240,7 +250,7 @@
             })
             .then(data => {
                 console.log('Cart add response:', data);
-                
+
                 // Restore button
                 setTimeout(() => {
                     button.innerHTML = originalText;
@@ -250,7 +260,7 @@
                 if (data.success) {
                     // Update cart count with server response
                     updateCartBadge(data.cart_count);
-                    
+
                     // Show success message
                     showMessage(`تم إضافة ${data.product_name} إلى السلة`, 'success');
 
@@ -273,17 +283,17 @@
     // Update cart badge with exact count
     function updateCartBadge(count) {
         console.log('Updating cart badge to:', count);
-        
+
         // Try multiple selectors to find the cart badge
         const cartBadgeSelectors = [
-            '.cart-badge',
-            '[data-cart-count]',
-            '.cart-count',
-            '#cart-count',
-            '.badge-cart',
-            '.header-cart-count'
+            '.cart-badge'
+            , '[data-cart-count]'
+            , '.cart-count'
+            , '#cart-count'
+            , '.badge-cart'
+            , '.header-cart-count'
         ];
-        
+
         let cartBadge = null;
         for (const selector of cartBadgeSelectors) {
             cartBadge = document.querySelector(selector);
@@ -292,12 +302,12 @@
                 break;
             }
         }
-        
+
         if (!cartBadge) {
             console.error('Cart badge element not found. Available elements:', document.querySelectorAll('[class*="cart"], [class*="badge"]'));
             return;
         }
-        
+
         cartBadge.textContent = count;
         cartBadge.classList.add('animate-pulse');
         setTimeout(() => cartBadge.classList.remove('animate-pulse'), 600);
@@ -306,17 +316,17 @@
     function updateCartCount() {
         fetch('/cart/count')
             .then(response => response.json())
-            .then(data => {
+            .then data => {
                 // Update cart badge in header with multiple selectors
                 const cartBadgeSelectors = [
-                    '.cart-badge',
-                    '[data-cart-count]',
-                    '.cart-count',
-                    '#cart-count',
-                    '.badge-cart',
-                    '.header-cart-count'
+                    '.cart-badge'
+                    , '[data-cart-count]'
+                    , '.cart-count'
+                    , '#cart-count'
+                    , '.badge-cart'
+                    , '.header-cart-count'
                 ];
-                
+
                 for (const selector of cartBadgeSelectors) {
                     const cartBadge = document.querySelector(selector);
                     if (cartBadge) {
@@ -324,14 +334,14 @@
                     }
                 }
             })
-            .catch(error => {
-                console.error('Error updating cart count:', error);
-            });
+    .catch(error => {
+        console.error('Error updating cart count:', error);
+    });
     }
 
     function showMessage(message, type) {
         console.log('Showing message:', message, type);
-        
+
         // Remove any existing messages first
         const existingMessages = document.querySelectorAll('.toast-message');
         existingMessages.forEach(msg => msg.remove());
@@ -375,18 +385,18 @@
     function animateCartIcon() {
         // Find cart icon and add animation
         const cartIconSelectors = [
-            '.cart-icon',
-            '.fa-shopping-cart',
-            '[href="/cart"]',
-            'a[href*="cart"]'
+            '.cart-icon'
+            , '.fa-shopping-cart'
+            , '[href="/cart"]'
+            , 'a[href*="cart"]'
         ];
-        
+
         let cartIcon = null;
         for (const selector of cartIconSelectors) {
             cartIcon = document.querySelector(selector);
             if (cartIcon) break;
         }
-        
+
         if (cartIcon) {
             cartIcon.classList.add('animate-bounce');
             setTimeout(() => {
@@ -396,3 +406,122 @@
     }
 
 </script>
+
+<script>
+    // Category Tabs Slider Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('categoryTabsContainer');
+        const scrollLeftBtn = document.getElementById('scrollLeft');
+        const scrollRightBtn = document.getElementById('scrollRight');
+
+        if (!container || !scrollLeftBtn || !scrollRightBtn) return;
+
+        // Check if scrolling is needed
+        function checkScrollButtons() {
+            const canScrollLeft = container.scrollLeft > 0;
+            const canScrollRight = container.scrollLeft < (container.scrollWidth - container.clientWidth);
+
+            scrollLeftBtn.classList.toggle('hidden', !canScrollLeft);
+            scrollRightBtn.classList.toggle('hidden', !canScrollRight);
+        }
+
+        // Initial check
+        checkScrollButtons();
+
+        // Scroll event listener
+        container.addEventListener('scroll', checkScrollButtons);
+
+        // Scroll buttons functionality
+        scrollLeftBtn.addEventListener('click', () => {
+            container.scrollBy({
+                left: -200
+                , behavior: 'smooth'
+            });
+        });
+
+        scrollRightBtn.addEventListener('click', () => {
+            container.scrollBy({
+                left: 200
+                , behavior: 'smooth'
+            });
+        });
+
+        // Window resize check
+        window.addEventListener('resize', checkScrollButtons);
+
+        // Initial check after a short delay to ensure proper rendering
+        setTimeout(checkScrollButtons, 100);
+    });
+
+    // Switch category function
+    function switchCategory(categoryId) {
+        // Add loading state to button
+        const clickedButton = document.querySelector(`[data-category="${categoryId}"]`);
+        if (clickedButton) {
+            const originalText = clickedButton.innerHTML;
+            clickedButton.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i>جاري التحميل...';
+            clickedButton.disabled = true;
+
+            // Restore after a moment (the page will navigate anyway)
+            setTimeout(() => {
+                clickedButton.innerHTML = originalText;
+                clickedButton.disabled = false;
+            }, 1000);
+        }
+
+        // Navigate to the category
+        const currentParams = new URLSearchParams(window.location.search);
+
+        // Remove category parameter if "all" is selected
+        if (categoryId === 'all') {
+            currentParams.delete('category');
+        } else {
+            currentParams.set('category', categoryId);
+        }
+
+        // Build new URL
+        const newUrl = window.location.pathname + (currentParams.toString() ? '?' + currentParams.toString() : '');
+
+        // Navigate with smooth transition
+        window.location.href = newUrl;
+    }
+
+    // Add smooth scroll behavior for better UX
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-scroll to active category on page load
+        const activeTab = document.querySelector('.category-tab.bg-blue-500');
+        if (activeTab) {
+            setTimeout(() => {
+                activeTab.scrollIntoView({
+                    behavior: 'smooth'
+                    , block: 'nearest'
+                    , inline: 'center'
+                });
+            }, 300);
+        }
+    });
+
+</script>
+
+<style>
+    /* Hide scrollbar for category tabs */
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Smooth scroll behavior */
+    .category-tabs-container {
+        scroll-behavior: smooth;
+    }
+
+    /* Category tab transitions */
+    .category-tab {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+</style>

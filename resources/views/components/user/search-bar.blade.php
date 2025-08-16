@@ -8,13 +8,10 @@ $searchConfig = [
 'placeholder' => 'بحث في المنيو...',
 'fields' => [
 ['name' => 'search', 'placeholder' => 'اسم المنتج أو الوصف', 'type' => 'text'],
-['name' => 'category', 'placeholder' => 'الفئة', 'type' => 'select', 'options' => 'categories'],
-['name' => 'type', 'placeholder' => 'النوع', 'type' => 'select', 'options' => [
-'coffee' => 'قهوة',
-'tea' => 'شاي',
-'cold_drink' => 'مشروب بارد',
-'dessert' => 'حلوى',
-'pastry' => 'معجنات'
+['name' => 'category', 'placeholder' => 'تصنيف المنتج', 'type' => 'select', 'options' => 'categories'],
+['name' => 'product_type', 'placeholder' => 'نوع المنتج', 'type' => 'select', 'options' => [
+'weekly' => 'منتج أسبوعي',
+'regular' => 'منتج ثابت'
 ]]
 ]
 ],
@@ -135,19 +132,29 @@ $config = $searchConfig[$page] ?? null;
                 </div>
                 @endif
 
-                <!-- Active Filters Display -->
-                @if(request()->hasAny(array_column($config['fields'], 'name')))
+                <!-- Active Filters Display (exclude category on menu tabs) -->
+                @php
+                    $activeFilters = [];
+                    foreach($config['fields'] as $field) {
+                        if($page === 'menu' && ($field['name'] ?? null) === 'category') {
+                            continue; // لا تعرض تبويب الفئة ضمن الفلاتر النشطة
+                        }
+                        if(isset($field['name']) && request()->filled($field['name'])) {
+                            $activeFilters[] = $field;
+                        }
+                    }
+                @endphp
+                @if(count($activeFilters))
                 <div class="flex flex-wrap gap-2">
                     <span class="text-sm text-gray-600">الفلاتر النشطة:</span>
-                    @foreach($config['fields'] as $field)
-                    @if(request($field['name']))
+                    @foreach($activeFilters as $field)
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {{ $field['placeholder'] }}:
-                        @if($field['type'] === 'select' && isset($field['options']) && is_array($field['options']))
+                        {{ $field['placeholder'] ?? $field['name'] }}:
+                        @if(($field['type'] ?? null) === 'select' && isset($field['options']) && is_array($field['options']))
                         {{ $field['options'][request($field['name'])] ?? request($field['name']) }}
                         @elseif(isset($field['options']) && $field['options'] === 'categories')
                         @php
-                        $category = \App\Models\Category::find(request($field['name']));
+                            $category = \App\Models\Category::find(request($field['name']));
                         @endphp
                         {{ $category->name ?? request($field['name']) }}
                         @else
@@ -157,7 +164,6 @@ $config = $searchConfig[$page] ?? null;
                             <i class="fas fa-times"></i>
                         </a>
                     </span>
-                    @endif
                     @endforeach
                 </div>
                 @endif

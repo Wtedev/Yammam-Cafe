@@ -12,6 +12,12 @@
                         <i class="fas fa-shopping-bag mr-1"></i>
                         {{ $activeCount ?? 0 }} طلبات نشطة
                     </span>
+                    @if(request('search') || request('status') || request('date_from') || request('date_to'))
+                    <a href="{{ route('my-orders') }}" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-times mr-1"></i>
+                        مسح الفلاتر
+                    </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -109,7 +115,7 @@
                 @endforeach
             </ul>
             <div class="mt-6 flex justify-center">
-                {{ $orders->links() }}
+                {{ $orders->appends(request()->query())->links() }}
             </div>
         </div>
         @else
@@ -117,8 +123,26 @@
         <div class="bg-white rounded-lg shadow-sm p-8 text-center">
             <div class="max-w-md mx-auto">
                 <i class="fas fa-receipt text-6xl text-gray-300 mb-4"></i>
-                <h2 class="text-xl font-semibold text-gray-700 mb-2">لا توجد طلبات حالياً</h2>
-                <p class="text-gray-500 mb-6">ابدأ بتصفح المنيو وإضافة المنتجات إلى سلة التسوق</p>
+                <h2 class="text-xl font-semibold text-gray-700 mb-2">
+                    @if(request('search') || request('status') || request('date_from') || request('date_to'))
+                    لا توجد طلبات بهذه المعايير
+                    @else
+                    لا توجد طلبات حالياً
+                    @endif
+                </h2>
+                <p class="text-gray-500 mb-6">
+                    @if(request('search') || request('status') || request('date_from') || request('date_to'))
+                    جرب تغيير معايير البحث أو قم بمسح الفلاتر
+                    @else
+                    ابدأ بتصفح المنيو وإضافة المنتجات إلى سلة التسوق
+                    @endif
+                </p>
+                @if(request('search') || request('status') || request('date_from') || request('date_to'))
+                <a href="{{ route('my-orders') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors mr-3">
+                    <i class="fas fa-times ml-2"></i>
+                    مسح الفلاتر
+                </a>
+                @endif
                 <a href="{{ route('menu.index') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                     تصفح المنيو
                     <i class="fas fa-arrow-left mr-2"></i>

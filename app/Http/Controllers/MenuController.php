@@ -13,7 +13,7 @@ class MenuController extends Controller
         $query = Product::where('is_available', true)
             ->where('stock_quantity', '>', 0); // إخفاء المنتجات التي نفد مخزونها
 
-        // البحث يأخذ الأولوية على تصفية القسم
+        // البحث النصي
         if ($request->has('search') && $request->search != '') {
             $searchTerm = '%' . $request->search . '%';
 
@@ -26,8 +26,9 @@ class MenuController extends Controller
                     });
             });
         }
-        // في حالة عدم وجود بحث، قم بتطبيق تصفية القسم
-        else if ($request->has('category') && $request->category != '') {
+
+        // تصفية حسب الفئة (يطبق مع البحث أو بدونه)
+        if ($request->has('category') && $request->category != '') {
             // إذا كان المعرف رقمي، نستعلم بناءً على معرف القسم
             if (is_numeric($request->category)) {
                 $query->where('category_id', $request->category);
@@ -43,9 +44,13 @@ class MenuController extends Controller
             }
         }
 
-        // تصفية حسب النوع - تطبق فقط في حالة عدم وجود بحث
-        if (!$request->has('search') && $request->has('type') && $request->type != '') {
-            $query->where('type', $request->type);
+        // تصفية حسب نوع المنتج (أسبوعي/ثابت) - يطبق مع البحث أو بدونه
+        if ($request->has('product_type') && $request->product_type != '') {
+            if ($request->product_type === 'weekly') {
+                $query->where('type', 'weekly');
+            } elseif ($request->product_type === 'regular') {
+                $query->where('type', '!=', 'weekly');
+            }
         }
 
         // ترتيب

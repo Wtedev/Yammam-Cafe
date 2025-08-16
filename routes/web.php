@@ -17,6 +17,9 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\SuggestionController as AdminSuggestionController;
 use App\Http\Controllers\Api\ProductController as ApiProductController;
 use App\Http\Controllers\Api\OrderController as ApiOrderController;
+use App\Http\Controllers\User\ProfileController as UserProfileController;
+use App\Http\Controllers\User\OrderController as UserOrderController;
+use App\Http\Controllers\User\SuggestionController as UserSuggestionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -69,23 +72,14 @@ Route::get('/dashboard', function () {
 // ==== صفحات المستخدم العادي ====
 Route::middleware(['auth'])->group(function () {
     // صفحة طلباتي
-    Route::get('/my-orders', function () {
-        $user = Auth::user();
-        $orders = $user->orders()->orderByDesc('created_at')->paginate(10);
-        $activeCount = $user->orders()->whereIn('status', ['pending', 'confirmed', 'processed'])->count();
-        return view('user.orders', compact('orders', 'activeCount'));
-    })->name('my-orders');
+    Route::get('/my-orders', [UserOrderController::class, 'index'])->name('my-orders');
 
     // صفحة اقتراحاتي
-    Route::get('/my-suggestions', function () {
-        $user = Auth::user();
-        $suggestions = $user->suggestions()->orderByDesc('created_at')->paginate(10);
-        return view('user.suggestions', compact('suggestions'));
-    })->name('my-suggestions');
+    Route::get('/my-suggestions', [UserSuggestionController::class, 'index'])->name('my-suggestions');
 
     // صفحة البروفايل للمستخدم
-    Route::get('/user/profile', [App\Http\Controllers\User\ProfileController::class, 'show'])->name('user.profile');
-    Route::patch('/user/profile', [App\Http\Controllers\User\ProfileController::class, 'update'])->name('user.profile.update');
+    Route::get('/user/profile', [UserProfileController::class, 'show'])->name('user.profile');
+    Route::patch('/user/profile', [UserProfileController::class, 'update'])->name('user.profile.update');
 });
 
 // ==== لوحة الإدارة ====
