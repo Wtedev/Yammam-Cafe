@@ -82,6 +82,10 @@ Route::middleware(['auth'])->group(function () {
         $suggestions = $user->suggestions()->orderByDesc('created_at')->paginate(10);
         return view('user.suggestions', compact('suggestions'));
     })->name('my-suggestions');
+
+    // صفحة البروفايل للمستخدم
+    Route::get('/user/profile', [App\Http\Controllers\User\ProfileController::class, 'show'])->name('user.profile');
+    Route::patch('/user/profile', [App\Http\Controllers\User\ProfileController::class, 'update'])->name('user.profile.update');
 });
 
 // ==== لوحة الإدارة ====

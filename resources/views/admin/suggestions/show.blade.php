@@ -145,9 +145,7 @@
                         @enderror
                     </div>
                     <div class="md:col-span-2 flex items-end">
-                        <button type="submit"
-                                class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300 flex items-center justify-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                                onclick="this.disabled=true; const ic=this.querySelector('.btn-icon'); if(ic){ ic.classList.remove('fa-save'); ic.classList.add('fa-spinner','fa-spin'); } const lbl=this.querySelector('.btn-label'); if(lbl){ lbl.textContent='جاري التحديث...'; } this.form.submit();">
+                        <button type="submit" class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300 flex items-center justify-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" onclick="this.disabled=true; const ic=this.querySelector('.btn-icon'); if(ic){ ic.classList.remove('fa-save'); ic.classList.add('fa-spinner','fa-spin'); } const lbl=this.querySelector('.btn-label'); if(lbl){ lbl.textContent='جاري التحديث...'; } this.form.submit();">
                             <i class="fas fa-save btn-icon"></i>
                             <span class="btn-label">تحديث حالة الاقتراح</span>
                         </button>

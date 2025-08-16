@@ -26,7 +26,7 @@
         </a>
 
         <!-- Profile -->
-        <a href="{{ route('profile.edit') }}" class="flex-1 flex flex-col items-center justify-center py-2 text-xs transition-colors {{ request()->routeIs('profile.*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-800' }}">
+        <a href="{{ route('user.profile') }}" class="flex-1 flex flex-col items-center justify-center py-2 text-xs transition-colors {{ request()->routeIs('user.profile*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-800' }}">
             <i class="fas fa-user text-lg mb-1"></i>
             <span class="font-medium">ملفي</span>
         </a>

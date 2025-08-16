@@ -13,9 +13,9 @@
                         <span>{{ $suggestion->created_at->format('Y-m-d H:i') }}</span>
                     </p>
                 </div>
-                <a href="{{ route('my-suggestions') }}" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors">
-                    <i class="fas fa-arrow-right ml-2"></i>
-                    رجوع لاقتراحاتي
+                <a href="{{ route('my-suggestions') }}" class="inline-flex items-center px-3 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-arrow-right"></i>
+                    <span class="hidden sm:inline ml-2">رجوع لاقتراحاتي</span>
                 </a>
             </div>
         </div>
@@ -35,15 +35,15 @@
         ];
 
         $steps = [
-            'new' => 'جديد',
-            'reviewing' => 'قيد المراجعة',
-            'approved' => 'موافق عليه',
-            'implemented' => 'تم التنفيذ'
+        'new' => 'جديد',
+        'reviewing' => 'قيد المراجعة',
+        'approved' => 'موافق عليه',
+        'implemented' => 'تم التنفيذ'
         ];
         $keys = array_keys($steps);
         $currentIndex = array_search($suggestion->status, $keys);
-        if ($currentIndex === false) { 
-            $currentIndex = 0; 
+        if ($currentIndex === false) {
+        $currentIndex = 0;
         }
         @endphp
 
@@ -115,110 +115,99 @@
 
                 <!-- Timeline -->
                 @if($suggestion->status === 'rejected')
-                    <!-- Show only current status for rejected suggestions -->
-                    <div class="flex items-center gap-3">
-                        <div class="flex-shrink-0">
-                            <div class="h-8 w-8 rounded-full flex items-center justify-center text-sm font-bold bg-red-500 text-white">
-                                <i class="fas fa-times"></i>
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-red-700">مرفوض</span>
-                                <span class="text-xs text-red-600 font-semibold">الحالة النهائية</span>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">تم رفض الاقتراح من قبل الإدارة</p>
+                <!-- Show only current status for rejected suggestions -->
+                <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0">
+                        <div class="h-8 w-8 rounded-full flex items-center justify-center text-sm font-bold bg-red-500 text-white">
+                            <i class="fas fa-times"></i>
                         </div>
                     </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-red-700">مرفوض</span>
+                            <span class="text-xs text-red-600 font-semibold">الحالة النهائية</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">تم رفض الاقتراح من قبل الإدارة</p>
+                    </div>
+                </div>
                 @else
-                    <!-- Show full timeline for non-rejected suggestions -->
-                    <div class="space-y-3">
-                        @foreach($steps as $key => $label)
-                        @php 
-                            $index = array_search($key, $keys);
-                            $isActive = $index <= $currentIndex;
-                            $isCurrent = $index === $currentIndex;
-                        @endphp
-                        <div class="flex items-center gap-3">
-                            <div class="flex-shrink-0">
-                                <div class="h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold border-2
+                <!-- Show full timeline for non-rejected suggestions -->
+                <div class="space-y-3">
+                    @foreach($steps as $key => $label)
+                    @php
+                    $index = array_search($key, $keys);
+                    $isActive = $index <= $currentIndex; $isCurrent=$index===$currentIndex; @endphp <div class="flex items-center gap-3">
+                        <div class="flex-shrink-0">
+                            <div class="h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold border-2
                                         {{ $isActive ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-gray-300 text-gray-400' }}
                                         {{ $isCurrent ? 'ring-2 ring-blue-200' : '' }}">
-                                    @if($isActive)
-                                        @if($index < $currentIndex)
-                                            <i class="fas fa-check text-[10px]"></i>
-                                        @else
-                                            {{ $index + 1 }}
-                                        @endif
+                                @if($isActive)
+                                @if($index < $currentIndex) <i class="fas fa-check text-[10px]"></i>
                                     @else
-                                        {{ $index + 1 }}
+                                    {{ $index + 1 }}
                                     @endif
-                                </div>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-medium {{ $isActive ? 'text-blue-700' : 'text-gray-400' }}">{{ $label }}</span>
-                                    @if($isCurrent)
-                                        <span class="text-xs text-blue-600 font-semibold">الحالة الحالية</span>
-                                    @elseif($isActive && $index < $currentIndex)
-                                        <span class="text-xs text-green-600">مكتمل</span>
+                                    @else
+                                    {{ $index + 1 }}
                                     @endif
-                                </div>
-                                @if(!$loop->last)
-                                    <div class="h-4 flex items-center mt-1">
-                                        <div class="w-px h-full {{ $index < $currentIndex ? 'bg-blue-600' : 'bg-gray-200' }}"></div>
-                                    </div>
-                                @endif
                             </div>
                         </div>
-                        @endforeach
-                    </div>
-                @endif
-
-                <!-- Last Update Info -->
-                @if($suggestion->updated_at)
-                <div class="mt-4 pt-3 border-t border-gray-100">
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="fas fa-clock"></i>
-                        <span>آخر تحديث: {{ $suggestion->updated_at->diffForHumans() }}</span>
-                    </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-medium {{ $isActive ? 'text-blue-700' : 'text-gray-400' }}">{{ $label }}</span>
+                                @if($isCurrent)
+                                <span class="text-xs text-blue-600 font-semibold">الحالة الحالية</span>
+                                @elseif($isActive && $index < $currentIndex) <span class="text-xs text-green-600">مكتمل</span>
+                                    @endif
+                            </div>
+                            @if(!$loop->last)
+                            <div class="h-4 flex items-center mt-1">
+                                <div class="w-px h-full {{ $index < $currentIndex ? 'bg-blue-600' : 'bg-gray-200' }}"></div>
+                            </div>
+                            @endif
+                        </div>
                 </div>
-                @endif
+                @endforeach
             </div>
+            @endif
+
+            <!-- Last Update Info -->
+            @if($suggestion->updated_at)
+            <div class="mt-4 pt-3 border-t border-gray-100">
+                <div class="flex items-center gap-2 text-xs text-gray-500">
+                    <i class="fas fa-clock"></i>
+                    <span>آخر تحديث: {{ $suggestion->updated_at->diffForHumans() }}</span>
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+        <!-- Suggestion Text -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-blue-50 p-6">
+            <h2 class="text-lg font-bold text-gray-900 mb-3">نص الاقتراح</h2>
+            <div class="text-gray-800 leading-relaxed whitespace-pre-line">{{ $suggestion->suggestion }}</div>
         </div>
 
-        <!-- Content -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-            <!-- Suggestion Text -->
-            <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-blue-50 p-6">
-                <h2 class="text-lg font-bold text-gray-900 mb-3">نص الاقتراح</h2>
-                <div class="text-gray-800 leading-relaxed whitespace-pre-line">{{ $suggestion->suggestion }}</div>
-            </div>
-
-            <!-- Admin Response -->
-            <div class="bg-white rounded-2xl shadow-sm border border-blue-50 p-6">
-                <h2 class="text-lg font-bold text-gray-900 mb-3">رد الإدارة</h2>
-                @if($suggestion->admin_response)
-                <div class="space-y-2 text-sm text-gray-700">
-                    <div class="text-gray-800 whitespace-pre-line">{{ $suggestion->admin_response }}</div>
-                    @if($suggestion->responded_at)
-                    <div class="flex items-center gap-2 text-gray-500 text-xs">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>بتاريخ: {{ $suggestion->responded_at->format('Y-m-d H:i') }}</span>
-                    </div>
-                    @endif
-                </div>
-                @else
-                <div class="text-sm text-gray-500">
-                    لم يتم إضافة رد حتى الآن. سنقوم بإخطارك عند وجود رد.
+        <!-- Admin Response -->
+        <div class="bg-white rounded-2xl shadow-sm border border-blue-50 p-6">
+            <h2 class="text-lg font-bold text-gray-900 mb-3">رد الإدارة</h2>
+            @if($suggestion->admin_response)
+            <div class="space-y-2 text-sm text-gray-700">
+                <div class="text-gray-800 whitespace-pre-line">{{ $suggestion->admin_response }}</div>
+                @if($suggestion->responded_at)
+                <div class="flex items-center gap-2 text-gray-500 text-xs">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>بتاريخ: {{ $suggestion->responded_at->format('Y-m-d H:i') }}</span>
                 </div>
                 @endif
             </div>
-        </div>
-
-        <!-- Footer actions -->
-        <div class="flex items-center justify-end gap-3">
-            <a href="{{ route('my-suggestions') }}" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 text-sm">رجوع</a>
+            @else
+            <div class="text-sm text-gray-500">
+                لم يتم إضافة رد حتى الآن. سنقوم بإخطارك عند وجود رد.
+            </div>
+            @endif
         </div>
     </div>
 </x-user-layout>

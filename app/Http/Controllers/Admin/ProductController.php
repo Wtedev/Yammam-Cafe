@@ -157,7 +157,7 @@ class ProductController extends Controller
                 try {
                     $path = $file->store('products', 'public');
                     if ($path && Storage::disk('public')->exists($path)) {
-                        $data['image'] = basename($path);
+                        $data['image'] = $path;
                         Log::info('Product image stored (create)', [
                             'path' => $path,
                             'original' => $file->getClientOriginalName(),
@@ -298,11 +298,11 @@ class ProductController extends Controller
             } else {
                 try {
                     if ($product->image) {
-                        Storage::disk('public')->delete('products/' . $product->image);
+                        Storage::disk('public')->delete($product->image);
                     }
                     $path = $file->store('products', 'public');
                     if ($path && Storage::disk('public')->exists($path)) {
-                        $data['image'] = basename($path);
+                        $data['image'] = $path;
                         Log::info('Product image stored (update)', [
                             'path' => $path,
                             'product_id' => $product->id,
@@ -322,7 +322,7 @@ class ProductController extends Controller
 
         // منطق حذف الصورة بدون رفع جديدة
         if ($request->boolean('remove_image') && !$request->hasFile('image') && $product->image) {
-            Storage::disk('public')->delete('products/' . $product->image);
+            Storage::disk('public')->delete($product->image);
             $data['image'] = null; // تفريغ الحقل
         }
 
@@ -338,7 +338,7 @@ class ProductController extends Controller
     {
         // حذف الصورة
         if ($product->image) {
-            Storage::delete('public/products/' . $product->image);
+            Storage::disk('public')->delete($product->image);
         }
 
         $product->delete();

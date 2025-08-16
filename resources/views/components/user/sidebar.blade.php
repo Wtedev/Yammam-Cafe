@@ -39,7 +39,7 @@
         </a>
 
         <!-- Profile -->
-        <a href="{{ route('profile.edit') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 {{ request()->routeIs('profile.*') ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
+        <a href="{{ route('user.profile') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 {{ request()->routeIs('user.profile*') ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
             <i class="fas fa-user text-lg w-5"></i>
             <span class="font-medium">ملفي الشخصي</span>
         </a>

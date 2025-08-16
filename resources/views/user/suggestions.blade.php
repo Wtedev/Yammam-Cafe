@@ -7,9 +7,9 @@
                     <h1 class="text-2xl font-bold text-gray-900">اقتراحاتي</h1>
                     <p class="text-gray-600 mt-1">شاركنا آرائك واقتراحاتك لتحسين الخدمة</p>
                 </div>
-                <a href="{{ route('suggestions.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <i class="fas fa-plus ml-2"></i>
-                    إضافة اقتراح جديد
+                <a href="{{ route('suggestions.create') }}" class="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-plus"></i>
+                    <span class="hidden sm:inline ml-2">أرسل اقتراح</span>
                 </a>
             </div>
         </div>
@@ -124,7 +124,7 @@
                 <p class="text-gray-500 mb-6">ساعدنا في تطوير خدماتنا من خلال مشاركة اقتراحاتك وآرائك</p>
                 <a href="{{ route('suggestions.create') }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                     <i class="fas fa-comment-alt ml-2"></i>
-                    إضافة اقتراح
+                    أرسل اقتراح
                 </a>
             </div>
         </div>

@@ -10,9 +10,9 @@
                     </h1>
                     <p class="text-gray-600 mt-1">يسعدنا سماع اقتراحاتك أو ملاحظاتك لتحسين تجربتك</p>
                 </div>
-                <a href="{{ route('my-suggestions') }}" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors">
-                    <i class="fas fa-arrow-right ml-2"></i>
-                    رجوع لاقتراحاتي
+                <a href="{{ route('my-suggestions') }}" class="inline-flex items-center px-3 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-arrow-right"></i>
+                    <span class="hidden sm:inline ml-2">رجوع لاقتراحاتي</span>
                 </a>
             </div>
         </div>

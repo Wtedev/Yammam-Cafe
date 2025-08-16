@@ -29,7 +29,7 @@
                         <h3 class="text-base font-bold text-blue-900 mb-3">صورة المنتج</h3>
                         <div id="imagePreviewContainer" class="relative w-full">
                             @if($product->image)
-                            <img id="imagePreview" data-original-src="{{ Storage::url('products/' . $product->image) }}" src="{{ Storage::url('products/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-56 object-cover rounded-xl shadow-sm border border-blue-50 mb-2 transition-opacity duration-200">
+                            <img id="imagePreview" data-original-src="{{ Storage::url($product->image) }}" src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-56 object-cover rounded-xl shadow-sm border border-blue-50 mb-2 transition-opacity duration-200">
                             @else
                             <div id="noImagePlaceholder" class="w-full h-56 bg-gray-100 rounded-xl flex items-center justify-center mb-2">
                                 <i class="fas fa-image text-4xl text-gray-400"></i>

@@ -85,114 +85,109 @@
 
                 @php
                 $steps = [
-                    ['key' => 'pending', 'label' => 'جديد', 'icon' => 'fa-clock'],
-                    ['key' => 'confirmed', 'label' => 'مؤكد', 'icon' => 'fa-circle-check'],
-                    ['key' => 'processed', 'label' => 'قيد التحضير', 'icon' => 'fa-mug-hot'],
-                    ['key' => 'delivered', 'label' => 'تم التسليم', 'icon' => 'fa-check-circle'],
+                ['key' => 'pending', 'label' => 'جديد', 'icon' => 'fa-clock'],
+                ['key' => 'confirmed', 'label' => 'مؤكد', 'icon' => 'fa-circle-check'],
+                ['key' => 'processed', 'label' => 'قيد التحضير', 'icon' => 'fa-mug-hot'],
+                ['key' => 'delivered', 'label' => 'تم التسليم', 'icon' => 'fa-check-circle'],
                 ];
                 $currentIndex = collect($steps)->search(fn($s) => $s['key'] === $order->status);
                 @endphp
 
                 <!-- Timeline -->
                 @if($order->status === 'cancelled')
-                    <!-- Show only current status for cancelled orders -->
-                    <div class="flex items-center gap-3">
-                        <div class="flex-shrink-0">
-                            <div class="h-8 w-8 rounded-full flex items-center justify-center text-sm font-bold bg-red-500 text-white">
-                                <i class="fas fa-times"></i>
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-red-700">ملغي</span>
-                                <span class="text-xs text-red-600 font-semibold">الحالة النهائية</span>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">تم إلغاء الطلب</p>
+                <!-- Show only current status for cancelled orders -->
+                <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0">
+                        <div class="h-8 w-8 rounded-full flex items-center justify-center text-sm font-bold bg-red-500 text-white">
+                            <i class="fas fa-times"></i>
                         </div>
                     </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-red-700">ملغي</span>
+                            <span class="text-xs text-red-600 font-semibold">الحالة النهائية</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">تم إلغاء الطلب</p>
+                    </div>
+                </div>
                 @else
-                    <!-- Show full timeline for non-cancelled orders -->
-                    <div class="space-y-3">
-                        @foreach($steps as $index => $step)
-                        @php 
-                            $isActive = $currentIndex !== false && $index <= $currentIndex;
-                            $isCurrent = $currentIndex !== false && $index === $currentIndex;
-                        @endphp
-                        <div class="flex items-center gap-3">
-                            <div class="flex-shrink-0">
-                                <div class="h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold border-2
+                <!-- Show full timeline for non-cancelled orders -->
+                <div class="space-y-3">
+                    @foreach($steps as $index => $step)
+                    @php
+                    $isActive = $currentIndex !== false && $index <= $currentIndex; $isCurrent=$currentIndex !==false && $index===$currentIndex; @endphp <div class="flex items-center gap-3">
+                        <div class="flex-shrink-0">
+                            <div class="h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold border-2
                                         {{ $isActive ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-gray-300 text-gray-400' }}
                                         {{ $isCurrent ? 'ring-2 ring-blue-200' : '' }}">
-                                    @if($isActive)
-                                        @if($index < $currentIndex)
-                                            <i class="fas fa-check text-[10px]"></i>
-                                        @else
-                                            <i class="fas {{ $step['icon'] }} text-[10px]"></i>
-                                        @endif
+                                @if($isActive)
+                                @if($index < $currentIndex) <i class="fas fa-check text-[10px]"></i>
                                     @else
-                                        <i class="fas {{ $step['icon'] }} text-[10px]"></i>
+                                    <i class="fas {{ $step['icon'] }} text-[10px]"></i>
                                     @endif
-                                </div>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-medium {{ $isActive ? 'text-blue-700' : 'text-gray-400' }}">{{ $step['label'] }}</span>
-                                    @if($isCurrent)
-                                        <span class="text-xs text-blue-600 font-semibold">الحالة الحالية</span>
-                                    @elseif($isActive && $index < $currentIndex)
-                                        <span class="text-xs text-green-600">مكتمل</span>
+                                    @else
+                                    <i class="fas {{ $step['icon'] }} text-[10px]"></i>
                                     @endif
-                                </div>
-                                @if(!$loop->last)
-                                    <div class="h-4 flex items-center mt-1">
-                                        <div class="w-px h-full {{ $index < $currentIndex ? 'bg-blue-600' : 'bg-gray-200' }}"></div>
-                                    </div>
-                                @endif
                             </div>
                         </div>
-                        @endforeach
-                    </div>
-                @endif
-
-                <!-- Last Update Info -->
-                @if($order->updated_at)
-                <div class="mt-4 pt-3 border-t border-gray-100">
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <i class="fas fa-clock"></i>
-                        <span>آخر تحديث: {{ $order->updated_at->diffForHumans() }}</span>
-                    </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-medium {{ $isActive ? 'text-blue-700' : 'text-gray-400' }}">{{ $step['label'] }}</span>
+                                @if($isCurrent)
+                                <span class="text-xs text-blue-600 font-semibold">الحالة الحالية</span>
+                                @elseif($isActive && $index < $currentIndex) <span class="text-xs text-green-600">مكتمل</span>
+                                    @endif
+                            </div>
+                            @if(!$loop->last)
+                            <div class="h-4 flex items-center mt-1">
+                                <div class="w-px h-full {{ $index < $currentIndex ? 'bg-blue-600' : 'bg-gray-200' }}"></div>
+                            </div>
+                            @endif
+                        </div>
                 </div>
-                @endif
-            </div>
-        </div>
-
-            
-            @if(!empty($meta['notes']))
-            <div class="mt-2 bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-start gap-3">
-                <i class="fas fa-comment-dots text-gray-400 mt-1"></i>
-                <div>
-                    <p class="text-xs font-bold text-gray-700 mb-1">ملاحظات العميل</p>
-                    <p class="text-sm text-gray-600 leading-relaxed">{{ $meta['notes'] }}</p>
-                </div>
+                @endforeach
             </div>
             @endif
 
-            @if($order->payment_method === 'bank_transfer' && $order->payment_image_url)
-            <div class="mt-2">
-                <h3 class="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
-                    <i class="fas fa-image text-blue-500"></i>
-                    إيصال التحويل البنكي
-                </h3>
-                <div class="relative group w-64 h-64 rounded-xl overflow-hidden border border-gray-200 bg-gray-100 flex items-center justify-center">
-                    <img src="{{ asset('storage/'.$order->payment_image_url) }}" alt="إيصال الدفع" class="w-full h-full object-cover group-hover:scale-105 transition" />
-                    <a href="{{ asset('storage/'.$order->payment_image_url) }}" target="_blank" class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition text-white text-xs font-medium">
-                        فتح بالحجم الكامل
-                    </a>
+            <!-- Last Update Info -->
+            @if($order->updated_at)
+            <div class="mt-4 pt-3 border-t border-gray-100">
+                <div class="flex items-center gap-2 text-xs text-gray-500">
+                    <i class="fas fa-clock"></i>
+                    <span>آخر تحديث: {{ $order->updated_at->diffForHumans() }}</span>
                 </div>
             </div>
             @endif
         </div>
-    
+    </div>
+
+
+    @if(!empty($meta['notes']))
+    <div class="mt-2 bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-start gap-3">
+        <i class="fas fa-comment-dots text-gray-400 mt-1"></i>
+        <div>
+            <p class="text-xs font-bold text-gray-700 mb-1">ملاحظات العميل</p>
+            <p class="text-sm text-gray-600 leading-relaxed">{{ $meta['notes'] }}</p>
+        </div>
+    </div>
+    @endif
+
+    @if($order->payment_method === 'bank_transfer' && $order->payment_image_url)
+    <div class="mt-2">
+        <h3 class="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
+            <i class="fas fa-image text-blue-500"></i>
+            إيصال التحويل البنكي
+        </h3>
+        <div class="relative group w-64 h-64 rounded-xl overflow-hidden border border-gray-200 bg-gray-100 flex items-center justify-center">
+            <img src="{{ asset('storage/'.$order->payment_image_url) }}" alt="إيصال الدفع" class="w-full h-full object-cover group-hover:scale-105 transition" />
+            <a href="{{ asset('storage/'.$order->payment_image_url) }}" target="_blank" class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition text-white text-xs font-medium">
+                فتح بالحجم الكامل
+            </a>
+        </div>
+    </div>
+    @endif
+    </div>
+
 
     <!-- عناصر الطلب بعرض كامل أسفل الشبكة -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mt-6">

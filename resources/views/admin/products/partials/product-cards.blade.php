@@ -4,7 +4,7 @@
         <div class="relative w-full bg-blue-50/40 aspect-square flex-shrink-0">
             <div class="absolute inset-0 flex items-center justify-center">
                 @if($product->image)
-                <img src="{{ Storage::url('products/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover object-center">
+                <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover object-center">
                 @else
                 <div class="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
                     <i class="fas fa-image text-6xl"></i>

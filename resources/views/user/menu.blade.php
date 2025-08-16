@@ -25,24 +25,14 @@
                         @endif
                     </p>
                 </div>
-                <div class="flex items-center space-x-4 space-x-reverse">
-                    <span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">
-                        <i class="fas fa-coffee mr-1"></i>
-                        {{ $products->count() }} متاح
-                    </span>
-                    @if(request('category') || request('search'))
+                @if(request('category') || request('search'))
+                <div class="flex items-center">
                     <a href="{{ route('menu.index') }}" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors">
                         <i class="fas fa-times mr-1"></i>
                         مسح الفلاتر
                     </a>
-                    @endif
-                    <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                        <i class="fas fa-filter"></i>
-                    </button>
-                    <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                        <i class="fas fa-sort"></i>
-                    </button>
                 </div>
+                @endif
             </div>
         </div>
 
@@ -75,15 +65,13 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden relative group transition hover:shadow-md h-[500px] max-h-[500px]">
                 <!-- Product Image -->
                 <div class="relative w-full bg-blue-50/40 aspect-square flex-shrink-0">
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        @if($product->image)
-                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover object-center">
-                        @else
-                        <div class="w-full h-full flex items-center justify-center text-gray-300 bg-gradient-to-br from-blue-400 to-blue-600">
-                            <i class="fas fa-{{ $product->getIconClass() }} text-white text-6xl"></i>
-                        </div>
-                        @endif
+                    @if($product->image)
+                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover object-center">
+                    @else
+                    <div class="w-full h-full flex items-center justify-center text-gray-300 bg-gradient-to-br from-blue-400 to-blue-600">
+                        <i class="fas fa-{{ $product->getIconClass() }} text-white text-6xl"></i>
                     </div>
+                    @endif
 
                     <!-- Tags Container (Top Left) -->
                     <div class="absolute top-3 left-3 flex flex-col gap-2 z-10">
@@ -139,23 +127,18 @@
 
                     <!-- Action Buttons -->
                     <div class="mt-auto flex items-center gap-2 pt-3 flex-shrink-0 border-t border-gray-100">
-                        <div class="flex w-full gap-2 pt-2">
+                        <div class="flex w-full pt-2">
                             @auth
-                            <button onclick="addToCart({{ $product->id }}, event)" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded-xl font-bold text-xs transition shadow-sm flex items-center justify-center">
+                            <button onclick="addToCart({{ $product->id }}, event)" class="w-full bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded-xl font-bold text-xs transition shadow-sm flex items-center justify-center">
                                 <i class="fas fa-cart-plus ml-1"></i>
                                 إضافة للسلة
                             </button>
                             @else
-                            <a href="{{ route('login') }}" class="flex-1 bg-gray-400 hover:bg-gray-500 text-white text-center py-2 rounded-xl font-bold text-xs transition shadow-sm flex items-center justify-center">
+                            <a href="{{ route('login') }}" class="w-full bg-gray-400 hover:bg-gray-500 text-white text-center py-2 rounded-xl font-bold text-xs transition shadow-sm flex items-center justify-center">
                                 <i class="fas fa-sign-in-alt ml-1"></i>
                                 تسجيل دخول
                             </a>
                             @endauth
-
-                            <a href="{{ route('menu.show', $product) }}" class="flex items-center justify-center gap-1 w-auto px-4 h-9 bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-600 rounded-xl text-xs font-bold border border-gray-200 transition focus:outline-none">
-                                <i class="fas fa-eye text-base"></i>
-                                <span class="hidden sm:inline">عرض</span>
-                            </a>
                         </div>
                     </div>
                 </div>
