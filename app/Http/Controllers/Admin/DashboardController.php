@@ -14,46 +14,47 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // إحصائيات هذا الأسبوع
-        $weekStart = now()->startOfWeek();
+        // حدود الأسبوع الحالي (لبعض المؤشرات فقط)
+        $weekStart = now()->startOfWeek(); // افتراضي: الإثنين. غيّره لإعدادات محلية إن لزم
         $weekEnd = now()->endOfWeek();
 
+        // بداية آخر يوم أحد (حسب الطلب)
+        $lastSunday = now()->startOfWeek()->subDay(); // الأحد قبل الإثنين الافتراضي
+        // إن أردت جعل الأحد هو بداية الأسبوع دائماً:
+        // $lastSunday = now()->setISODate((int)now()->format('o'), (int)now()->format('W'), 7)->startOfDay();
+
         $weeklyStats = [
+            // طلبات هذا الأسبوع (أي حالة)
             'orders' => Order::whereBetween('created_at', [$weekStart, $weekEnd])->count(),
-            'revenue' => Order::whereBetween('created_at', [$weekStart, $weekEnd])
+            // المبيعات منذ آخر أحد: نجمع كل الحالات غير الملغية
+            'revenue' => Order::where('created_at', '>=', $lastSunday)
                 ->where('status', '!=', 'cancelled')
                 ->sum('total_price'),
-            'products' => Product::count(),
+            // عدد المنتجات المتاحة
+            'products' => Product::where('is_available', true)->count(),
+            // اقتراحات هذا الأسبوع
             'suggestions' => Suggestion::whereBetween('created_at', [$weekStart, $weekEnd])->count(),
+            // الطلبات الجديدة: جميع غير المقروءة غير مقيّدة بالأسبوع
             'new_orders' => Order::new()->count(),
+            // الاقتراحات الجديدة: جميع غير المقروءة غير مقيّدة بالأسبوع
             'new_suggestions' => Suggestion::unviewed()->count(),
         ];
 
-        // أحدث 5 طلبات
-        $recentOrders = Order::with('user')
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-
-        // أحدث 3 طلبات جديدة
+        // جميع الطلبات غير المقروءة (كل الوقت)
         $newOrders = Order::new()
             ->with('user')
             ->orderBy('created_at', 'desc')
-            ->take(3)
             ->get();
 
-        // أحدث 5 اقتراحات
-        $recentSuggestions = Suggestion::with('user')
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-
-        // أحدث 3 اقتراحات جديدة
+        // جميع الاقتراحات غير المقروءة (كل الوقت)
         $newSuggestions = Suggestion::unviewed()
             ->with('user')
             ->orderBy('created_at', 'desc')
-            ->take(3)
             ->get();
+
+        // لم تعد أقسام "أحدث الطلبات/الاقتراحات" مستخدمة في الواجهة
+        $recentOrders = collect();
+        $recentSuggestions = collect();
 
         return view('admin.dashboard', compact(
             'weeklyStats',
