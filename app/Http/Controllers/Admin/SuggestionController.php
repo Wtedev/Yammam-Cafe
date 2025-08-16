@@ -94,10 +94,10 @@ class SuggestionController extends Controller
     public function markAsRead(Suggestion $suggestion)
     {
         if ($suggestion->status === 'new') {
-            $suggestion->update(['status' => 'reviewed']);
+            $suggestion->update(['status' => 'reviewing']);
         }
 
-        return back()->with('success', 'تم وضع علامة مقروء');
+        return back()->with('success', 'تم وضع علامة قيد المراجعة');
     }
 
     public function bulkAction(Request $request)
@@ -111,13 +111,13 @@ class SuggestionController extends Controller
 
         switch ($request->action) {
             case 'mark_reviewed':
-                $suggestions->update(['status' => 'reviewed']);
-                $message = 'تم وضع علامة مقروء على الاقتراحات المحددة';
+                $suggestions->update(['status' => 'reviewing']);
+                $message = 'تم وضع علامة قيد المراجعة على الاقتراحات المحددة';
                 break;
 
             case 'mark_responded':
-                $suggestions->update(['status' => 'responded', 'responded_at' => now()]);
-                $message = 'تم وضع علامة مجاب على الاقتراحات المحددة';
+                $suggestions->update(['status' => 'approved', 'responded_at' => now()]);
+                $message = 'تم وضع علامة موافق عليه على الاقتراحات المحددة';
                 break;
 
             case 'delete':

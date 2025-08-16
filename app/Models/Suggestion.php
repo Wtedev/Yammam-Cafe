@@ -76,9 +76,10 @@ class Suggestion extends Model
     {
         $statusTexts = [
             'new' => 'جديد',
-            'reviewed' => 'مراجع',
-            'responded' => 'مجاب عليه',
-            'closed' => 'مغلق'
+            'reviewing' => 'قيد المراجعة',
+            'approved' => 'موافق عليه',
+            'rejected' => 'مرفوض',
+            'implemented' => 'تم التنفيذ'
         ];
 
         return $statusTexts[$this->status] ?? 'غير معروف';

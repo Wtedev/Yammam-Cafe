@@ -91,54 +91,67 @@
                 <p class="text-gray-800 leading-relaxed">{{ $suggestion->suggestion }}</p>
             </div>
 
-            <!-- حالة الاقتراح -->
-            <div class="mt-4 flex items-center gap-2">
-                <span class="font-medium text-gray-700">الحالة الحالية:</span>
-                <span class="px-3 py-1 rounded-full text-sm font-semibold {{
-                    match($suggestion->status) {
-                        'new' => 'bg-yellow-100 text-yellow-800',
-                        'reviewing' => 'bg-blue-100 text-blue-800',
-                        'approved' => 'bg-green-100 text-green-800',
-                        'rejected' => 'bg-red-100 text-red-800',
-                        'implemented' => 'bg-purple-100 text-purple-800',
-                        default => 'bg-gray-200 text-gray-700',
-                    }
-                }}">{{
-                    match($suggestion->status) {
-                        'new' => 'جديد',
-                        'reviewing' => 'قيد المراجعة',
-                        'approved' => 'موافق عليه',
-                        'rejected' => 'مرفوض',
-                        'implemented' => 'تم التنفيذ',
-                        default => $suggestion->status,
-                    }
-                }}</span>
+            <!-- كارد حالة الاقتراح (مطابق لأسلوب الطلب) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 mt-4">
+                <div class="rounded-2xl bg-white/90 shadow-sm border border-purple-50 flex flex-col gap-2 p-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-purple-700">الحالة الحالية:</span>
+                        <span class="px-3 py-1 rounded-full text-sm font-semibold {{
+                            match($suggestion->status) {
+                                'new' => 'bg-yellow-100 text-yellow-800',
+                                'reviewing' => 'bg-blue-100 text-blue-800',
+                                'approved' => 'bg-green-100 text-green-800',
+                                'rejected' => 'bg-red-100 text-red-800',
+                                'implemented' => 'bg-purple-100 text-purple-800',
+                                default => 'bg-gray-200 text-gray-700',
+                            }
+                        }}">{{
+                            match($suggestion->status) {
+                                'new' => 'جديد',
+                                'reviewing' => 'قيد المراجعة',
+                                'approved' => 'موافق عليه',
+                                'rejected' => 'مرفوض',
+                                'implemented' => 'تم التنفيذ',
+                                default => $suggestion->status,
+                            }
+                        }}</span>
+                    </div>
+                </div>
+                <div class="rounded-2xl bg-white/90 shadow-sm border border-purple-50 flex flex-col gap-2 p-4">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-clock text-purple-400"></i>
+                        <span class="text-xs font-bold text-purple-700">آخر تحديث:</span>
+                        <span class="text-xs text-gray-700">{{ $suggestion->updated_at->diffForHumans() }}</span>
+                    </div>
+                </div>
             </div>
 
             <!-- نموذج تحديث الحالة -->
-            <form action="{{ route('admin.suggestions.update-status', $suggestion) }}" method="POST" class="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <form action="{{ route('admin.suggestions.update-status', $suggestion) }}" method="POST" class="flex flex-col gap-4 bg-gray-50 border border-gray-200 rounded-lg p-4">
                 @csrf
                 @method('PATCH')
-
-                <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">تحديث حالة الاقتراح:</label>
-                        <select name="status" id="status" class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500" required>
+                        <label for="status" class="block text-sm font-medium text-purple-700 mb-2">الحالة الجديدة</label>
+                        <select name="status" id="status" class="block w-full rounded-lg border-purple-200 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50 text-sm" required>
                             <option value="new" {{ $suggestion->status === 'new' ? 'selected' : '' }}>جديد</option>
                             <option value="reviewing" {{ $suggestion->status === 'reviewing' ? 'selected' : '' }}>قيد المراجعة</option>
                             <option value="approved" {{ $suggestion->status === 'approved' ? 'selected' : '' }}>موافق عليه</option>
                             <option value="rejected" {{ $suggestion->status === 'rejected' ? 'selected' : '' }}>مرفوض</option>
                             <option value="implemented" {{ $suggestion->status === 'implemented' ? 'selected' : '' }}>تم التنفيذ</option>
                         </select>
+                        @error('status')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
-                </div>
-
-                <!-- زر حفظ التعديلات -->
-                <div class="mt-6 text-center">
-                    <button type="submit" class="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-sm transition-all duration-200 transform hover:scale-105">
-                        <i class="fas fa-save"></i>
-                        حفظ التعديلات
-                    </button>
+                    <div class="md:col-span-2 flex items-end">
+                        <button type="submit"
+                                class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300 flex items-center justify-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                                onclick="this.disabled=true; const ic=this.querySelector('.btn-icon'); if(ic){ ic.classList.remove('fa-save'); ic.classList.add('fa-spinner','fa-spin'); } const lbl=this.querySelector('.btn-label'); if(lbl){ lbl.textContent='جاري التحديث...'; } this.form.submit();">
+                            <i class="fas fa-save btn-icon"></i>
+                            <span class="btn-label">تحديث حالة الاقتراح</span>
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
