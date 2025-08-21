@@ -156,32 +156,59 @@
                                     <p class="font-bold text-gray-900 text-lg">{{ $bankInfo['iban'] }}</p>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Receipt Upload -->
+                        <!-- Receipt Upload Section - Only for Bank Transfer -->
+                        <div x-show="paymentMethod === 'bank_transfer'" x-transition class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+                            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class="fas fa-camera text-blue-500"></i>
+                                إرفاق إيصال التحويل
+                            </h2>
+
                             <div>
-                                <label for="receipt_image" class="block text-sm font-bold text-blue-900 mb-2">
-                                    <i class="fas fa-camera ml-1"></i>
-                                    إرفاق صورة الإيصال <span class="text-red-600" x-show="paymentMethod==='bank_transfer'">(إلزامي)</span>
+                                <label for="receipt_image" class="block text-sm font-bold text-gray-700 mb-2">
+                                    <i class="fas fa-upload ml-1"></i>
+                                    صورة الإيصال <span class="text-red-600">(إلزامي)</span>
                                 </label>
                                 <div x-data="{ 
                                         fileName: '', 
                                         fileSize: '',
                                         handleFileChange(event) {
                                             const file = event.target.files[0];
-                                            if (file) { this.fileName = file.name; this.fileSize = (file.size / 1024 / 1024).toFixed(2) + ' MB'; }
-                                            else { this.fileName=''; this.fileSize=''; }
+                                            if (file) { 
+                                                this.fileName = file.name; 
+                                                this.fileSize = (file.size / 1024 / 1024).toFixed(2) + ' ميجابايت'; 
+                                            }
+                                            else { 
+                                                this.fileName=''; 
+                                                this.fileSize=''; 
+                                            }
                                         }
-                                    }" class="space-y-2">
-                                    <input type="file" id="receipt_image" name="receipt_image" accept="image/*" @change="handleFileChange($event)" :required="paymentMethod==='bank_transfer'" class="w-full px-4 py-3 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-white">
-                                    <div x-show="fileName" class="text-xs text-blue-700 bg-blue-50 p-2 rounded-lg">
-                                        <i class="fas fa-file-image ml-1"></i>
-                                        <span x-text="fileName"></span>
-                                        <span class="text-blue-500">(<span x-text="fileSize"></span>)</span>
+                                    }" class="space-y-3">
+
+                                    <input type="file" id="receipt_image" name="receipt_image" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp,image/heic,image/heif" @change="handleFileChange($event)" :required="paymentMethod==='bank_transfer'" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+
+                                    <div x-show="fileName" class="text-sm text-gray-700 bg-green-50 border border-green-200 p-3 rounded-lg flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-green-600"></i>
+                                        <div>
+                                            <div class="font-medium" x-text="fileName"></div>
+                                            <div class="text-xs text-gray-500" x-text="'الحجم: ' + fileSize"></div>
+                                        </div>
                                     </div>
                                 </div>
-                                <p class="text-xs text-blue-600 mt-2">يُفضل إرفاق صورة واضحة للإيصال</p>
+
+                                <div class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <p class="text-xs text-blue-700 flex items-center gap-2">
+                                        <i class="fas fa-info-circle"></i>
+                                        الرجاء إرفاق صورة واضحة لإيصال التحويل البنكي لتسريع عملية المراجعة (الأنواع المسموحة: JPG, JPEG, PNG, GIF, WEBP, HEIC/HEIF)
+                                    </p>
+                                </div>
+
                                 @error('receipt_image')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-sm mt-2 flex items-center gap-1">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    {{ $message }}
+                                </p>
                                 @enderror
                             </div>
                         </div>
@@ -299,6 +326,7 @@
     <script>
         function checkoutData() {
             return {
+                // Initialize from old input (defaults to 'cash')
                 paymentMethod: '{{ old('
                 payment_method ', '
                 cash ') }}'

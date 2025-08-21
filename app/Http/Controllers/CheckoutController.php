@@ -50,12 +50,15 @@ class CheckoutController extends Controller
                 'notes' => 'nullable|string|max:500'
             ];
             if ($request->payment_method === 'bank_transfer') {
-                $baseRules['receipt_image'] = 'required|image|mimes:jpeg,png,jpg,gif|max:4096';
+                $baseRules['receipt_image'] = 'required|image|mimes:jpeg,png,jpg,gif,webp,heic,heif|max:4096';
             } else {
-                $baseRules['receipt_image'] = 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096';
+                $baseRules['receipt_image'] = 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,heif|max:4096';
             }
             $request->validate($baseRules, [
-                'receipt_image.required' => 'صورة الإيصال مطلوبة عند اختيار التحويل البنكي'
+                'receipt_image.required' => 'صورة الإيصال مطلوبة عند اختيار التحويل البنكي',
+                'receipt_image.image' => 'يجب أن يكون الملف صورة صالحة.',
+                'receipt_image.mimes' => 'الأنواع المسموحة: JPG, JPEG, PNG, GIF, WEBP, HEIC/HEIF.',
+                'receipt_image.max' => 'الحد الأقصى لحجم الصورة 4MB.'
             ]);
 
             $cartItems = session('cart', []);

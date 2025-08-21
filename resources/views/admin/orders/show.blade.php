@@ -100,13 +100,55 @@
                 </div>
                 <div class="flex items-center gap-2 text-sm">
                     <span class="font-medium text-gray-700">طريقة الدفع:</span>
-                    <span class="text-gray-900">{{ $order->payment_method ?? '-' }}</span>
+                    <span class="text-gray-900">
+                        @if($order->payment_method === 'bank_transfer')
+                        تحويل بنكي
+                        @elseif($order->payment_method === 'network')
+                        شبكة
+                        @elseif($order->payment_method === 'cash')
+                        كاش
+                        @else
+                        {{ $order->payment_method ?? '-' }}
+                        @endif
+                    </span>
                 </div>
+
+                @if($order->payment_method === 'bank_transfer')
                 @if($order->payment_image_url)
-                <div class="flex items-center gap-2 text-sm">
-                    <span class="font-medium text-gray-700">صورة الدفع:</span>
-                    <a href="{{ $order->payment_image_url }}" target="_blank" class="text-blue-600 hover:underline">عرض صورة الدفع</a>
+                <!-- إيصال التحويل البنكي -->
+                <div class="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-exclamation-triangle text-amber-600"></i>
+                        <span class="font-bold text-amber-800">تحذير مهم للمدير</span>
+                    </div>
+                    <p class="text-sm text-amber-700 mb-3">
+                        يرجى التحقق من مصداقية إيصال التحويل البنكي المرفق والتأكد من صحة البيانات قبل تأكيد الطلب.
+                    </p>
+
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm font-medium text-gray-700">إيصال التحويل:</span>
+                        <a href="{{ asset('storage/' . $order->payment_image_url) }}" target="_blank" class="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-image"></i>
+                            عرض الإيصال
+                        </a>
+                    </div>
+
+                    <!-- معاينة مصغرة للصورة -->
+                    <div class="mt-3">
+                        <img src="{{ asset('storage/' . $order->payment_image_url) }}" alt="إيصال التحويل البنكي" class="max-w-xs max-h-48 object-contain border border-gray-300 rounded-lg shadow-sm cursor-pointer" onclick="window.open('{{ asset('storage/' . $order->payment_image_url) }}', '_blank')">
+                    </div>
                 </div>
+                @else
+                <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-times-circle text-red-600"></i>
+                        <span class="font-bold text-red-800">لم يتم إرفاق إيصال التحويل</span>
+                    </div>
+                    <p class="text-sm text-red-700 mt-2">
+                        العميل لم يقم بإرفاق إيصال التحويل البنكي. يرجى التواصل معه للحصول على الإيصال.
+                    </p>
+                </div>
+                @endif
                 @endif
             </div>
         </div>
