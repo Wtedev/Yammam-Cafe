@@ -26,39 +26,49 @@
             <span class="font-medium">المنيو</span>
         </a>
 
-        <!-- My Orders -->
-        <a href="{{ route('my-orders') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 {{ request()->routeIs('my-orders') ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
+    <!-- My Orders -->
+    @auth
+    <a href="{{ route('my-orders') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 {{ request()->routeIs('my-orders') ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
             <i class="fas fa-shopping-bag text-lg w-5"></i>
             <span class="font-medium">طلباتي</span>
         </a>
+    @endauth
 
-        <!-- My Suggestions -->
-        <a href="{{ route('my-suggestions') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 {{ request()->routeIs('my-suggestions') ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
+    <!-- My Suggestions -->
+    @auth
+    <a href="{{ route('my-suggestions') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 {{ request()->routeIs('my-suggestions') ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
             <i class="fas fa-lightbulb text-lg w-5"></i>
             <span class="font-medium">اقتراحاتي</span>
         </a>
+    @endauth
 
-        <!-- Profile -->
+        <!-- Profile / Login -->
+        @auth
         <a href="{{ route('user.profile') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 {{ request()->routeIs('user.profile*') ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
             <i class="fas fa-user text-lg w-5"></i>
             <span class="font-medium">ملفي الشخصي</span>
         </a>
+        @else
+        <a href="{{ route('login') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 text-gray-700 hover:bg-gray-50">
+            <span class="font-medium">تسجيل الدخول</span>
+        </a>
+        @endauth
     </nav>
 
     <!-- User Info at Bottom -->
+    @auth
     <div class="p-4 border-t border-gray-200">
         <div class="flex items-center space-x-3 space-x-reverse">
             <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
                 <span class="text-gray-600 font-medium text-sm">
-                    {{ substr(auth()->user()->name ?? 'U', 0, 1) }}
+                    {{ substr(auth()->user()->name, 0, 1) }}
                 </span>
             </div>
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-900 truncate">
-                    {{ auth()->user()->name ?? 'المستخدم' }}
-                </p>
+                <p class="text-sm font-medium text-gray-900 truncate">{{ auth()->user()->name }}</p>
                 <p class="text-xs text-gray-500">مستخدم</p>
             </div>
         </div>
     </div>
+    @endauth
 </aside>

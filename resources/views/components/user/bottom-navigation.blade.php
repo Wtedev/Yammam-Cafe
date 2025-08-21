@@ -14,21 +14,31 @@
         </a>
 
         <!-- My Orders -->
+        @auth
         <a href="{{ route('my-orders') }}" class="flex-1 flex flex-col items-center justify-center py-2 text-xs transition-colors {{ request()->routeIs('my-orders') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-800' }}">
             <i class="fas fa-shopping-bag text-lg mb-1"></i>
             <span class="font-medium">طلباتي</span>
         </a>
+        @endauth
 
         <!-- My Suggestions -->
+        @auth
         <a href="{{ route('my-suggestions') }}" class="flex-1 flex flex-col items-center justify-center py-2 text-xs transition-colors {{ request()->routeIs('my-suggestions') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-800' }}">
             <i class="fas fa-lightbulb text-lg mb-1"></i>
             <span class="font-medium">اقتراحاتي</span>
         </a>
+        @endauth
 
-        <!-- Profile -->
+        <!-- Profile / Login -->
+        @auth
         <a href="{{ route('user.profile') }}" class="flex-1 flex flex-col items-center justify-center py-2 text-xs transition-colors {{ request()->routeIs('user.profile*') ? 'text-blue-600' : 'text-gray-600 hover:text-gray-800' }}">
             <i class="fas fa-user text-lg mb-1"></i>
             <span class="font-medium">ملفي</span>
         </a>
+        @else
+        <a href="{{ route('login') }}" class="flex-1 flex flex-col items-center justify-center py-2 text-xs transition-colors text-gray-600 hover:text-gray-800">
+            <span class="font-medium">تسجيل الدخول</span>
+        </a>
+        @endauth
     </div>
 </nav>

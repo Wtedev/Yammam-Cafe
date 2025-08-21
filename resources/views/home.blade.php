@@ -20,6 +20,7 @@
                 </a>
             </div>
 
+            @auth
             <div class="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition-shadow">
                 <i class="fas fa-shopping-bag text-4xl text-green-600 mb-4"></i>
                 <h3 class="text-lg font-semibold text-gray-900 mb-2">طلباتي</h3>
@@ -39,6 +40,7 @@
                     <i class="fas fa-arrow-left mr-2"></i>
                 </a>
             </div>
+            @endauth
         </div>
 
         <!-- Empty Content Area -->
