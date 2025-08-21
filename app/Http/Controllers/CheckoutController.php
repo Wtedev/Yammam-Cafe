@@ -42,24 +42,24 @@ class CheckoutController extends Controller
     {
         $traceId = uniqid('ord_');
         Log::info('Checkout start', ['trace' => $traceId, 'user_id' => Auth::id(), 'ip' => $request->ip()]);
+        // Validate first so field-specific errors are returned properly
+        $baseRules = [
+            'name' => 'required|string|max:255',
+            'office_number' => 'required|string|max:50',
+            'payment_method' => 'required|in:bank_transfer,network,cash',
+            'notes' => 'nullable|string|max:500'
+        ];
+        if ($request->payment_method === 'bank_transfer') {
+            // السماح بأنواع صور شائعة للإيصال
+            $baseRules['receipt_image'] = 'required|image|mimes:jpeg,png,jpg,gif,webp,heic,heif|max:6144';
+        } else {
+            $baseRules['receipt_image'] = 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,heif|max:6144';
+        }
+        $request->validate($baseRules, [
+            'receipt_image.required' => 'صورة الإيصال مطلوبة عند اختيار التحويل البنكي'
+        ]);
+
         try {
-            $baseRules = [
-                'name' => 'required|string|max:255',
-                'office_number' => 'required|string|max:50',
-                'payment_method' => 'required|in:bank_transfer,network,cash',
-                'notes' => 'nullable|string|max:500'
-            ];
-            if ($request->payment_method === 'bank_transfer') {
-                $baseRules['receipt_image'] = 'required|image|mimes:jpeg,png,jpg,gif,webp,heic,heif|max:4096';
-            } else {
-                $baseRules['receipt_image'] = 'nullable|image|mimes:jpeg,png,jpg,gif,webp,heic,heif|max:4096';
-            }
-            $request->validate($baseRules, [
-                'receipt_image.required' => 'صورة الإيصال مطلوبة عند اختيار التحويل البنكي',
-                'receipt_image.image' => 'يجب أن يكون الملف صورة صالحة.',
-                'receipt_image.mimes' => 'الأنواع المسموحة: JPG, JPEG, PNG, GIF, WEBP, HEIC/HEIF.',
-                'receipt_image.max' => 'الحد الأقصى لحجم الصورة 4MB.'
-            ]);
 
             $cartItems = session('cart', []);
             if (empty($cartItems)) {
