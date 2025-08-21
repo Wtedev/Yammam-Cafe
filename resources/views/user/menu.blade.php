@@ -62,7 +62,7 @@
         <!-- Products Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">
             @forelse($products->where('stock_quantity', '>', 0) as $product)
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden relative group transition hover:shadow-md h-auto sm:h-[500px] sm:max-h-[500px]">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden relative group transition hover:shadow-md h-auto md:h-[500px] md:max-h-[500px]">
                 <!-- Product Image -->
                 <div class="relative w-full bg-blue-50/40 aspect-square flex-shrink-0">
                     @if($product->image)
@@ -94,7 +94,7 @@
                 </div>
 
                 <!-- Product Content -->
-                <div class="flex-1 flex flex-col p-4 gap-2 overflow-visible sm:overflow-y-auto">
+                <div class="flex-1 flex flex-col p-4 gap-2 overflow-visible md:overflow-y-auto md:scrollbar-hide">
                     <h3 class="text-base font-extrabold text-gray-900 mb-1">{{ $product->name }}</h3>
 
                     @if($product->description)
