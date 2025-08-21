@@ -61,11 +61,6 @@ Route::prefix('suggestions')->name('suggestions.')->group(function () {
     Route::get('/{suggestion}', [SuggestionController::class, 'show'])->name('show')->middleware('auth');
 });
 
-// Dashboard للمستخدمين المسجلين
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
 // ==== صفحات المستخدم العادي ====
 Route::middleware(['auth'])->group(function () {
     // صفحة طلباتي
@@ -149,19 +144,6 @@ Route::prefix('api')->name('api.')->group(function () {
         Route::get('/{order}/status', [ApiOrderController::class, 'status'])->name('status');
         Route::get('/{order}/tracking', [ApiOrderController::class, 'tracking'])->name('tracking');
     });
-});
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/profile/show', function () {
-        return view('profile.show');
-    })->name('profile.show');
 });
 
 require __DIR__ . '/auth.php';

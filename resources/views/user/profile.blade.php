@@ -125,7 +125,7 @@
 
                 <!-- Submit Button -->
                 <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-6 border-t border-gray-100">
-                    <a href="{{ route('dashboard') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm border border-gray-200 transition-colors duration-200">
+                    <a href="{{ route('home') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm border border-gray-200 transition-colors duration-200">
                         <i class="fas fa-arrow-right"></i>
                         <span class="hidden sm:inline">العودة للوحة الرئيسية</span>
                     </a>

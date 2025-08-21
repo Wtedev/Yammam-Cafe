@@ -45,10 +45,10 @@ class LoginController extends Controller
 
         // توجيه المستخدم حسب صلاحياته
         if ($user->isAdmin()) {
-            return redirect()->intended('/admin/dashboard');
+            return redirect()->intended('/admin');
         }
 
-        return redirect()->intended('/dashboard');
+        return redirect()->intended('/');
     }
 
     public function logout(Request $request)
