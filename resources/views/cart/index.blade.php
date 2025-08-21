@@ -20,12 +20,12 @@
 
     <x-user-layout title="سلة المشتريات">
         <!-- Cart Wrapper -->
-        <div class="max-w-6xl mx-auto space-y-6" x-data="cartPage()">
+    <div class="max-w-6xl mx-auto space-y-4 sm:space-y-6" x-data="cartPage()">
             @if(count($cartItems) > 0)
             <!-- Items List -->
             <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                <div class="px-4 py-4 border-b border-gray-100 flex items-center justify-between">
-                    <h2 class="text-base font-extrabold text-gray-900 flex items-center gap-2">
+                <div class="px-3 py-3 sm:px-4 sm:py-4 border-b border-gray-100 flex items-center justify-between">
+                    <h2 class="text-sm sm:text-base font-extrabold text-gray-900 flex items-center gap-2">
                         <i class="fas fa-cart-shopping text-blue-500"></i>
                         <span id="products-header-count">المنتجات ({{ $totalQuantity }})</span>
                     </h2>
@@ -35,12 +35,12 @@
                     </button>
                 </div>
                 <!-- Grid Container -->
-                <div id="cart-items-wrapper" class="p-4 space-y-4">
+                <div id="cart-items-wrapper" class="p-3 sm:p-4 space-y-3 sm:space-y-4">
                     @foreach($cartItems as $item)
                     @php($p = $item['product'])
-                    <div id="cart-item-{{ $p->id }}" class="relative flex items-center gap-4 bg-white border border-gray-100 rounded-2xl p-4 hover:border-blue-200 hover:shadow-md transition-all duration-200">
+                    <div id="cart-item-{{ $p->id }}" class="relative flex items-center gap-3 sm:gap-4 bg-white border border-gray-100 rounded-2xl p-3 sm:p-4 hover:border-blue-200 hover:shadow-md transition-all duration-200">
                         <!-- Image -->
-                        <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
+                        <div class="relative w-16 h-16 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
                             @if($p->image)
                             <img src="{{ asset('storage/' . $p->image) }}" alt="{{ $p->name }}" class="w-full h-full object-cover">
                             @else
@@ -58,27 +58,27 @@
                         <!-- Content -->
                         <div class="flex-1 min-w-0">
                             <!-- Product Info -->
-                            <div class="mb-3">
+                            <div class="mb-2 sm:mb-3">
                                 <h3 class="font-bold text-gray-900 text-sm sm:text-base mb-1 line-clamp-1">{{ $p->name }}</h3>
                                 <p class="text-xs sm:text-sm text-gray-500">{{ number_format($p->price, 2) }} ر.س للقطعة</p>
                             </div>
 
                             <!-- Controls -->
-                            <div class="flex flex-row sm:items-center justify-between gap-3">
+                            <div class="flex flex-row sm:items-center justify-between gap-2 sm:gap-3">
                                 <!-- Quantity Controls -->
-                                <div class="flex items-center gap-50 bg-gray-50 rounded-xl p-1">
-                                    <button onclick="changeQuantity({{ $p->id }}, -1, this)" class="w-8 h-8 rounded-lg bg-white hover:bg-gray-100 text-gray-600 hover:text-gray-800 flex items-center justify-center text-sm shadow-sm transition" aria-label="تنقيص الكمية">
+                                <div class="flex items-center gap-2 sm:gap-3 bg-gray-50 rounded-xl p-1">
+                                    <button onclick="changeQuantity({{ $p->id }}, -1, this)" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white hover:bg-gray-100 text-gray-600 hover:text-gray-800 flex items-center justify-center text-sm shadow-sm transition" aria-label="تنقيص الكمية">
                                         <i class="fas fa-minus"></i>
                                     </button>
-                                    <span id="quantity-{{ $p->id }}" class="w-10 text-center font-bold text-sm">{{ $item['quantity'] }}</span>
-                                    <button onclick="changeQuantity({{ $p->id }}, 1, this)" class="w-8 h-8 rounded-lg bg-white hover:bg-gray-100 text-gray-600 hover:text-gray-800 flex items-center justify-center text-sm shadow-sm transition" aria-label="زيادة الكمية">
+                                    <span id="quantity-{{ $p->id }}" class="w-9 sm:w-10 text-center font-bold text-sm">{{ $item['quantity'] }}</span>
+                                    <button onclick="changeQuantity({{ $p->id }}, 1, this)" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white hover:bg-gray-100 text-gray-600 hover:text-gray-800 flex items-center justify-center text-sm shadow-sm transition" aria-label="زيادة الكمية">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
 
                                 <!-- Price & Remove -->
-                                <div class="flex items-center gap-4 p-1">
-                                    <span id="subtotal-{{ $p->id }}" class="text-lg font-extrabold text-green-600 ml-3">{{ number_format($item['subtotal'], 2) }} ر.س</span>
+                                <div class="flex items-center gap-3 sm:gap-4 p-1">
+                                    <span id="subtotal-{{ $p->id }}" class="text-base sm:text-lg font-extrabold text-green-600 ml-2 sm:ml-3">{{ number_format($item['subtotal'], 2) }} ر.س</span>
                                     <button onclick="removeItem({{ $p->id }})" class="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 flex items-center justify-center text-sm transition group">
                                         <i class="fas fa-trash group-hover:scale-110 transition-transform"></i>
                                     </button>
@@ -94,7 +94,7 @@
             <div class="lg:grid lg:grid-cols-3 lg:gap-6">
                 <div class="lg:col-span-2"></div>
                 <div class="lg:col-span-1">
-                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 space-y-4 sticky bottom-0 lg:static" id="cart-summary">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 sm:p-5 space-y-4 sticky bottom-0 lg:static" id="cart-summary">
                         <h3 class="text-sm font-extrabold text-gray-900 flex items-center gap-2">
                             <i class="fas fa-receipt text-green-500"></i>
                             ملخص الطلب
@@ -133,7 +133,7 @@
             </div>
             @else
             <!-- Empty State -->
-            <div class="bg-white border border-dashed border-gray-300 rounded-2xl shadow-sm p-10 text-center max-w-md mx-auto">
+            <div class="bg-white border border-dashed border-gray-300 rounded-2xl shadow-sm p-8 sm:p-10 text-center max-w-md mx-auto">
                 <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
                     <i class="fas fa-cart-shopping text-3xl text-gray-400"></i>
                 </div>
