@@ -10,11 +10,15 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // منتجات الأسبوع (المنتجات المميزة)
+        // منتجات الأسبوع (المنتجات الأسبوعية المتاحة حالياً)
         $weeklyProducts = Product::where('is_available', true)
-            ->where('is_featured', true)
+            ->where('type', 'weekly')
+            ->where(function($query) {
+                $query->whereNull('end_date')
+                      ->orWhere('end_date', '>=', now()->toDateString());
+            })
             ->orderBy('created_at', 'desc')
-            ->take(4)
+            ->take(6)
             ->get();
 
         // أقسام الكافيه من قاعدة البيانات

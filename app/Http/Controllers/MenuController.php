@@ -11,7 +11,18 @@ class MenuController extends Controller
     public function index(Request $request)
     {
         $query = Product::where('is_available', true)
-            ->where('stock_quantity', '>', 0); // إخفاء المنتجات التي نفد مخزونها
+            ->where('stock_quantity', '>', 0) // إخفاء المنتجات التي نفد مخزونها
+            ->where(function($q) {
+                // إخفاء المنتجات الأسبوعية المنتهية الصلاحية
+                $q->where('type', '!=', 'weekly')
+                  ->orWhere(function($weeklyQuery) {
+                      $weeklyQuery->where('type', 'weekly')
+                                 ->where(function($dateQuery) {
+                                     $dateQuery->whereNull('end_date')
+                                              ->orWhere('end_date', '>=', now()->toDateString());
+                                 });
+                  });
+            });
 
         // البحث يأخذ الأولوية على تصفية القسم
         if ($request->has('search') && $request->search != '') {
@@ -74,7 +85,9 @@ class MenuController extends Controller
 
     public function show(Product $product)
     {
-        if (!$product->is_available) {
+        // التحقق من توفر المنتج وعدم انتهاء صلاحيته إذا كان أسبوعياً
+        if (!$product->is_available || 
+            ($product->type === 'weekly' && $product->end_date && now()->toDateString() > $product->end_date)) {
             abort(404);
         }
 
@@ -82,6 +95,17 @@ class MenuController extends Controller
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->where('is_available', true)
+            ->where(function($q) {
+                // إخفاء المنتجات الأسبوعية المنتهية الصلاحية
+                $q->where('type', '!=', 'weekly')
+                  ->orWhere(function($weeklyQuery) {
+                      $weeklyQuery->where('type', 'weekly')
+                                 ->where(function($dateQuery) {
+                                     $dateQuery->whereNull('end_date')
+                                              ->orWhere('end_date', '>=', now()->toDateString());
+                                 });
+                  });
+            })
             ->take(4)
             ->get();
 

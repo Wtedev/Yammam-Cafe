@@ -81,6 +81,11 @@ Route::middleware(['auth'])->group(function () {
     // صفحة البروفايل للمستخدم
     Route::get('/user/profile', [App\Http\Controllers\User\ProfileController::class, 'show'])->name('user.profile');
     Route::patch('/user/profile', [App\Http\Controllers\User\ProfileController::class, 'update'])->name('user.profile.update');
+    
+    // صفحة تواصل مع المطور
+    Route::get('/contact-developer', function () {
+        return view('contact-developer');
+    })->name('contact.developer');
 });
 
 // ==== لوحة الإدارة ====

@@ -10,7 +10,18 @@ class ProductController extends Controller
 {
     public function search(Request $request)
     {
-        $query = Product::where('is_available', true);
+        $query = Product::where('is_available', true)
+            ->where(function($q) {
+                // إخفاء المنتجات الأسبوعية المنتهية الصلاحية
+                $q->where('type', '!=', 'weekly')
+                  ->orWhere(function($weeklyQuery) {
+                      $weeklyQuery->where('type', 'weekly')
+                                 ->where(function($dateQuery) {
+                                     $dateQuery->whereNull('end_date')
+                                              ->orWhere('end_date', '>=', now()->toDateString());
+                                 });
+                  });
+            });
 
         if ($request->q) {
             $query->where(function ($q) use ($request) {
@@ -63,6 +74,17 @@ class ProductController extends Controller
     {
         $products = Product::where('is_available', true)
             ->where('is_featured', true)
+            ->where(function($q) {
+                // إخفاء المنتجات الأسبوعية المنتهية الصلاحية
+                $q->where('type', '!=', 'weekly')
+                  ->orWhere(function($weeklyQuery) {
+                      $weeklyQuery->where('type', 'weekly')
+                                 ->where(function($dateQuery) {
+                                     $dateQuery->whereNull('end_date')
+                                              ->orWhere('end_date', '>=', now()->toDateString());
+                                 });
+                  });
+            })
             ->orderBy('order_count', 'desc')
             ->take(8)
             ->get(['id', 'name', 'price', 'image', 'category']);
@@ -73,6 +95,17 @@ class ProductController extends Controller
     public function popular()
     {
         $products = Product::where('is_available', true)
+            ->where(function($q) {
+                // إخفاء المنتجات الأسبوعية المنتهية الصلاحية
+                $q->where('type', '!=', 'weekly')
+                  ->orWhere(function($weeklyQuery) {
+                      $weeklyQuery->where('type', 'weekly')
+                                 ->where(function($dateQuery) {
+                                     $dateQuery->whereNull('end_date')
+                                              ->orWhere('end_date', '>=', now()->toDateString());
+                                 });
+                  });
+            })
             ->orderBy('order_count', 'desc')
             ->take(10)
             ->get(['id', 'name', 'price', 'image', 'order_count']);
