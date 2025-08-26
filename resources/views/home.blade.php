@@ -9,7 +9,7 @@
         </div>
 
         <!-- Quick Action Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="flex flex-col gap-6 lg:gap-6">
             <!-- Browse Menu Card -->
             <div class="group bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200 hover:border-blue-300 transition-all duration-300 hover:shadow-lg hover:scale-105">
                 <div class="text-center">
@@ -24,46 +24,6 @@
                     </a>
                 </div>
             </div>
-
-            @auth
-            <!-- My Orders Card (Simple Horizontal) -->
-            <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-shopping-bag text-green-600 text-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">طلباتي</h3>
-                            <p class="text-sm text-gray-500">تابع حالة طلباتك</p>
-                        </div>
-                    </div>
-                    <a href="{{ route('my-orders') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors flex items-center gap-2">
-                        <span>عرض</span>
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- My Suggestions Card (Simple Horizontal) -->
-            <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-lightbulb text-yellow-600 text-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">اقتراحاتي</h3>
-                            <p class="text-sm text-gray-500">شاركنا آرائك</p>
-                        </div>
-                    </div>
-                    <a href="{{ route('my-suggestions') }}" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors flex items-center gap-2">
-                        <span>إضافة</span>
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                </div>
-            </div>
-            @endauth
 
         </div>
 
@@ -461,5 +421,56 @@
 
         </script>
         @endif
+
+        <!-- User Action Cards - After Weekly Products -->
+        @auth
+        <div class="flex flex-col gap-6 w-full mt-6">
+            <!-- My Orders Card (Simple Horizontal) -->
+            <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow w-full">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-shopping-bag text-green-600 text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">طلباتي</h3>
+                            <p class="text-sm text-gray-500">تابع حالة طلباتك</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('my-orders') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors flex items-center gap-2">
+                        <span>عرض</span>
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- My Suggestions Card (Simple Horizontal) -->
+            <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow w-full">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-lightbulb text-yellow-600 text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">اقتراحاتي</h3>
+                            <p class="text-sm text-gray-500">شاركنا آرائك</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('my-suggestions') }}" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors flex items-center gap-2">
+                        <span>إضافة</span>
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endauth
+
+        <!-- Contact Developer Link -->
+        <div class="max-w-7xl mx-auto mt-6 text-center">
+            <a href="{{ route('contact.developer') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+                <i class="fas fa-code text-sm"></i>
+                <span class="text-sm">تواصل مع المطور</span>
+            </a>
+        </div>
     </div>
 </x-user-layout>
