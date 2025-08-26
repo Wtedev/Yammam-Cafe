@@ -48,6 +48,6 @@ class RegisterController extends Controller
         // تسجيل دخول المستخدم تلقائياً
         Auth::login($user);
 
-        return redirect('/dashboard')->with('success', 'تم إنشاء الحساب بنجاح!');
+        return redirect('/')->with('success', 'تم إنشاء الحساب بنجاح!');
     }
 }

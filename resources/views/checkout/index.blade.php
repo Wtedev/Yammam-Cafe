@@ -20,25 +20,11 @@
 
     <x-user-layout title="إتمام الطلب">
         <div class="max-w-4xl mx-auto space-y-4">
-            <!-- Debug Block -->
-            <div class="text-[11px] bg-gray-900 text-gray-100 rounded-xl p-3 font-mono space-y-1">
-                <div>DEBUG MODE (مؤقت) - احذف لاحقاً</div>
-                <div>User: {{ Auth::check() ? Auth::id() . ' / ' . e(Auth::user()->name) : 'Guest' }}</div>
-                <div>Cart Count (session): {{ is_array(session('cart')) ? count(session('cart')) : 0 }}</div>
-                <div x-text="'Selected Payment: ' + paymentMethod"></div>
-                <div>Has Receipt File: <span x-text="document.getElementById('receipt_image')?.files.length ? 'yes':'no'"></span></div>
-            </div>
-
-            <div class="text-[11px] md:text-xs bg-gray-900 text-gray-100 rounded-lg px-3 py-2 flex flex-wrap gap-3">
-                <span>مستخدم: <b>{{ Auth::user()->name }}</b> (#{{ Auth::id() }})</span>
-                <span>عدد عناصر السلة: <b>{{ count(session('cart', [])) }}</b></span>
-                <span>طريقة دفع حالية: <b x-text="paymentMethod"></b></span>
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-credit-card text-2xl text-blue-500"></i>
-                    <div>
-                        <h1 class="text-xl font-extrabold text-gray-900">إتمام الطلب</h1>
-                        <p class="text-sm text-gray-500">أكمل بياناتك لإنهاء طلبك</p>
-                    </div>
+            <div class="flex items-center gap-3">
+                <i class="fas fa-credit-card text-2xl text-blue-500"></i>
+                <div>
+                    <h1 class="text-xl font-extrabold text-gray-900">إتمام الطلب</h1>
+                    <p class="text-sm text-gray-500">أكمل بياناتك لإنهاء طلبك</p>
                 </div>
             </div>
 
@@ -184,18 +170,6 @@
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
-                        </div>
-
-                        <!-- Additional Notes -->
-                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-                            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <i class="fas fa-comment text-yellow-500"></i>
-                                ملاحظات إضافية
-                            </h2>
-                            <textarea name="notes" rows="3" placeholder="أي ملاحظات خاصة بطلبك..." class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition resize-none">{{ old('notes') }}</textarea>
-                            @error('notes')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
                         </div>
 
                     </div>
