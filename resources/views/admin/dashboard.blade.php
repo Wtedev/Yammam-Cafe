@@ -1,29 +1,67 @@
 <x-layout.admin-layout title="لوحة الإدارة">
-    <!-- Weekly Stats (Soft, Modern, Responsive) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-6 font-[Cairo,Tajawal,Segoe UI,Arial,sans-serif]">
-        <div class="rounded-2xl bg-white shadow-sm border border-orange-50 flex flex-col items-start p-4 min-h-[110px]">
-            <span class="text-xs text-orange-700 font-bold mb-1">طلبات جديدة</span>
-            <span class="text-2xl md:text-3xl font-extrabold text-orange-600">{{ number_format($weeklyStats['new_orders']) }}</span>
-        </div>
-        <div class="rounded-2xl bg-white shadow-sm border border-purple-50 flex flex-col items-start p-4 min-h-[110px]">
-            <span class="text-xs text-purple-700 font-bold mb-1">اقتراحات جديدة</span>
-            <span class="text-2xl md:text-3xl font-extrabold text-purple-600">{{ number_format($weeklyStats['new_suggestions']) }}</span>
-        </div>
-        <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-            <span class="text-xs text-blue-700 font-bold mb-1">طلبات هذا الأسبوع</span>
-            <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ number_format($weeklyStats['orders']) }}</span>
-        </div>
-        <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-            <span class="text-xs text-blue-700 font-bold mb-1">مبيعات هذا الأسبوع</span>
-            <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ number_format($weeklyStats['revenue'], 2) }} <span class="text-base text-blue-400 font-normal">ر.س</span></span>
-        </div>
-        <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-            <span class="text-xs text-blue-700 font-bold mb-1">عدد منتجاتي</span>
-            <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ number_format($weeklyStats['products']) }}</span>
-        </div>
-        <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-            <span class="text-xs text-blue-700 font-bold mb-1">اقتراحات هذا الأسبوع</span>
-            <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ number_format($weeklyStats['suggestions']) }}</span>
+    <!-- Quick Actions Section -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+            <i class="fas fa-bolt text-blue-500 ml-2"></i>
+            إجراءات سريعة
+        </h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Add Product -->
+            <a href="{{ route('admin.products.create') }}" 
+               class="flex items-center p-4 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition-colors group">
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 bg-blue-100 group-hover:bg-blue-200 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-plus text-blue-600"></i>
+                    </div>
+                </div>
+                <div class="mr-3">
+                    <p class="text-sm font-medium text-blue-900">إضافة منتج</p>
+                    <p class="text-xs text-blue-600">منتج جديد</p>
+                </div>
+            </a>
+
+            <!-- Add Category -->
+            <a href="{{ route('admin.categories.create') }}" 
+               class="flex items-center p-4 bg-green-50 hover:bg-green-100 border border-green-200 rounded-xl transition-colors group">
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 bg-green-100 group-hover:bg-green-200 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-tag text-green-600"></i>
+                    </div>
+                </div>
+                <div class="mr-3">
+                    <p class="text-sm font-medium text-green-900">إضافة تصنيف</p>
+                    <p class="text-xs text-green-600">تصنيف جديد</p>
+                </div>
+            </a>
+
+            <!-- View Categories -->
+            <a href="{{ route('admin.categories.index') }}" 
+               class="flex items-center p-4 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl transition-colors group">
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 bg-purple-100 group-hover:bg-purple-200 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-tags text-purple-600"></i>
+                    </div>
+                </div>
+                <div class="mr-3">
+                    <p class="text-sm font-medium text-purple-900">إدارة التصنيفات</p>
+                    <p class="text-xs text-purple-600">عرض الكل</p>
+                </div>
+            </a>
+
+            <!-- View Orders -->
+            <a href="{{ route('admin.orders') }}" 
+               class="flex items-center p-4 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl transition-colors group">
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 bg-orange-100 group-hover:bg-orange-200 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shopping-cart text-orange-600"></i>
+                    </div>
+                </div>
+                <div class="mr-3">
+                    <p class="text-sm font-medium text-orange-900">إدارة الطلبات</p>
+                    <p class="text-xs text-orange-600">عرض الكل</p>
+                </div>
+            </a>
         </div>
     </div>
 

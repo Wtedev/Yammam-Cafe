@@ -5,30 +5,6 @@
             <h1 class="sr-only">إدارة الاقتراحات</h1>
         </div>
 
-        <!-- Stats Cards (Unified like dashboard) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
-            <div class="rounded-2xl bg-white shadow-sm border border-purple-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-purple-700 font-bold mb-1">اقتراحات جديدة</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-purple-600">{{ $newSuggestionsCount ?? 0 }}</span>
-            </div>
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">اقتراحات</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ $typeCounts['suggestion'] ?? 0 }}</span>
-            </div>
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">شكاوى</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ $typeCounts['complaint'] ?? 0 }}</span>
-            </div>
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">إطراءات</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ $typeCounts['compliment'] ?? 0 }}</span>
-            </div>
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">جديد</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ $statusCounts['new'] ?? 0 }}</span>
-            </div>
-        </div>
-
         <!-- الاقتراحات -->
         <h2 class="text-xl font-bold text-gray-900 mb-4">الاقتراحات</h2>
 

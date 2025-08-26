@@ -22,29 +22,16 @@
 
         <!-- Header -->
         <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
-            <a href="{{ route('admin.products.create') }}" class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-bold px-6 py-3 rounded-xl shadow transition-colors duration-200">
-                <i class="fas fa-plus"></i>
-                <span>إضافة منتج جديد</span>
-            </a>
-        </div>
-
-        <!-- Stats Cards (Unified like dashboard) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">إجمالي المنتجات</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ $products->total() }}</span>
-            </div>
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">متوفر</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ $products->where('is_available', true)->count() }}</span>
-            </div>
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">غير متوفر</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ $products->where('is_available', false)->count() }}</span>
-            </div>
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">مميز</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ $products->where('is_featured', true)->count() }}</span>
+            <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <a href="{{ route('admin.products.create') }}" class="inline-flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-bold px-6 py-3 rounded-xl shadow transition-colors duration-200">
+                    <i class="fas fa-plus"></i>
+                    <span>إضافة منتج جديد</span>
+                </a>
+                
+                <a href="{{ route('admin.categories.index') }}" class="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-xl shadow transition-colors duration-200">
+                    <i class="fas fa-list"></i>
+                    <span>إدارة التصنيفات</span>
+                </a>
             </div>
         </div>
 

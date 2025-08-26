@@ -116,7 +116,15 @@
                         </div>
                         <!-- Category -->
                         <div>
-                            <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">التصنيف <span class="text-red-500">*</span></label>
+                            <div class="flex items-center justify-between mb-2">
+                                <label for="category_id" class="block text-sm font-medium text-gray-700">التصنيف <span class="text-red-500">*</span></label>
+                                <a href="{{ route('admin.categories.create') }}" 
+                                   target="_blank"
+                                   class="inline-flex items-center text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors">
+                                    <i class="fas fa-plus text-xs ml-1"></i>
+                                    إضافة تصنيف جديد
+                                </a>
+                            </div>
                             <select id="category_id" name="category_id" required class="w-full rounded-lg border-gray-200 focus:border-blue-500 focus:ring-blue-500 @error('category_id') border-red-500 @enderror">
                                 <option value="">اختر التصنيف</option>
                                 @foreach($categories as $category)

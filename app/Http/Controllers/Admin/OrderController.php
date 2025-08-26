@@ -47,15 +47,7 @@ class OrderController extends Controller
 
         $orders = $query->orderBy('created_at', 'desc')->paginate(20);
 
-        $statusCounts = Order::selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->pluck('count', 'status');
-
-        // إحصائيات الطلبات الجديدة
-        $newOrdersCount = Order::new()->count();
-        $newOrders = Order::new()->latest()->take(5)->get();
-
-        return view('admin.orders', compact('orders', 'statusCounts', 'newOrdersCount', 'newOrders'));
+        return view('admin.orders', compact('orders'));
     }
 
     public function show(Order $order)

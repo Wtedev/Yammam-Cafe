@@ -15,6 +15,10 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
+                'name' => 'قهوة مختصة',
+                'slug' => 'specialty-coffee',
+            ],
+            [
                 'name' => 'مشروبات ساخنة',
                 'slug' => 'hot-drinks',
             ],
@@ -23,12 +27,24 @@ class CategorySeeder extends Seeder
                 'slug' => 'cold-drinks',
             ],
             [
+                'name' => 'حلويات شرقية',
+                'slug' => 'eastern-desserts',
+            ],
+            [
+                'name' => 'حلويات غربية',
+                'slug' => 'western-desserts',
+            ],
+            [
+                'name' => 'معجنات وفطائر',
+                'slug' => 'pastries',
+            ],
+            [
                 'name' => 'وجبات خفيفة',
                 'slug' => 'snacks',
             ],
             [
-                'name' => 'حلويات',
-                'slug' => 'desserts',
+                'name' => 'مثلجات',
+                'slug' => 'ice-cream',
             ],
         ];
 

@@ -5,30 +5,6 @@
             <h1 class="sr-only">إدارة الطلبات</h1>
         </div>
 
-        <!-- Stats Cards (Unified like dashboard) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">طلبات جديدة</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-orange-600">{{ $newOrdersCount ?? 0 }}</span>
-            </div>
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">في الانتظار</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ $statusCounts['pending'] ?? 0 }}</span>
-            </div>
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">قيد المعالجة</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ $statusCounts['processed'] ?? 0 }}</span>
-            </div>
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">تم التسليم</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ $statusCounts['delivered'] ?? 0 }}</span>
-            </div>
-            <div class="rounded-2xl bg-white shadow-sm border border-blue-50 flex flex-col items-start p-4 min-h-[110px]">
-                <span class="text-xs text-blue-700 font-bold mb-1">ملغى</span>
-                <span class="text-2xl md:text-3xl font-extrabold text-gray-900">{{ $statusCounts['cancelled'] ?? 0 }}</span>
-            </div>
-        </div>
-
         <!-- الطلبات -->
         <h2 class="text-xl font-bold text-gray-900 mb-4">الطلبات</h2>
 

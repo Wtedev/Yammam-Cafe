@@ -83,42 +83,5 @@
                 </div>
             </div>
         </div>
-
-        <!-- Statistics -->
-        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white/90 rounded-2xl shadow-sm p-6 border border-blue-50 flex flex-col items-center">
-                <div class="flex items-center gap-3">
-                    <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-                        <i class="fas fa-shopping-cart text-xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs text-blue-700 font-bold">مرات الطلب</p>
-                        <p class="text-2xl font-extrabold text-blue-900">{{ $product->orders_count ?? 0 }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white/90 rounded-2xl shadow-sm p-6 border border-blue-50 flex flex-col items-center">
-                <div class="flex items-center gap-3">
-                    <div class="p-3 rounded-full bg-green-100 text-green-600">
-                        <i class="fas fa-chart-line text-xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs text-blue-700 font-bold">إجمالي المبيعات</p>
-                        <p class="text-2xl font-extrabold text-blue-900">{{ number_format(($product->orders_count ?? 0) * $product->price, 2) }} ريال</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white/90 rounded-2xl shadow-sm p-6 border border-blue-50 flex flex-col items-center">
-                <div class="flex items-center gap-3">
-                    <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
-                        <i class="fas fa-eye text-xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs text-blue-700 font-bold">المشاهدات</p>
-                        <p class="text-2xl font-extrabold text-blue-900">{{ $product->views_count ?? 0 }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </x-layout.admin-layout>

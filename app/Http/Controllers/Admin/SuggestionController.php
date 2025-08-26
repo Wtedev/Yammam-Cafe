@@ -42,19 +42,7 @@ class SuggestionController extends Controller
 
         $suggestions = $query->orderBy('created_at', 'desc')->paginate(20);
 
-        $typeCounts = Suggestion::selectRaw('type, COUNT(*) as count')
-            ->groupBy('type')
-            ->pluck('count', 'type');
-
-        $statusCounts = Suggestion::selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->pluck('count', 'status');
-
-        // إحصائيات الاقتراحات الجديدة (غير المفتوحة)
-        $newSuggestionsCount = Suggestion::unviewed()->count();
-        $newSuggestions = Suggestion::unviewed()->latest()->take(5)->get();
-
-        return view('admin.suggestions.index', compact('suggestions', 'typeCounts', 'statusCounts', 'newSuggestionsCount', 'newSuggestions'));
+        return view('admin.suggestions.index', compact('suggestions'));
     }
 
     public function show(Suggestion $suggestion)
