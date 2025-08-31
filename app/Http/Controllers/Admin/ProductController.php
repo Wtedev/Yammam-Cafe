@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Artisan;
 
 class ProductController extends Controller
 {
@@ -343,6 +344,9 @@ class ProductController extends Controller
 
         $product->delete();
 
+        // مسح كاش التطبيق بعد الحذف
+        Artisan::call('cache:clear');
+
         return redirect()->route('admin.products.index')
             ->with('success', 'تم حذف المنتج بنجاح');
     }
@@ -350,6 +354,9 @@ class ProductController extends Controller
     public function toggleStatus(Product $product)
     {
         $product->update(['is_available' => !$product->is_available]);
+
+        // مسح كاش التطبيق بعد تغيير الحالة
+        Artisan::call('cache:clear');
 
         $status = $product->is_available ? 'متاح' : 'غير متاح';
         return back()->with('success', "تم تغيير حالة المنتج إلى: {$status}");
