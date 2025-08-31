@@ -29,7 +29,7 @@ class CheckoutController extends Controller
             }
         }
         if (empty($cartProducts)) return redirect()->route('cart.index')->with('error', 'لا توجد منتجات متاحة في السلة');
-        
+
         // استخدام البيانات البنكية من قاعدة البيانات
         $bankSettings = BankSetting::getSettings();
         $bankInfo = [

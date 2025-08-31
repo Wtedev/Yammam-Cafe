@@ -116,7 +116,7 @@
                         معلومات الحساب البنكي
                     </h3>
                     <p class="text-gray-600 text-sm mb-6">هذه المعلومات ستظهر للعملاء في صفحة الدفع</p>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Bank Name -->
                         <div>

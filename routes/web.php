@@ -125,10 +125,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     })->name('profile');
     Route::patch('/profile/update', [AdminUserController::class, 'updateProfile'])->name('profile.update');
 
-    // إعدادات البنك
-    Route::get('/bank-settings', [\App\Http\Controllers\Admin\BankSettingController::class, 'index'])->name('bank-settings');
-    Route::put('/bank-settings', [\App\Http\Controllers\Admin\BankSettingController::class, 'update'])->name('bank-settings.update');
-
     // إدارة الاقتراحات
     Route::prefix('suggestions')->name('suggestions.')->group(function () {
         Route::get('/', [AdminSuggestionController::class, 'index'])->name('index');

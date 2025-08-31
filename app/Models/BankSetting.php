@@ -8,7 +8,7 @@ class BankSetting extends Model
 {
     protected $fillable = [
         'bank_name',
-        'account_holder', 
+        'account_holder',
         'account_number',
         'iban'
     ];
@@ -19,7 +19,7 @@ class BankSetting extends Model
     public static function getSettings()
     {
         $settings = self::first();
-        
+
         if (!$settings) {
             $settings = self::create([
                 'bank_name' => 'البنك الأهلي السعودي',
@@ -28,7 +28,7 @@ class BankSetting extends Model
                 'iban' => 'SA1234567890123456789012'
             ]);
         }
-        
+
         return $settings;
     }
 
@@ -38,13 +38,13 @@ class BankSetting extends Model
     public static function updateSettings($data)
     {
         $settings = self::first();
-        
+
         if ($settings) {
             $settings->update($data);
         } else {
             $settings = self::create($data);
         }
-        
+
         return $settings;
     }
 }

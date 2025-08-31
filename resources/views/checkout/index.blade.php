@@ -306,7 +306,7 @@
         function copyToClipboard(elementId, button) {
             const element = document.getElementById(elementId);
             const text = element.textContent.trim();
-            
+
             // استخدام Clipboard API الحديث
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
@@ -329,26 +329,26 @@
             document.body.appendChild(textArea);
             textArea.focus();
             textArea.select();
-            
+
             try {
                 document.execCommand('copy');
                 showCopySuccess(button);
             } catch (err) {
                 console.error('فشل في النسخ:', err);
             }
-            
+
             document.body.removeChild(textArea);
         }
 
         function showCopySuccess(button) {
             const icon = button.querySelector('i');
             const originalClass = icon.className;
-            
+
             // تغيير الأيقونة لإظهار النجاح
             icon.className = 'fas fa-check text-sm';
             button.classList.remove('text-gray-400', 'hover:text-blue-600');
             button.classList.add('text-green-600');
-            
+
             // إرجاع الأيقونة للوضع الأصلي بعد ثانيتين
             setTimeout(() => {
                 icon.className = originalClass;
