@@ -44,6 +44,12 @@
             <i class="fas fa-user-cog text-lg w-5"></i>
             <span class="font-medium">الملف الشخصي</span>
         </a>
+
+        <!-- Bank Settings -->
+        <a href="{{ route('admin.bank-settings') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 {{ request()->routeIs('admin.bank-settings') ? 'bg-green-50 text-green-700 border-l-4 border-green-600' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i class="fas fa-university text-lg w-5"></i>
+            <span class="font-medium">إعدادات البنك</span>
+        </a>
     </nav>
 
     <!-- User Info at Bottom -->

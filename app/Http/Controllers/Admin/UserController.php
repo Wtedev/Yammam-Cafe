@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
+use App\Models\BankSetting;
 
 class UserController extends Controller
 {
@@ -142,18 +144,35 @@ class UserController extends Controller
             'first_name' => 'required|string|max:50',
             'last_name' => 'required|string|max:50',
             'mobile' => 'required|string|max:15|unique:users,mobile,' . $user->id,
+            'bank_name' => 'required|string|max:100',
+            'account_holder' => 'required|string|max:100',
+            'account_number' => 'required|string|max:50',
+            'iban' => 'required|string|max:50',
         ], [
             'first_name.required' => 'الاسم الأول مطلوب',
             'last_name.required' => 'اسم العائلة مطلوب',
             'mobile.required' => 'رقم الجوال مطلوب',
             'mobile.unique' => 'رقم الجوال مسجل مسبقاً',
+            'bank_name.required' => 'اسم البنك مطلوب',
+            'account_holder.required' => 'اسم صاحب الحساب مطلوب',
+            'account_number.required' => 'رقم الحساب مطلوب',
+            'iban.required' => 'رقم الآيبان مطلوب',
         ]);
 
+        // تحديث بيانات المستخدم
         $user->update([
             'name' => $request->first_name . ' ' . $request->last_name,
             'mobile' => $request->mobile,
         ]);
 
-        return back()->with('success', 'تم تحديث البيانات الشخصية بنجاح');
+        // تحديث البيانات البنكية
+        BankSetting::updateSettings([
+            'bank_name' => $request->bank_name,
+            'account_holder' => $request->account_holder,
+            'account_number' => $request->account_number,
+            'iban' => $request->iban,
+        ]);
+
+        return back()->with('success', 'تم تحديث البيانات الشخصية والبنكية بنجاح');
     }
 }

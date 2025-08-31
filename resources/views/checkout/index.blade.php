@@ -128,18 +128,44 @@
                                 بيانات الحساب البنكي
                             </h3>
 
-                            <div class="grid md:grid-cols-2 gap-4 mb-6">
-                                <div class="bg-white/70 p-4 rounded-xl">
-                                    <p class="text-xs text-blue-600 font-bold mb-1">اسم البنك</p>
-                                    <p class="font-bold text-gray-900">{{ $bankInfo['bank_name'] }}</p>
+                            <div class="space-y-4 mb-6">
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div class="bg-white/70 p-4 rounded-xl relative">
+                                        <p class="text-xs text-blue-600 font-bold mb-1">اسم البنك</p>
+                                        <div class="flex items-center justify-between">
+                                            <p class="font-bold text-gray-900" id="bank-name">{{ $bankInfo['bank_name'] }}</p>
+                                            <button onclick="copyToClipboard('bank-name', this)" class="text-gray-500 hover:text-blue-600 transition-colors" title="نسخ اسم البنك">
+                                                <i class="fas fa-copy text-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white/70 p-4 rounded-xl relative">
+                                        <p class="text-xs text-blue-600 font-bold mb-1">اسم صاحب الحساب</p>
+                                        <div class="flex items-center justify-between">
+                                            <p class="font-bold text-gray-900" id="account-holder">{{ $bankInfo['account_holder'] }}</p>
+                                            <button onclick="copyToClipboard('account-holder', this)" class="text-gray-500 hover:text-blue-600 transition-colors" title="نسخ اسم صاحب الحساب">
+                                                <i class="fas fa-copy text-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="bg-white/70 p-4 rounded-xl">
-                                    <p class="text-xs text-blue-600 font-bold mb-1">اسم صاحب الحساب</p>
-                                    <p class="font-bold text-gray-900">{{ $bankInfo['account_holder'] }}</p>
+                                <div class="bg-white/70 p-4 rounded-xl relative">
+                                    <p class="text-xs text-blue-600 font-bold mb-1">رقم الحساب</p>
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-bold text-gray-900 text-lg font-mono" id="account-number">{{ $bankInfo['account_number'] }}</p>
+                                        <button onclick="copyToClipboard('account-number', this)" class="text-gray-500 hover:text-blue-600 transition-colors" title="نسخ رقم الحساب">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="bg-white/70 p-4 rounded-xl md:col-span-2">
-                                    <p class="text-xs text-blue-600 font-bold mb-1">رقم الحساب / IBAN</p>
-                                    <p class="font-bold text-gray-900 text-lg">{{ $bankInfo['iban'] }}</p>
+                                <div class="bg-white/70 p-4 rounded-xl relative">
+                                    <p class="text-xs text-blue-600 font-bold mb-1">رقم الآيبان (IBAN)</p>
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-bold text-gray-900 text-lg font-mono" id="iban-number">{{ $bankInfo['iban'] }}</p>
+                                        <button onclick="copyToClipboard('iban-number', this)" class="text-gray-500 hover:text-blue-600 transition-colors" title="نسخ رقم الآيبان">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -275,6 +301,60 @@
             return {
                 paymentMethod: @json(old('payment_method', 'cash'))
             };
+        }
+
+        function copyToClipboard(elementId, button) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent.trim();
+            
+            // استخدام Clipboard API الحديث
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopySuccess(button);
+                }).catch(() => {
+                    fallbackCopyTextToClipboard(text, button);
+                });
+            } else {
+                // الطريقة التقليدية للمتصفحات القديمة
+                fallbackCopyTextToClipboard(text, button);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text, button) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showCopySuccess(button);
+            } catch (err) {
+                console.error('فشل في النسخ:', err);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function showCopySuccess(button) {
+            const icon = button.querySelector('i');
+            const originalClass = icon.className;
+            
+            // تغيير الأيقونة لإظهار النجاح
+            icon.className = 'fas fa-check text-sm';
+            button.classList.remove('text-gray-400', 'hover:text-blue-600');
+            button.classList.add('text-green-600');
+            
+            // إرجاع الأيقونة للوضع الأصلي بعد ثانيتين
+            setTimeout(() => {
+                icon.className = originalClass;
+                button.classList.remove('text-green-600');
+                button.classList.add('text-gray-400', 'hover:text-blue-600');
+            }, 2000);
         }
 
     </script>

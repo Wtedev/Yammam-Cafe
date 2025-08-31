@@ -41,7 +41,7 @@
 
                 <script>
                     function confirmDelete() {
-                        @if($category->products->count() > 0)
+                        @if($category - > products - > count() > 0)
                         return confirm('⚠️ تحذير!\n\nهذا التصنيف يحتوي على {{ $category->products->count() }} منتج.\n\nعند الحذف:\n✓ سيتم حذف التصنيف نهائياً\n✓ سيتم إزالة ارتباط المنتجات بهذا التصنيف\n✓ المنتجات ستبقى موجودة لكن بدون تصنيف\n\nهل أنت متأكد من المتابعة؟');
                         @else
                         return confirm('هل أنت متأكد من حذف هذا التصنيف؟\n\nهذا الإجراء لا يمكن التراجع عنه.');

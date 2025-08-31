@@ -109,34 +109,79 @@
                     @enderror
                 </div>
 
-                <!-- Office Number (Read Only) -->
-                @if(auth()->user()->office_number)
-                <div>
-                    <label for="office_number" class="block text-sm font-medium text-gray-700 mb-2">
-                        رقم المكتب
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                            <i class="fas fa-building text-gray-400"></i>
+                <!-- Bank Information Section -->
+                <div class="col-span-1 md:col-span-2 border-t border-gray-200 pt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-university text-blue-600"></i>
+                        معلومات الحساب البنكي
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-6">هذه المعلومات ستظهر للعملاء في صفحة الدفع</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Bank Name -->
+                        <div>
+                            <label for="bank_name" class="block text-sm font-medium text-gray-700 mb-2">
+                                اسم البنك <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="fas fa-university text-gray-400"></i>
+                                </div>
+                                <input type="text" id="bank_name" name="bank_name" value="{{ old('bank_name', \App\Models\BankSetting::getSettings()->bank_name) }}" required class="block w-full pr-10 pl-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('bank_name') border-red-500 @enderror" placeholder="أدخل اسم البنك">
+                            </div>
+                            @error('bank_name')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
-                        <input type="text" id="office_number" value="{{ auth()->user()->office_number }}" readonly class="block w-full pr-10 pl-3 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-600" placeholder="رقم المكتب">
-                    </div>
-                    <p class="text-gray-500 text-sm mt-1">رقم المكتب غير قابل للتعديل</p>
-                </div>
-                @endif
 
-                <!-- Role (Read Only) -->
-                <div>
-                    <label for="role" class="block text-sm font-medium text-gray-700 mb-2">
-                        الدور في النظام
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                            <i class="fas fa-shield-alt text-gray-400"></i>
+                        <!-- Account Holder -->
+                        <div>
+                            <label for="account_holder" class="block text-sm font-medium text-gray-700 mb-2">
+                                اسم صاحب الحساب <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="fas fa-user-tie text-gray-400"></i>
+                                </div>
+                                <input type="text" id="account_holder" name="account_holder" value="{{ old('account_holder', \App\Models\BankSetting::getSettings()->account_holder) }}" required class="block w-full pr-10 pl-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('account_holder') border-red-500 @enderror" placeholder="أدخل اسم صاحب الحساب">
+                            </div>
+                            @error('account_holder')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
-                        <input type="text" id="role" value="{{ auth()->user()->role === 'admin' ? 'مدير النظام' : 'مستخدم' }}" readonly class="block w-full pr-10 pl-3 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-600">
+
+                        <!-- Account Number -->
+                        <div>
+                            <label for="account_number" class="block text-sm font-medium text-gray-700 mb-2">
+                                رقم الحساب <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="fas fa-credit-card text-gray-400"></i>
+                                </div>
+                                <input type="text" id="account_number" name="account_number" value="{{ old('account_number', \App\Models\BankSetting::getSettings()->account_number) }}" required class="block w-full pr-10 pl-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('account_number') border-red-500 @enderror" placeholder="أدخل رقم الحساب" dir="ltr">
+                            </div>
+                            @error('account_number')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- IBAN -->
+                        <div>
+                            <label for="iban" class="block text-sm font-medium text-gray-700 mb-2">
+                                رقم الآيبان (IBAN) <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="fas fa-barcode text-gray-400"></i>
+                                </div>
+                                <input type="text" id="iban" name="iban" value="{{ old('iban', \App\Models\BankSetting::getSettings()->iban) }}" required class="block w-full pr-10 pl-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('iban') border-red-500 @enderror" placeholder="أدخل رقم الآيبان" dir="ltr">
+                            </div>
+                            @error('iban')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
-                    <p class="text-gray-500 text-sm mt-1">الدور في النظام غير قابل للتعديل</p>
                 </div>
 
                 <!-- Submit Button -->

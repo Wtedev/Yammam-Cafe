@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\BankSetting;
 
 class CheckoutController extends Controller
 {
@@ -28,7 +29,15 @@ class CheckoutController extends Controller
             }
         }
         if (empty($cartProducts)) return redirect()->route('cart.index')->with('error', 'لا توجد منتجات متاحة في السلة');
-        $bankInfo = ['bank_name' => 'البنك الأهلي السعودي', 'account_number' => 'SA1234567890123456789012', 'account_holder' => 'يمام كافيه', 'iban' => 'SA1234567890123456789012'];
+        
+        // استخدام البيانات البنكية من قاعدة البيانات
+        $bankSettings = BankSetting::getSettings();
+        $bankInfo = [
+            'bank_name' => $bankSettings->bank_name,
+            'account_number' => $bankSettings->account_number,
+            'account_holder' => $bankSettings->account_holder,
+            'iban' => $bankSettings->iban
+        ];
         // Debug معلومات للمطور (يمكن إزالتها لاحقاً)
         Log::debug('Checkout index debug', [
             'user_id' => Auth::id(),

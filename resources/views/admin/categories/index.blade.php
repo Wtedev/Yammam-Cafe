@@ -107,13 +107,18 @@
                                     </button>
 
                                     <script>
-                                        function confirmDelete{{ $category->id }}() {
-                                            @if($category->products->count() > 0)
+                                        function confirmDelete {
+                                            {
+                                                $category - > id
+                                            }
+                                        }() {
+                                            @if($category - > products - > count() > 0)
                                             return confirm('⚠️ تحذير!\n\nالتصنيف "{{ $category->name }}" يحتوي على {{ $category->products->count() }} منتج.\n\nعند الحذف سيتم إزالة ارتباط المنتجات.\nهل أنت متأكد؟');
                                             @else
                                             return confirm('هل أنت متأكد من حذف التصنيف "{{ $category->name }}"؟');
                                             @endif
                                         }
+
                                     </script>
                                 </form>
                             </div>

@@ -34,18 +34,12 @@
                 <h2 class="text-2xl font-bold text-gray-900">منتجات الأسبوع</h2>
                 <!-- Slider Controls - All screens -->
                 <div class="flex items-center gap-2">
-                    <button @click="previousSlide()" 
-                            :disabled="isPrevDisabled()"
-                            class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors" 
-                            :class="{ 'opacity-50 cursor-not-allowed': isPrevDisabled() }">
+                    <button @click="previousSlide()" :disabled="isPrevDisabled()" class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors" :class="{ 'opacity-50 cursor-not-allowed': isPrevDisabled() }">
                         <i class="fas fa-chevron-right text-gray-600"></i>
                     </button>
                     <span class="text-sm text-gray-500 px-2 lg:hidden" x-text="`${currentSlide + 1} من ${totalSlides}`"></span>
                     <span class="text-sm text-gray-500 px-2 hidden lg:block" x-text="`صفحة ${currentSlide === 0 ? 1 : 2} من ${totalSlides > 4 ? 2 : 1}`"></span>
-                    <button @click="nextSlide()" 
-                            :disabled="isNextDisabled()"
-                            class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors" 
-                            :class="{ 'opacity-50 cursor-not-allowed': isNextDisabled() }">
+                    <button @click="nextSlide()" :disabled="isNextDisabled()" class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors" :class="{ 'opacity-50 cursor-not-allowed': isNextDisabled() }">
                         <i class="fas fa-chevron-left text-gray-600"></i>
                     </button>
                 </div>
@@ -240,12 +234,16 @@
         <script>
             function weeklySlider() {
                 return {
-                    currentSlide: 0,
-                    totalSlides: {{ $weeklyProducts->count() }},
+                    currentSlide: 0
+                    , totalSlides: {
+                        {
+                            $weeklyProducts - > count()
+                        }
+                    },
 
                     nextSlide() {
                         const isDesktop = window.innerWidth >= 1024;
-                        
+
                         if (isDesktop) {
                             // للديسكتوب: التنقل بـ 4 منتجات
                             if (this.totalSlides > 4 && this.currentSlide === 0) {
@@ -261,7 +259,7 @@
 
                     previousSlide() {
                         const isDesktop = window.innerWidth >= 1024;
-                        
+
                         if (isDesktop) {
                             // للديسكتوب: العودة للصفحة الأولى
                             if (this.currentSlide > 0) {
