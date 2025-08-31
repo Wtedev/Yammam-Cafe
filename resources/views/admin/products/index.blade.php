@@ -27,7 +27,7 @@
                     <i class="fas fa-plus"></i>
                     <span>إضافة منتج جديد</span>
                 </a>
-                
+
                 <a href="{{ route('admin.categories.index') }}" class="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-xl shadow transition-colors duration-200">
                     <i class="fas fa-list"></i>
                     <span>إدارة التصنيفات</span>

@@ -77,9 +77,7 @@
                             <div class="bg-blue-50 rounded-xl p-4 flex flex-col gap-2">
                                 <div class="flex items-center justify-between mb-1">
                                     <label for="category" class="text-xs text-blue-700 font-bold">الفئة <span class="text-red-500">*</span></label>
-                                    <a href="{{ route('admin.categories.create') }}" 
-                                       target="_blank"
-                                       class="inline-flex items-center text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors">
+                                    <a href="{{ route('admin.categories.create') }}" target="_blank" class="inline-flex items-center text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors">
                                         <i class="fas fa-plus text-xs ml-1"></i>
                                         إضافة تصنيف
                                     </a>

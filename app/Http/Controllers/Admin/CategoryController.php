@@ -78,7 +78,7 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $productCount = $category->products()->count();
-        
+
         // إذا كان التصنيف يحتوي على منتجات، قم بإزالة ارتباطها بالتصنيف
         if ($productCount > 0) {
             // إزالة ارتباط المنتجات بالتصنيف (تعيين category_id إلى null)
@@ -88,7 +88,7 @@ class CategoryController extends Controller
         $categoryName = $category->name;
         $category->delete();
 
-        $message = $productCount > 0 
+        $message = $productCount > 0
             ? "تم حذف التصنيف '{$categoryName}' بنجاح وإزالة ارتباطه بـ {$productCount} منتج"
             : "تم حذف التصنيف '{$categoryName}' بنجاح";
 

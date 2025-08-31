@@ -137,7 +137,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- Contact Developer Link -->
     <div class="max-w-7xl mx-auto mt-6 text-center">
         <a href="{{ route('contact.developer') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">

@@ -28,18 +28,24 @@
         </div>
 
         <!-- Weekly Products Slider -->
-        @if($weeklyProducts->count() > 0)
+        @if($weeklyProducts && $weeklyProducts->count() > 0)
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-6" x-data="weeklySlider()">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-bold text-gray-900">منتجات الأسبوع</h2>
                 <!-- Slider Controls - All screens -->
                 <div class="flex items-center gap-2">
-                    <button @click="previousSlide()" class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors" :class="{ 'opacity-50 cursor-not-allowed': currentSlide === 0 }">
+                    <button @click="previousSlide()" 
+                            :disabled="isPrevDisabled()"
+                            class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors" 
+                            :class="{ 'opacity-50 cursor-not-allowed': isPrevDisabled() }">
                         <i class="fas fa-chevron-right text-gray-600"></i>
                     </button>
                     <span class="text-sm text-gray-500 px-2 lg:hidden" x-text="`${currentSlide + 1} من ${totalSlides}`"></span>
-                    <span class="text-sm text-gray-500 px-2 hidden lg:block" x-text="`${Math.floor(currentSlide / 4) + 1} من ${Math.ceil(totalSlides / 4)}`"></span>
-                    <button @click="nextSlide()" class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors" :class="{ 'opacity-50 cursor-not-allowed': (window.innerWidth >= 1024 ? currentSlide >= Math.max(0, totalSlides - 4) : currentSlide === totalSlides - 1) }">
+                    <span class="text-sm text-gray-500 px-2 hidden lg:block" x-text="`صفحة ${currentSlide === 0 ? 1 : 2} من ${totalSlides > 4 ? 2 : 1}`"></span>
+                    <button @click="nextSlide()" 
+                            :disabled="isNextDisabled()"
+                            class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors" 
+                            :class="{ 'opacity-50 cursor-not-allowed': isNextDisabled() }">
                         <i class="fas fa-chevron-left text-gray-600"></i>
                     </button>
                 </div>
@@ -138,7 +144,7 @@
             <!-- Desktop Grid View -->
             <div class="hidden lg:grid lg:grid-cols-4 gap-6">
                 @foreach($weeklyProducts as $index => $product)
-                <div x-show="Math.floor({{ $index }} / 4) === Math.floor(currentSlide / 4)" class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden relative group transition hover:shadow-md h-auto">
+                <div x-show="(currentSlide === 0 && {{ $index }} < 4) || (currentSlide > 0 && {{ $index }} >= 4)" class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden relative group transition hover:shadow-md h-auto">
                     <!-- Product Image -->
                     <div class="relative w-full bg-blue-50/40 aspect-square flex-shrink-0">
                         @if($product->image)
@@ -238,32 +244,56 @@
                     totalSlides: {{ $weeklyProducts->count() }},
 
                     nextSlide() {
-                        // Desktop: التنقل بـ 4 منتجات، Mobile: منتج واحد
-                        const step = window.innerWidth >= 1024 ? 4 : 1;
-                        const maxSlide = window.innerWidth >= 1024 ? this.totalSlides - 4 : this.totalSlides - 1;
+                        const isDesktop = window.innerWidth >= 1024;
                         
-                        if (this.currentSlide < maxSlide) {
-                            this.currentSlide += step;
-                            if (this.currentSlide > maxSlide) {
-                                this.currentSlide = maxSlide;
+                        if (isDesktop) {
+                            // للديسكتوب: التنقل بـ 4 منتجات
+                            if (this.totalSlides > 4 && this.currentSlide === 0) {
+                                this.currentSlide = Math.min(4, this.totalSlides - 4);
+                            }
+                        } else {
+                            // للموبايل: التنقل بمنتج واحد
+                            if (this.currentSlide < this.totalSlides - 1) {
+                                this.currentSlide++;
                             }
                         }
                     },
 
                     previousSlide() {
-                        // Desktop: التنقل بـ 4 منتجات، Mobile: منتج واحد
-                        const step = window.innerWidth >= 1024 ? 4 : 1;
+                        const isDesktop = window.innerWidth >= 1024;
                         
-                        if (this.currentSlide > 0) {
-                            this.currentSlide -= step;
-                            if (this.currentSlide < 0) {
+                        if (isDesktop) {
+                            // للديسكتوب: العودة للصفحة الأولى
+                            if (this.currentSlide > 0) {
                                 this.currentSlide = 0;
+                            }
+                        } else {
+                            // للموبايل: التنقل بمنتج واحد
+                            if (this.currentSlide > 0) {
+                                this.currentSlide--;
                             }
                         }
                     },
 
                     goToSlide(index) {
                         this.currentSlide = index;
+                    },
+
+                    // Helper method to check if next button should be disabled
+                    isNextDisabled() {
+                        const isDesktop = window.innerWidth >= 1024;
+                        if (isDesktop) {
+                            // للديسكتوب: معطل إذا كنا في الصفحة الثانية أو إذا كان عدد المنتجات 4 أو أقل
+                            return this.totalSlides <= 4 || this.currentSlide > 0;
+                        } else {
+                            // للموبايل: معطل إذا كنا في المنتج الأخير
+                            return this.currentSlide >= this.totalSlides - 1;
+                        }
+                    },
+
+                    // Helper method to check if previous button should be disabled
+                    isPrevDisabled() {
+                        return this.currentSlide <= 0;
                     }
                 }
             }

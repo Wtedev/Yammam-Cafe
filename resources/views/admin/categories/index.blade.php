@@ -92,33 +92,28 @@
                             </span>
                             @endif
                             <span class="text-green-600 font-bold text-sm md:text-base">{{ $category->products->where('is_available', true)->count() }} متوفر</span>
-                            
+
                             <!-- Action Buttons -->
                             <div class="flex items-center gap-1" onclick="event.stopPropagation()">
-                                <a href="{{ route('admin.categories.edit', $category) }}" 
-                                   class="inline-flex items-center px-2 py-1 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 text-xs font-medium rounded transition-colors">
+                                <a href="{{ route('admin.categories.edit', $category) }}" class="inline-flex items-center px-2 py-1 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 text-xs font-medium rounded transition-colors">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                
-                                <form action="{{ route('admin.categories.destroy', $category) }}" 
-                                      method="POST" 
-                                      class="inline-block"
-                                      onsubmit="return confirmDelete{{ $category->id }}()">
+
+                                <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="inline-block" onsubmit="return confirmDelete{{ $category->id }}()">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" 
-                                            class="inline-flex items-center px-2 py-1 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-medium rounded transition-colors">
+                                    <button type="submit" class="inline-flex items-center px-2 py-1 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-medium rounded transition-colors">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                    
+
                                     <script>
-                                    function confirmDelete{{ $category->id }}() {
-                                        @if($category->products->count() > 0)
-                                        return confirm('⚠️ تحذير!\n\nالتصنيف "{{ $category->name }}" يحتوي على {{ $category->products->count() }} منتج.\n\nعند الحذف سيتم إزالة ارتباط المنتجات.\nهل أنت متأكد؟');
-                                        @else
-                                        return confirm('هل أنت متأكد من حذف التصنيف "{{ $category->name }}"؟');
-                                        @endif
-                                    }
+                                        function confirmDelete{{ $category->id }}() {
+                                            @if($category->products->count() > 0)
+                                            return confirm('⚠️ تحذير!\n\nالتصنيف "{{ $category->name }}" يحتوي على {{ $category->products->count() }} منتج.\n\nعند الحذف سيتم إزالة ارتباط المنتجات.\nهل أنت متأكد؟');
+                                            @else
+                                            return confirm('هل أنت متأكد من حذف التصنيف "{{ $category->name }}"؟');
+                                            @endif
+                                        }
                                     </script>
                                 </form>
                             </div>
@@ -131,8 +126,7 @@
             <div class="p-8 text-center text-gray-400">
                 <i class="fas fa-tags text-gray-300 text-4xl mb-4"></i>
                 <p class="mb-4">لا توجد تصنيفات حتى الآن</p>
-                <a href="{{ route('admin.categories.create') }}" 
-                   class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-xl transition-colors">
+                <a href="{{ route('admin.categories.create') }}" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-xl transition-colors">
                     <i class="fas fa-plus ml-2"></i>
                     إضافة تصنيف جديد
                 </a>

@@ -26,21 +26,21 @@
             <span class="font-medium">المنيو</span>
         </a>
 
-    <!-- My Orders -->
-    @auth
-    <a href="{{ route('my-orders') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 {{ request()->routeIs('my-orders') ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
+        <!-- My Orders -->
+        @auth
+        <a href="{{ route('my-orders') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 {{ request()->routeIs('my-orders') ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
             <i class="fas fa-shopping-bag text-lg w-5"></i>
             <span class="font-medium">طلباتي</span>
         </a>
-    @endauth
+        @endauth
 
-    <!-- My Suggestions -->
-    @auth
-    <a href="{{ route('my-suggestions') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 {{ request()->routeIs('my-suggestions') ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
+        <!-- My Suggestions -->
+        @auth
+        <a href="{{ route('my-suggestions') }}" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all duration-200 {{ request()->routeIs('my-suggestions') ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-50' }}">
             <i class="fas fa-lightbulb text-lg w-5"></i>
             <span class="font-medium">اقتراحاتي</span>
         </a>
-    @endauth
+        @endauth
 
         <!-- Profile / Login -->
         @auth

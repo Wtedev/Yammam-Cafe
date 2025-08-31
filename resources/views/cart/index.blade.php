@@ -20,7 +20,7 @@
 
     <x-user-layout title="سلة المشتريات">
         <!-- Cart Wrapper -->
-    <div class="max-w-6xl mx-auto space-y-4 sm:space-y-6" x-data="cartPage()">
+        <div class="max-w-6xl mx-auto space-y-4 sm:space-y-6" x-data="cartPage()">
             @if(count($cartItems) > 0)
             <!-- Items List -->
             <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">

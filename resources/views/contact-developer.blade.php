@@ -18,7 +18,7 @@
                         <p class="text-sm text-gray-600">0590187528</p>
                     </div>
                 </a>
-                
+
                 <a href="mailto:lamaalmushyqih@gmail.com" class="flex items-center gap-4 p-4 rounded-xl bg-white hover:bg-blue-50 transition-colors group border border-gray-100">
                     <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-envelope text-2xl text-blue-500"></i>
@@ -28,7 +28,7 @@
                         <p class="text-sm text-gray-600">lamaalmushyqih@gmail.com</p>
                     </div>
                 </a>
-                
+
                 <a href="https://www.linkedin.com/in/lama-almushyqih" target="_blank" rel="noopener" class="flex items-center gap-4 p-4 rounded-xl bg-white hover:bg-blue-50 transition-colors group border border-gray-100">
                     <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                         <i class="fab fa-linkedin text-2xl text-blue-600"></i>
@@ -38,7 +38,7 @@
                         <p class="text-sm text-gray-600">lama-almushyqih</p>
                     </div>
                 </a>
-                
+
                 <a href="https://github.com/wtedev" target="_blank" rel="noopener" class="flex items-center gap-4 p-4 rounded-xl bg-white hover:bg-gray-50 transition-colors group border border-gray-100">
                     <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
                         <i class="fab fa-github text-2xl text-gray-700"></i>

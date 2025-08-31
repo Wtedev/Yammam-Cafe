@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -13,10 +14,6 @@ class HomeController extends Controller
         // منتجات الأسبوع (المنتجات الأسبوعية المتاحة حالياً)
         $weeklyProducts = Product::where('is_available', true)
             ->where('type', 'weekly')
-            ->where(function($query) {
-                $query->whereNull('end_date')
-                      ->orWhere('end_date', '>=', now()->toDateString());
-            })
             ->orderBy('created_at', 'desc')
             ->take(6)
             ->get();

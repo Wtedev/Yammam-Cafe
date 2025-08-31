@@ -1,6 +1,6 @@
 <x-layout.admin-layout title="عرض التصنيف">
     <div class="max-w-4xl mx-auto py-8 px-2 md:px-6 font-[Cairo,Tajawal,Segoe UI,Arial,sans-serif]">
-        
+
         <!-- Success Message -->
         @if(session('success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6" role="alert">
@@ -20,7 +20,7 @@
             </div>
         </div>
         @endif
-        
+
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <h1 class="text-2xl md:text-3xl font-extrabold text-green-900 flex items-center gap-2">
@@ -34,20 +34,20 @@
                 <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="inline" onsubmit="return confirmDelete()">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" 
-                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 shadow-sm flex items-center gap-1">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 shadow-sm flex items-center gap-1">
                         <i class="fas fa-trash"></i> حذف
                     </button>
                 </form>
-                
+
                 <script>
-                function confirmDelete() {
-                    @if($category->products->count() > 0)
-                    return confirm('⚠️ تحذير!\n\nهذا التصنيف يحتوي على {{ $category->products->count() }} منتج.\n\nعند الحذف:\n✓ سيتم حذف التصنيف نهائياً\n✓ سيتم إزالة ارتباط المنتجات بهذا التصنيف\n✓ المنتجات ستبقى موجودة لكن بدون تصنيف\n\nهل أنت متأكد من المتابعة؟');
-                    @else
-                    return confirm('هل أنت متأكد من حذف هذا التصنيف؟\n\nهذا الإجراء لا يمكن التراجع عنه.');
-                    @endif
-                }
+                    function confirmDelete() {
+                        @if($category->products->count() > 0)
+                        return confirm('⚠️ تحذير!\n\nهذا التصنيف يحتوي على {{ $category->products->count() }} منتج.\n\nعند الحذف:\n✓ سيتم حذف التصنيف نهائياً\n✓ سيتم إزالة ارتباط المنتجات بهذا التصنيف\n✓ المنتجات ستبقى موجودة لكن بدون تصنيف\n\nهل أنت متأكد من المتابعة؟');
+                        @else
+                        return confirm('هل أنت متأكد من حذف هذا التصنيف؟\n\nهذا الإجراء لا يمكن التراجع عنه.');
+                        @endif
+                    }
+
                 </script>
                 <a href="{{ route('admin.categories.index') }}" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 shadow-sm flex items-center gap-1">
                     <i class="fas fa-arrow-right"></i> العودة للقائمة
@@ -101,7 +101,7 @@
                 <i class="fas fa-list"></i>
                 منتجات هذا التصنيف
             </h2>
-            
+
             <!-- Mobile Cards -->
             <div class="block md:hidden space-y-4">
                 @foreach($category->products as $product)
@@ -111,8 +111,7 @@
                             <i class="fas fa-cube text-green-500 text-lg"></i>
                             <span class="font-bold text-gray-900">{{ $product->name }}</span>
                         </div>
-                        <a href="{{ route('admin.products.show', $product) }}" 
-                           class="text-green-600 hover:text-green-900 p-2">
+                        <a href="{{ route('admin.products.show', $product) }}" class="text-green-600 hover:text-green-900 p-2">
                             <i class="fas fa-eye"></i>
                         </a>
                     </div>
@@ -130,7 +129,7 @@
                 </div>
                 @endforeach
             </div>
-            
+
             <!-- Desktop Table -->
             <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -176,8 +175,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <a href="{{ route('admin.products.show', $product) }}" 
-                                   class="text-green-600 hover:text-green-900 p-2">
+                                <a href="{{ route('admin.products.show', $product) }}" class="text-green-600 hover:text-green-900 p-2">
                                     <i class="fas fa-eye"></i>
                                 </a>
                             </td>
