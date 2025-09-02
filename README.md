@@ -15,7 +15,7 @@
 
 ## ✨ Features
 - Digital menu for all café products (fixed & weekly specials)  
-- Order placement system for companies and individuals  
+- Easy ordering system for café customers
 - Suggestions & feedback submission by users  
 - Admin dashboard to manage products, view orders, and track suggestions  
 - Weekly sales & activity statistics  
@@ -24,7 +24,7 @@
 
 ## 🛠️ Tech Stack
 - **Laravel 11** – Backend framework  
-- **PostgreSQL** – Database  
+- **MySQL** – Database  
 - **Blade + Tailwind CSS** – Responsive frontend (desktop & mobile)  
 - **Laravel Cloud** – Deployment  
 
