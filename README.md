@@ -1,6 +1,5 @@
 <p align="center">
   <a href="https://yammam-cafe-main-olbq74.laravel.cloud" target="_blank">
-    <img src="https://img.icons8.com/external-flat-juicy-fish/60/external-cafe-coffee-shop-flat-flat-juicy-fish.png" width="120" alt="Yammam Café Logo">
   </a>
 </p>
 
