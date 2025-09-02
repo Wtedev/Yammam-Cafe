@@ -6,9 +6,9 @@
 <h1 align="center">☕ Yammam Café</h1>
 
 <p align="center">
-  A café ordering and suggestion management system built for the shared café in Jada 30.  
+  A café ordering and suggestion management system built for Yammam café in Jada 30.  
   <br/>
-  <a href="https://yammam-cafe-main-olbq74.laravel.cloud" target="_blank"><strong>🌐 Live Demo</strong></a>
+  <a href="https://yammam-cafe-main-olbq74.laravel.cloud" target="_blank"><strong>🌐 Visit Website</strong></a>
 </p>
 
 ---
